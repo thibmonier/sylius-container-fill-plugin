@@ -1,0 +1,4 @@
+{# violation: {code, parameters} (plan data) #}
+{% set parameters = {} %}
+{% for name, value in violation.parameters %}{% set parameters = parameters|merge({('%' ~ name ~ '%'): value}) %}{% endfor %}
+{{- ('tmonier_container_fill.violation.' ~ violation.code)|trans(parameters, 'validators') -}}

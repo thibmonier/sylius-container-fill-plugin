@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping http://symfony.com/schema/dic/services/constraint-mapping-1.0.xsd">
+
+    <!-- Fill rules: only when the checkout completes, never in "sylius" (partial carts must save). -->
+    <class name="Sylius\Component\Core\Model\Order">
+        <constraint name="Tmonier\SyliusContainerFillPlugin\Validator\OrderContainerFillSatisfied">
+            <option name="groups">
+                <value>sylius_checkout_complete</value>
+            </option>
+        </constraint>
+    </class>
+
+    <!-- Opt-in per variant: the quantity of a line is a multiple of the case, checked when the cart is saved. -->
+    <class name="Sylius\Component\Core\Model\OrderItem">
+        <constraint name="Tmonier\SyliusContainerFillPlugin\Validator\CaseMultiple">
+            <option name="groups">
+                <value>sylius</value>
+            </option>
+        </constraint>
+    </class>
+
+    <!-- The shop API validates the command, not the order: without this the API bypasses the rules. -->
+    <class name="Sylius\Bundle\ApiBundle\Command\Checkout\CompleteOrder">
+        <constraint name="Tmonier\SyliusContainerFillPlugin\Validator\OrderContainerFillSatisfied">
+            <option name="groups">
+                <value>sylius_checkout_complete</value>
+            </option>
+        </constraint>
+    </class>
+</constraint-mapping>

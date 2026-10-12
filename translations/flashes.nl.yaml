@@ -1,0 +1,4 @@
+tmonier_container_fill:
+    checkout_blocked: 'Uw bestelling voldoet nog niet aan de vulregels voor pallets en vrachtwagens: vul het laadplan in de winkelwagen aan.'
+    completed: '%quantity% x %product% toegevoegd om de laadeenheid te vullen.'
+    rounded_to_layer: '%quantity% x %product% toegevoegd om de laag te vullen.'

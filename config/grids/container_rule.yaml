@@ -1,0 +1,76 @@
+sylius_grid:
+    grids:
+        tmonier_container_fill_admin_container_rule:
+            driver:
+                name: doctrine/orm
+                options:
+                    class: "%tmonier_container_fill.model.container_rule.class%"
+            sorting:
+                id: asc
+            fields:
+                name:
+                    type: string
+                    label: sylius.ui.name
+                    sortable: ~
+                channel:
+                    type: twig
+                    label: sylius.ui.channel
+                    sortable: channel.code
+                    options:
+                        template: "@SyliusAdmin/shared/grid/field/channel.html.twig"
+                scope:
+                    type: twig
+                    label: tmonier_container_fill.form.scope
+                    path: .
+                    options:
+                        template: "@TmonierSyliusContainerFillPlugin/admin/container_rule/grid/field/scope.html.twig"
+                customerGroup:
+                    type: twig
+                    label: sylius.ui.customer_group
+                    path: .
+                    options:
+                        template: "@TmonierSyliusContainerFillPlugin/admin/container_rule/grid/field/customer_group.html.twig"
+                mode:
+                    type: twig
+                    label: tmonier_container_fill.form.mode
+                    path: .
+                    options:
+                        template: "@TmonierSyliusContainerFillPlugin/admin/container_rule/grid/field/mode.html.twig"
+                containerTypes:
+                    type: twig
+                    label: tmonier_container_fill.ui.container_types
+                    path: .
+                    options:
+                        template: "@TmonierSyliusContainerFillPlugin/admin/container_rule/grid/field/container_types.html.twig"
+                enabled:
+                    type: twig
+                    label: sylius.ui.enabled
+                    sortable: ~
+                    options:
+                        template: "@SyliusAdmin/shared/grid/field/boolean.html.twig"
+            filters:
+                search:
+                    type: string
+                    label: sylius.ui.search
+                    options:
+                        fields: [name]
+                channel:
+                    type: entity
+                    label: sylius.ui.channel
+                    form_options:
+                        class: "%sylius.model.channel.class%"
+                enabled:
+                    type: boolean
+                    label: sylius.ui.enabled
+            actions:
+                main:
+                    create:
+                        type: create
+                item:
+                    update:
+                        type: update
+                    delete:
+                        type: delete
+                bulk:
+                    delete:
+                        type: delete

@@ -1,0 +1,4 @@
+tmonier_container_fill:
+    checkout_blocked: 'Su pedido aún no cumple las reglas de llenado de palés y camiones: complete el plan de carga que se muestra en el carrito.'
+    completed: '%quantity% x %product% añadido(s) para completar el contenedor.'
+    rounded_to_layer: '%quantity% x %product% añadido(s) para completar la capa.'

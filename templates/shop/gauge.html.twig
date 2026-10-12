@@ -1,0 +1,123 @@
+{# Rendered with \Tmonier\SyliusContainerFillPlugin\Twig\Component\ContainerGaugeComponent #}
+{% set report = this.report %}
+<div {{ attributes }}>
+    {% if report.hasRules or report.lineViolations is not empty %}
+        <style>
+            .tmonier-cf-bar-fill { transition: none; }
+            @media (prefers-reduced-motion: no-preference) { .tmonier-cf-bar-fill { transition: width .3s ease-out; } }
+        </style>
+        <div class="card mb-4" {{ sylius_test_html_attribute('tmonier-container-fill-gauge') }}>
+            <div class="card-body">
+                <h2 class="h5 mb-3">{{ 'tmonier_container_fill.ui.load_plan'|trans }}</h2>
+
+                <div aria-live="polite" {{ sylius_test_html_attribute('tmonier-container-fill-status') }}>
+                    {% if report.satisfied %}
+                        <p class="mb-2 text-success fw-semibold">{{ ux_icon('tabler:circle-check', {'class': 'icon', 'aria-hidden': 'true'}) }} {{ 'tmonier_container_fill.ui.rules_met'|trans }}</p>
+                    {% else %}
+                        <p class="mb-2 text-danger fw-semibold">{{ ux_icon('tabler:alert-triangle', {'class': 'icon', 'aria-hidden': 'true'}) }} {{ 'tmonier_container_fill.ui.rules_not_met'|trans }}</p>
+                    {% endif %}
+                </div>
+
+                {% for outcome in report.outcomes %}
+                    {% set result = outcome.result %}
+                    {% set required = outcome.rule.requiredFill %}
+                    <div class="mb-3" {{ sylius_test_html_attribute('tmonier-container-fill-rule', loop.index0) }}>
+                        <div class="small text-body-secondary mb-1">
+                            {{ outcome.rule.name }} ·
+                            {{ 'tmonier_container_fill.ui.container_count'|trans({'%count%': result.containerCount, '%type%': result.container.name}) }}
+                            {% if result.container.indicative %}<span class="badge text-bg-light border">{{ 'tmonier_container_fill.ui.indicative'|trans }}</span>{% endif %}
+                        </div>
+
+                        {% for container in result.containers %}
+                            {% set percent = container.percent %}
+                            {% set shown = min(100, percent) %}
+                            {% set ok = container.full or (required is not null and container.ratio >= required - 0.000001) or required is null %}
+                            {% set label = 'tmonier_container_fill.ui.container_fill'|trans({'%index%': container.index, '%count%': result.containerCount, '%percent%': percent, '%binding%': ('tmonier_container_fill.binding.' ~ container.binding.value)|trans}) %}
+                            <div class="mb-2" {{ sylius_test_html_attribute('tmonier-container-fill-container', container.index) }}>
+                                <div class="d-flex justify-content-between small">
+                                    <span>{{ label }}</span>
+                                    <span class="fw-semibold">{{ ok ? 'tmonier_container_fill.ui.status_ok'|trans : 'tmonier_container_fill.ui.status_missing'|trans }}</span>
+                                </div>
+                                <div role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ shown }}" aria-valuetext="{{ label }}" aria-label="{{ label }}">
+                                    <svg viewBox="0 0 100 6" width="100%" height="12" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                                        <rect x="0" y="0" width="100" height="6" rx="1" fill="#e9ecef"></rect>
+                                        <rect class="tmonier-cf-bar-fill" x="0" y="0" width="{{ shown }}" height="6" rx="1" fill="{{ container.overloaded ? '#d63939' : (ok ? '#2fb344' : '#f59f00') }}"></rect>
+                                        {% if required is not null and required < 1 %}
+                                            <line x1="{{ required * 100 }}" y1="0" x2="{{ required * 100 }}" y2="6" stroke="#1d273b" stroke-width="0.6"></line>
+                                        {% endif %}
+                                    </svg>
+                                </div>
+                                {% if result.container.slots > 1 %}
+                                    {% set slots = result.container.slots %}
+                                    {% set used = container.slotRatio * slots %}
+                                    {% set columns = (slots / 2)|round(0, 'ceil') %}
+                                    <svg viewBox="0 0 {{ columns * 6 }} 12" width="100%" height="28" class="mt-1" aria-hidden="true" focusable="false" {{ sylius_test_html_attribute('tmonier-container-fill-places') }}>
+                                        {% for place in 0..(slots - 1) %}
+                                            {% set column = (place / 2)|round(0, 'floor') %}
+                                            {% set row = place % 2 %}
+                                            {% set filled = max(0, min(1, used - place)) %}
+                                            <rect x="{{ column * 6 + 0.5 }}" y="{{ row * 6 + 0.5 }}" width="5" height="5" fill="#ffffff" stroke="#adb5bd" stroke-width="0.3"></rect>
+                                            {% if filled > 0 %}<rect x="{{ column * 6 + 0.5 }}" y="{{ row * 6 + 0.5 }}" width="{{ 5 * filled }}" height="5" fill="#206bc4"></rect>{% endif %}
+                                        {% endfor %}
+                                    </svg>
+                                    <div class="small text-body-secondary">{{ 'tmonier_container_fill.ui.places_used'|trans({'%used%': used|round(1), '%slots%': slots}) }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+
+                        {% if not outcome.satisfied %}
+                            <ul class="small text-danger ps-3 mb-2" {{ sylius_test_html_attribute('tmonier-container-fill-violations') }}>
+                                {% for violation in outcome.violations %}
+                                    <li>{{ ('tmonier_container_fill.violation.' ~ violation.code)|trans(violation.translationParameters, 'validators') }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                        {% set suggestion = outcome.suggestion %}
+                        {% if suggestion is not null %}
+                            {% set parameters = {'%product%': suggestion.label, '%units%': suggestion.addUnits, '%cases%': suggestion.addCases, '%index%': suggestion.containerIndex, '%type%': result.container.name} %}
+                            <p class="small mb-2" {{ sylius_test_html_attribute('tmonier-container-fill-suggestion') }}>
+                                {% if suggestion.action == 'round_to_multiple' %}
+                                    {{ 'tmonier_container_fill.suggestion.round_to_multiple'|trans(parameters) }}
+                                {% elseif suggestion.binding.value == 'slots' %}
+                                    {{ (suggestion.addCases is not null ? 'tmonier_container_fill.suggestion.complete_cases' : 'tmonier_container_fill.suggestion.complete_units')|trans(parameters) }}
+                                {% else %}
+                                    {{ ('tmonier_container_fill.suggestion.complete_' ~ suggestion.binding.value)|trans(parameters) }}
+                                {% endif %}
+                            </p>
+                            <button type="button" class="btn btn-sm btn-outline-primary mb-2"
+                                    data-action="live#action"
+                                    data-live-action-param="complete"
+                                    data-live-rule-param="{{ loop.index0 }}"
+                                    {{ sylius_test_html_attribute('tmonier-container-fill-complete', loop.index0) }}
+                            >
+                                {{ 'tmonier_container_fill.ui.add_units'|trans({'%units%': suggestion.addUnits, '%product%': suggestion.label}) }}
+                            </button>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                {% if report.lineViolations is not empty %}
+                    <ul class="small text-danger ps-3 mb-2" {{ sylius_test_html_attribute('tmonier-container-fill-line-violations') }}>
+                        {% for violation in report.lineViolations %}
+                            <li>{{ ('tmonier_container_fill.violation.' ~ violation.code)|trans(violation.translationParameters, 'validators') }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                {% for rounding in this.layerRoundings %}
+                    <button type="button" class="btn btn-sm btn-outline-secondary me-1 mb-1"
+                            data-action="live#action"
+                            data-live-action-param="roundToLayer"
+                            data-live-variant-param="{{ rounding.key }}"
+                            {{ sylius_test_html_attribute('tmonier-container-fill-round-layer', rounding.key) }}
+                    >
+                        {{ 'tmonier_container_fill.ui.round_to_layer'|trans({'%product%': rounding.label, '%quantity%': rounding.target}) }}
+                    </button>
+                {% endfor %}
+
+                <p class="small text-body-secondary mt-2 mb-0">{{ 'tmonier_container_fill.ui.plan_disclaimer'|trans }}</p>
+            </div>
+        </div>
+    {% endif %}
+</div>

@@ -1,0 +1,2 @@
+{{ data.name|default(data.code) }}
+{% if data.indicative %}<span class="badge bg-yellow-lt ms-1" title="{{ 'tmonier_container_fill.ui.indicative_help'|trans }}">{{ 'tmonier_container_fill.ui.indicative'|trans }}</span>{% endif %}

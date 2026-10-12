@@ -1,0 +1,38 @@
+tmonier_container_fill:
+    violation:
+        incomplete_data: 'Logistikdaten unvollständig (Kapazität oder Gewicht) für: %products%.'
+        under_filled: 'Ladungsträger %index% ist zu %percent% % gefüllt; mindestens %required% % sind erforderlich.'
+        not_full: 'Ladungsträger %index% ist zu %percent% % gefüllt; nur volle Ladungsträger können bestellt werden.'
+        not_multiple: '%product%: %quantity% ist kein Vielfaches von %multiple%.'
+        too_many_containers: 'Diese Bestellung benötigt %count% Ladungsträger; höchstens %maximum% sind erlaubt.'
+        overloaded: 'Ladungsträger %index% ist überladen (%percent% %): eine Einheit übersteigt seine Kapazität.'
+    case_multiple: 'Dieses Produkt wird nur in ganzen Kartons verkauft: bestellen Sie ein Vielfaches von %multiple%.'
+    container_type:
+        code:
+            not_blank: 'Geben Sie einen Code ein.'
+            unique: 'Dieser Code wird bereits verwendet.'
+            regex: 'Verwenden Sie nur Buchstaben, Ziffern, Binde- und Unterstriche.'
+        name:
+            not_blank: 'Geben Sie einen Namen ein.'
+        nested_type:
+            invalid: 'Die Stellplätze müssen einen anderen Typ mit nur einem Stellplatz aufnehmen.'
+            slots: 'Ein Typ mit Stellplätzen eines anderen Typs braucht mindestens 2 Stellplätze.'
+    container_rule:
+        name:
+            not_blank: 'Geben Sie einen Namen ein.'
+        channel:
+            not_null: 'Wählen Sie einen Kanal.'
+        container_types:
+            min: 'Wählen Sie mindestens einen Ladungsträgertyp.'
+        scope:
+            invalid: 'Wählen Sie, wofür die Regel gilt.'
+        taxon:
+            not_null: 'Wählen Sie eine Kategorie.'
+        product:
+            not_null: 'Wählen Sie ein Produkt.'
+        threshold:
+            percent: 'Geben Sie einen Prozentsatz von 1 bis 100 ein.'
+            containers: 'Geben Sie eine Anzahl von mindestens 1 ein.'
+            multiple: 'Geben Sie ein Vielfaches von mindestens 1 ein oder lassen Sie das Feld leer.'
+        mode:
+            invalid: 'Wählen Sie eine Anforderung.'

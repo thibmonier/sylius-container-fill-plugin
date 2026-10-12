@@ -1,0 +1,18 @@
+{% set form = hookable_metadata.context.form %}
+
+<div class="row">
+    <div class="col-12 col-md-6">{{ form_row(form.name) }}</div>
+    <div class="col-12 col-md-3">{{ form_row(form.channel) }}</div>
+    <div class="col-12 col-md-3">{{ form_row(form.customerGroup) }}</div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-4">{{ form_row(form.scope) }}</div>
+    <div class="col-12 col-md-4">{{ form_row(form.taxon) }}</div>
+    <div class="col-12 col-md-4">{{ form_row(form.product) }}</div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-4">{{ form_row(form.containerTypes) }}</div>
+    <div class="col-12 col-md-5">{{ form_row(form.mode) }}</div>
+    <div class="col-12 col-md-3">{{ form_row(form.threshold) }}{{ form_row(form.enabled) }}</div>
+</div>
+<p class="text-secondary small mb-0">{{ 'tmonier_container_fill.form.rule_help'|trans }}</p>

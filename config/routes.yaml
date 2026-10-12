@@ -1,0 +1,8 @@
+# Import this file from your application's config/routes:
+#
+# tmonier_sylius_container_fill:
+#     resource: "@TmonierSyliusContainerFillPlugin/config/routes.yaml"
+
+tmonier_container_fill_admin:
+    resource: "@TmonierSyliusContainerFillPlugin/config/routes/admin.yaml"
+    prefix: '/%sylius_admin.path_name%'

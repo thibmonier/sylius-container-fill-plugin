@@ -1,0 +1,38 @@
+tmonier_container_fill:
+    violation:
+        incomplete_data: 'Datos logísticos incompletos (capacidad o peso) para: %products%.'
+        under_filled: 'El contenedor %index% está lleno al %percent% %; se requiere al menos el %required% %.'
+        not_full: 'El contenedor %index% está lleno al %percent% %; solo se pueden pedir contenedores completos.'
+        not_multiple: '%product%: %quantity% no es múltiplo de %multiple%.'
+        too_many_containers: 'Este pedido necesita %count% contenedores; se permiten como máximo %maximum%.'
+        overloaded: 'El contenedor %index% está sobrecargado (%percent% %): una unidad supera su capacidad.'
+    case_multiple: 'Este producto se vende por cajas completas: pida un múltiplo de %multiple%.'
+    container_type:
+        code:
+            not_blank: 'Introduzca un código.'
+            unique: 'Este código ya está en uso.'
+            regex: 'Use solo letras, cifras, guiones y guiones bajos.'
+        name:
+            not_blank: 'Introduzca un nombre.'
+        nested_type:
+            invalid: 'Las plazas deben contener otro tipo de una sola plaza.'
+            slots: 'Un tipo con plazas de otro tipo necesita al menos 2 plazas.'
+    container_rule:
+        name:
+            not_blank: 'Introduzca un nombre.'
+        channel:
+            not_null: 'Elija un canal.'
+        container_types:
+            min: 'Elija al menos un tipo de contenedor.'
+        scope:
+            invalid: 'Elija a qué se aplica la regla.'
+        taxon:
+            not_null: 'Elija una categoría.'
+        product:
+            not_null: 'Elija un producto.'
+        threshold:
+            percent: 'Introduzca un porcentaje de 1 a 100.'
+            containers: 'Introduzca un número de contenedores igual o superior a 1.'
+            multiple: 'Introduzca un múltiplo igual o superior a 1, o déjelo vacío.'
+        mode:
+            invalid: 'Elija un requisito.'

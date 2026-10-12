@@ -1,0 +1,56 @@
+sylius_twig_hooks:
+    hooks:
+        'tmonier_container_fill_admin.container_type.create.content.form.sections.general':
+            default:
+                enabled: false
+            fields:
+                template: '@TmonierSyliusContainerFillPlugin/admin/container_type/form/fields.html.twig'
+                priority: 0
+
+        'tmonier_container_fill_admin.container_type.update.content.form.sections.general':
+            default:
+                enabled: false
+            fields:
+                template: '@TmonierSyliusContainerFillPlugin/admin/container_type/form/fields.html.twig'
+                priority: 0
+
+        'tmonier_container_fill_admin.container_rule.create.content.form.sections.general':
+            default:
+                enabled: false
+            fields:
+                template: '@TmonierSyliusContainerFillPlugin/admin/container_rule/form/fields.html.twig'
+                priority: 0
+
+        'tmonier_container_fill_admin.container_rule.update.content.form.sections.general':
+            default:
+                enabled: false
+            fields:
+                template: '@TmonierSyliusContainerFillPlugin/admin/container_rule/form/fields.html.twig'
+                priority: 0
+
+        # "Logistics" tab of the variant form (create and update).
+        'sylius_admin.product_variant.create.content.form.side_navigation':
+            tmonier_container_fill:
+                template: '@TmonierSyliusContainerFillPlugin/admin/product_variant/side_navigation.html.twig'
+                priority: 150
+
+        'sylius_admin.product_variant.create.content.form.sections':
+            tmonier_container_fill:
+                template: '@TmonierSyliusContainerFillPlugin/admin/product_variant/section.html.twig'
+                priority: 150
+
+        'sylius_admin.product_variant.update.content.form.side_navigation':
+            tmonier_container_fill:
+                template: '@TmonierSyliusContainerFillPlugin/admin/product_variant/side_navigation.html.twig'
+                priority: 150
+
+        'sylius_admin.product_variant.update.content.form.sections':
+            tmonier_container_fill:
+                template: '@TmonierSyliusContainerFillPlugin/admin/product_variant/section.html.twig'
+                priority: 150
+
+        # Load plan recorded at checkout, on the order page.
+        'sylius_admin.order.show.content.sections#left':
+            tmonier_container_fill:
+                template: '@TmonierSyliusContainerFillPlugin/admin/order/load_plan.html.twig'
+                priority: 50

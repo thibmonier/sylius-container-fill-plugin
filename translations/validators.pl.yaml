@@ -1,0 +1,38 @@
+tmonier_container_fill:
+    violation:
+        incomplete_data: 'Niekompletne dane logistyczne (pojemność lub waga) dla: %products%.'
+        under_filled: 'Nośnik %index% jest wypełniony w %percent% %; wymagane jest co najmniej %required% %.'
+        not_full: 'Nośnik %index% jest wypełniony w %percent% %; można zamawiać tylko pełne nośniki.'
+        not_multiple: '%product%: %quantity% nie jest wielokrotnością %multiple%.'
+        too_many_containers: 'To zamówienie wymaga %count% nośników; dozwolone jest co najwyżej %maximum%.'
+        overloaded: 'Nośnik %index% jest przeciążony (%percent% %): jedna jednostka przekracza jego pojemność.'
+    case_multiple: 'Ten produkt jest sprzedawany w pełnych kartonach: zamów wielokrotność %multiple%.'
+    container_type:
+        code:
+            not_blank: 'Podaj kod.'
+            unique: 'Ten kod jest już używany.'
+            regex: 'Używaj tylko liter, cyfr, myślników i podkreśleń.'
+        name:
+            not_blank: 'Podaj nazwę.'
+        nested_type:
+            invalid: 'Miejsca muszą zawierać inny typ z jednym miejscem.'
+            slots: 'Typ z miejscami innego typu wymaga co najmniej 2 miejsc.'
+    container_rule:
+        name:
+            not_blank: 'Podaj nazwę.'
+        channel:
+            not_null: 'Wybierz kanał.'
+        container_types:
+            min: 'Wybierz co najmniej jeden typ nośnika.'
+        scope:
+            invalid: 'Wybierz, czego dotyczy reguła.'
+        taxon:
+            not_null: 'Wybierz kategorię.'
+        product:
+            not_null: 'Wybierz produkt.'
+        threshold:
+            percent: 'Podaj procent od 1 do 100.'
+            containers: 'Podaj liczbę nośników równą 1 lub większą.'
+            multiple: 'Podaj wielokrotność równą 1 lub większą albo pozostaw puste.'
+        mode:
+            invalid: 'Wybierz wymóg.'

@@ -1,0 +1,4 @@
+tmonier_container_fill:
+    checkout_blocked: 'Ihre Bestellung erfüllt die Füllregeln für Paletten und LKW noch nicht: vervollständigen Sie den Ladeplan im Warenkorb.'
+    completed: '%quantity% x %product% hinzugefügt, um den Ladungsträger zu füllen.'
+    rounded_to_layer: '%quantity% x %product% hinzugefügt, um die Lage zu vervollständigen.'

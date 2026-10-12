@@ -1,0 +1,3 @@
+{{ ('tmonier_container_fill.scope.' ~ data.scope)|trans }}
+{% if data.scope == 'taxon' and data.taxon %}: {{ data.taxon.name|default(data.taxon.code) }}{% endif %}
+{% if data.scope == 'product' and data.product %}: {{ data.product.name|default(data.product.code) }}{% endif %}

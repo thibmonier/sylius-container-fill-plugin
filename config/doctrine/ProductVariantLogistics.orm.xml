@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+
+    <mapped-superclass name="Tmonier\SyliusContainerFillPlugin\Entity\ProductVariantLogistics" table="tmonier_container_variant_logistics">
+        <id name="id" column="id" type="integer">
+            <generator strategy="AUTO" />
+        </id>
+
+        <field name="unitsPerCase" column="units_per_case" type="integer" />
+        <field name="caseWeight" column="case_weight" type="integer" nullable="true" />
+        <field name="stackable" column="stackable" type="boolean" />
+        <field name="ownPallet" column="own_pallet" type="boolean" />
+        <field name="caseMultipleRequired" column="case_multiple_required" type="boolean" />
+
+        <one-to-one field="variant" target-entity="Sylius\Component\Product\Model\ProductVariantInterface">
+            <join-column name="variant_id" referenced-column-name="id" nullable="false" unique="true" on-delete="CASCADE" />
+        </one-to-one>
+    </mapped-superclass>
+
+</doctrine-mapping>

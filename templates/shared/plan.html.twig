@@ -1,0 +1,30 @@
+{# plan: CartFillReport::toArray() (snapshot or computed) #}
+{% for rule in plan.rules %}
+    <div class="mb-3" {{ sylius_test_html_attribute('tmonier-container-fill-plan-rule', loop.index0) }}>
+        <div class="fw-semibold">
+            {{ rule.rule.name }} ·
+            {{ 'tmonier_container_fill.ui.container_count'|trans({'%count%': rule.containerCount, '%type%': rule.containerType.name}) }}
+            {% if rule.containerType.indicative %}<span class="badge bg-yellow-lt ms-1">{{ 'tmonier_container_fill.ui.indicative'|trans }}</span>{% endif %}
+        </div>
+        <ul class="list-unstyled mb-1 small">
+            {% for container in rule.containers %}
+                <li>
+                    {{ 'tmonier_container_fill.ui.container_fill'|trans({'%index%': container.index, '%count%': rule.containerCount, '%percent%': container.percent, '%binding%': ('tmonier_container_fill.binding.' ~ container.binding)|trans}) }}
+                    <span class="text-secondary">({{ 'tmonier_container_fill.ui.dimensions_detail'|trans({'%slots%': container.slots, '%weight%': container.weight, '%volume%': container.volume is null ? '-' : container.volume}) }})</span>
+                </li>
+            {% endfor %}
+        </ul>
+        {% if rule.satisfied %}
+            <div class="text-success small">{{ 'tmonier_container_fill.ui.rule_met'|trans }}</div>
+        {% else %}
+            <ul class="text-danger small mb-0">
+                {% for violation in rule.violations %}<li>{% include '@TmonierSyliusContainerFillPlugin/shared/violation.html.twig' %}</li>{% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+{% endfor %}
+{% if plan.lineViolations is not empty %}
+    <ul class="text-danger small mb-0">
+        {% for violation in plan.lineViolations %}<li>{% include '@TmonierSyliusContainerFillPlugin/shared/violation.html.twig' %}</li>{% endfor %}
+    </ul>
+{% endif %}

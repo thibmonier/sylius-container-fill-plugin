@@ -1,0 +1,5 @@
+tmonier_sylius_container_fill:
+    resource: "@TmonierSyliusContainerFillPlugin/config/routes.yaml"
+
+tmonier_sylius_quick_order:
+    resource: "@TmonierSyliusQuickOrderPlugin/config/routes.yaml"

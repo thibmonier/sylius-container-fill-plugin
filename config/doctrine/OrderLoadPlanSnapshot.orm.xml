@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+
+    <mapped-superclass name="Tmonier\SyliusContainerFillPlugin\Entity\OrderLoadPlanSnapshot" table="tmonier_container_order_load_plan">
+        <id name="id" column="id" type="integer">
+            <generator strategy="AUTO" />
+        </id>
+
+        <field name="plan" column="plan" type="json" />
+        <field name="satisfied" column="satisfied" type="boolean" />
+        <field name="overriddenBy" column="overridden_by" type="string" nullable="true" />
+        <field name="createdAt" column="created_at" type="datetime" />
+
+        <one-to-one field="order" target-entity="Sylius\Component\Order\Model\OrderInterface">
+            <join-column name="order_id" referenced-column-name="id" nullable="false" unique="true" on-delete="CASCADE" />
+        </one-to-one>
+    </mapped-superclass>
+
+</doctrine-mapping>

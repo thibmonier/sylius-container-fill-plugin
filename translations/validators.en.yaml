@@ -1,0 +1,38 @@
+tmonier_container_fill:
+    violation:
+        incomplete_data: 'Logistics data incomplete (capacity or weight) for: %products%.'
+        under_filled: 'Container %index% is filled to %percent% %; at least %required% % is required.'
+        not_full: 'Container %index% is filled to %percent% %; only full containers can be ordered.'
+        not_multiple: '%product%: %quantity% is not a multiple of %multiple%.'
+        too_many_containers: 'This order needs %count% containers; at most %maximum% are allowed.'
+        overloaded: 'Container %index% is overloaded (%percent% %): one unit exceeds its capacity.'
+    case_multiple: 'This product is sold by whole cases: order a multiple of %multiple%.'
+    container_type:
+        code:
+            not_blank: 'Enter a code.'
+            unique: 'This code is already used.'
+            regex: 'Use letters, digits, dashes and underscores only.'
+        name:
+            not_blank: 'Enter a name.'
+        nested_type:
+            invalid: 'The places must hold another type with a single place.'
+            slots: 'A type with places of another type needs at least 2 places.'
+    container_rule:
+        name:
+            not_blank: 'Enter a name.'
+        channel:
+            not_null: 'Choose a channel.'
+        container_types:
+            min: 'Choose at least one container type.'
+        scope:
+            invalid: 'Choose what the rule applies to.'
+        taxon:
+            not_null: 'Choose a taxon.'
+        product:
+            not_null: 'Choose a product.'
+        threshold:
+            percent: 'Enter a percentage from 1 to 100.'
+            containers: 'Enter a number of containers of 1 or more.'
+            multiple: 'Enter a multiple of 1 or more, or leave it empty.'
+        mode:
+            invalid: 'Choose a requirement.'

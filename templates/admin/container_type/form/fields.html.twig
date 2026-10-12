@@ -1,0 +1,29 @@
+{% import '@SyliusAdmin/shared/helper/translations.html.twig' as translations %}
+{% set form = hookable_metadata.context.form %}
+
+<div class="row">
+    <div class="col-12 col-md-4">{{ form_row(form.code) }}</div>
+    <div class="col-12 col-md-4">{{ form_row(form.kind) }}</div>
+    <div class="col-12 col-md-2">{{ form_row(form.position) }}</div>
+    <div class="col-12 col-md-2 pt-md-4">{{ form_row(form.enabled) }}</div>
+</div>
+<div class="mb-3">
+    {{ translations.default(form.translations, null, {accordion_id: 'tmonier-container-type-translations'}) }}
+</div>
+<h3 class="h4 mt-4">{{ 'tmonier_container_fill.ui.capacity'|trans }}</h3>
+<div class="row">
+    <div class="col-12 col-md-4">{{ form_row(form.maxPayload) }}</div>
+    <div class="col-12 col-md-4">{{ form_row(form.slots) }}</div>
+    <div class="col-12 col-md-4">{{ form_row(form.nestedType) }}</div>
+</div>
+<h3 class="h4 mt-4">{{ 'tmonier_container_fill.ui.dimensions'|trans }}</h3>
+<div class="row">
+    <div class="col-12 col-md-3">{{ form_row(form.innerLength) }}</div>
+    <div class="col-12 col-md-3">{{ form_row(form.innerWidth) }}</div>
+    <div class="col-12 col-md-3">{{ form_row(form.innerHeight) }}</div>
+    <div class="col-12 col-md-3">{{ form_row(form.maxLoadHeight) }}</div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-4">{{ form_row(form.volumeEfficiency) }}</div>
+    <div class="col-12 col-md-8 pt-md-4">{{ form_row(form.indicative) }}</div>
+</div>

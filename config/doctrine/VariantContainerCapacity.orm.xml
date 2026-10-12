@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+
+    <mapped-superclass name="Tmonier\SyliusContainerFillPlugin\Entity\VariantContainerCapacity" table="tmonier_container_variant_capacity">
+        <unique-constraints>
+            <unique-constraint name="tmonier_container_variant_capacity_unique" columns="variant_id,container_type_id" />
+        </unique-constraints>
+
+        <id name="id" column="id" type="integer">
+            <generator strategy="AUTO" />
+        </id>
+
+        <field name="quantity" column="quantity" type="integer" />
+        <field name="unitsPerLayer" column="units_per_layer" type="integer" nullable="true" />
+
+        <many-to-one field="variant" target-entity="Sylius\Component\Product\Model\ProductVariantInterface">
+            <join-column name="variant_id" referenced-column-name="id" nullable="false" on-delete="CASCADE" />
+        </many-to-one>
+
+        <many-to-one field="containerType" target-entity="Tmonier\SyliusContainerFillPlugin\Entity\ContainerTypeInterface">
+            <join-column name="container_type_id" referenced-column-name="id" nullable="false" on-delete="CASCADE" />
+        </many-to-one>
+    </mapped-superclass>
+
+</doctrine-mapping>

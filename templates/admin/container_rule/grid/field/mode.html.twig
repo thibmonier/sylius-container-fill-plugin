@@ -1,0 +1,1 @@
+{{ ('tmonier_container_fill.mode.' ~ data.mode)|trans }}{% if data.threshold is not null and data.mode != 'full_only' %} ({{ data.threshold }}{{ data.mode == 'min_fill_percent' ? ' %' }}){% endif %}

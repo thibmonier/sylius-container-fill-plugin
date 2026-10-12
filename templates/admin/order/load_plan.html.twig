@@ -1,0 +1,28 @@
+{% set order = hookable_metadata.context.resource %}
+{% set snapshot = tmonier_container_fill_snapshot(order) %}
+
+<div class="card mb-3" {{ sylius_test_html_attribute('tmonier-container-fill-load-plan') }}>
+    <div class="card-header">
+        <div class="card-title">{{ 'tmonier_container_fill.ui.load_plan'|trans }}</div>
+        {% if snapshot %}
+            <div class="card-actions">
+                {% if snapshot.satisfied %}
+                    <span class="badge bg-green-lt">{{ 'tmonier_container_fill.ui.rules_met'|trans }}</span>
+                {% else %}
+                    <span class="badge bg-red-lt">{{ 'tmonier_container_fill.ui.rules_not_met'|trans }}</span>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        {% if snapshot is null %}
+            <span class="text-secondary">{{ 'tmonier_container_fill.ui.no_load_plan'|trans }}</span>
+        {% else %}
+            {% include '@TmonierSyliusContainerFillPlugin/shared/plan.html.twig' with { plan: snapshot.plan } only %}
+            {% if snapshot.overriddenBy %}
+                <div class="alert alert-warning mt-2 mb-0" {{ sylius_test_html_attribute('tmonier-container-fill-override') }}>{{ 'tmonier_container_fill.ui.overridden_by'|trans({'%administrator%': snapshot.overriddenBy}) }}</div>
+            {% endif %}
+            <div class="text-secondary small mt-2">{{ 'tmonier_container_fill.ui.recorded_at'|trans({'%date%': snapshot.createdAt|date('Y-m-d H:i')}) }}</div>
+        {% endif %}
+    </div>
+</div>

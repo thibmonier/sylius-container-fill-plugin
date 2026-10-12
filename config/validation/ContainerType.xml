@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping http://symfony.com/schema/dic/services/constraint-mapping-1.0.xsd">
+
+    <class name="Tmonier\SyliusContainerFillPlugin\Entity\ContainerType">
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">code</option>
+            <option name="message">tmonier_container_fill.container_type.code.unique</option>
+            <option name="groups">sylius</option>
+        </constraint>
+        <constraint name="Tmonier\SyliusContainerFillPlugin\Validator\ValidContainerType">
+            <option name="groups">sylius</option>
+        </constraint>
+        <property name="code">
+            <constraint name="NotBlank">
+                <option name="message">tmonier_container_fill.container_type.code.not_blank</option>
+                <option name="groups">sylius</option>
+            </constraint>
+            <constraint name="Length">
+                <option name="max">64</option>
+                <option name="groups">sylius</option>
+            </constraint>
+            <constraint name="Regex">
+                <option name="pattern">/^[\w-]*$/</option>
+                <option name="message">tmonier_container_fill.container_type.code.regex</option>
+                <option name="groups">sylius</option>
+            </constraint>
+        </property>
+        <property name="kind">
+            <constraint name="Choice">
+                <option name="choices">
+                    <value>pallet</value>
+                    <value>truck</value>
+                    <value>sea_container</value>
+                    <value>carton</value>
+                </option>
+                <option name="groups">sylius</option>
+            </constraint>
+        </property>
+        <property name="maxPayload">
+            <constraint name="Positive">
+                <option name="groups">sylius</option>
+            </constraint>
+        </property>
+        <property name="slots">
+            <constraint name="Range">
+                <option name="min">1</option>
+                <option name="max">1000</option>
+                <option name="groups">sylius</option>
+            </constraint>
+        </property>
+        <property name="volumeEfficiency">
+            <constraint name="Range">
+                <option name="min">1</option>
+                <option name="max">100</option>
+                <option name="groups">sylius</option>
+            </constraint>
+        </property>
+        <property name="innerLength">
+            <constraint name="Positive"><option name="groups">sylius</option></constraint>
+        </property>
+        <property name="innerWidth">
+            <constraint name="Positive"><option name="groups">sylius</option></constraint>
+        </property>
+        <property name="innerHeight">
+            <constraint name="Positive"><option name="groups">sylius</option></constraint>
+        </property>
+        <property name="maxLoadHeight">
+            <constraint name="Positive"><option name="groups">sylius</option></constraint>
+        </property>
+        <property name="translations">
+            <constraint name="Valid" />
+        </property>
+    </class>
+
+    <class name="Tmonier\SyliusContainerFillPlugin\Entity\ContainerTypeTranslation">
+        <property name="name">
+            <constraint name="NotBlank">
+                <option name="message">tmonier_container_fill.container_type.name.not_blank</option>
+                <option name="groups">sylius</option>
+            </constraint>
+            <constraint name="Length">
+                <option name="max">255</option>
+                <option name="groups">sylius</option>
+            </constraint>
+        </property>
+    </class>
+</constraint-mapping>

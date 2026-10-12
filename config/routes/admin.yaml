@@ -1,0 +1,33 @@
+tmonier_container_fill_admin_container_type:
+    resource: |
+        alias: tmonier_container_fill.container_type
+        section: admin
+        templates: "@SyliusAdmin\\shared\\crud"
+        except: ['show']
+        redirect: index
+        grid: tmonier_container_fill_admin_container_type
+        form:
+            type: Tmonier\SyliusContainerFillPlugin\Form\Type\ContainerTypeType
+        permission: true
+        path: container-types
+        vars:
+            all:
+                hook_prefix: tmonier_container_fill_admin.container_type
+    type: sylius.resource
+
+tmonier_container_fill_admin_container_rule:
+    resource: |
+        alias: tmonier_container_fill.container_rule
+        section: admin
+        templates: "@SyliusAdmin\\shared\\crud"
+        except: ['show']
+        redirect: index
+        grid: tmonier_container_fill_admin_container_rule
+        form:
+            type: Tmonier\SyliusContainerFillPlugin\Form\Type\ContainerRuleType
+        permission: true
+        path: container-rules
+        vars:
+            all:
+                hook_prefix: tmonier_container_fill_admin.container_rule
+    type: sylius.resource

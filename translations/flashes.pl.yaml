@@ -1,0 +1,4 @@
+tmonier_container_fill:
+    checkout_blocked: 'Twoje zamówienie nie spełnia jeszcze reguł wypełnienia palet i ciężarówek: uzupełnij plan załadunku widoczny w koszyku.'
+    completed: 'Dodano %quantity% x %product%, aby uzupełnić nośnik.'
+    rounded_to_layer: 'Dodano %quantity% x %product%, aby uzupełnić warstwę.'

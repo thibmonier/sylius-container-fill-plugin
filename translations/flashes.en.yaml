@@ -1,0 +1,4 @@
+tmonier_container_fill:
+    checkout_blocked: 'Your order does not meet the pallet and truck fill rules yet: complete the load plan shown in the cart.'
+    completed: '%quantity% x %product% added to complete the container.'
+    rounded_to_layer: '%quantity% x %product% added to complete the layer.'

@@ -1,0 +1,30 @@
+imports:
+    - { resource: "@TmonierSyliusContainerFillPlugin/config/config.yaml" }
+    - { resource: "@TmonierSyliusQuickOrderPlugin/config/config.yaml" }
+    - { resource: "dbal_savepoints.php" }
+
+twig:
+    paths:
+        '%kernel.project_dir%/../../../tests/TestApplication/templates': ~
+
+tmonier_sylius_container_fill:
+    units:
+        length: cm
+        weight: kg
+
+# Demo data (dev and test databases): container type presets, three pallet goods with
+# capacities, a "full pallets or a full truck" rule on the "Pallet goods" taxon of every
+# channel, and the verified buyer pallet@example.com / sylius.
+sylius_fixtures:
+    suites:
+        default:
+            fixtures:
+                tmonier_container_fill_container_types:
+                    priority: -100
+                tmonier_container_fill_demo:
+                    priority: -110
+
+services:
+    Tests\Tmonier\SyliusContainerFillPlugin\Cart\ResetNewCartOnRequestListener:
+        arguments: ['@sylius.context.cart.new_shop_based']
+        tags: [{ name: kernel.event_listener, event: kernel.request, priority: 4096 }]

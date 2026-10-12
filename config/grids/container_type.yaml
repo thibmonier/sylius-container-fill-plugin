@@ -1,0 +1,70 @@
+sylius_grid:
+    grids:
+        tmonier_container_fill_admin_container_type:
+            driver:
+                name: doctrine/orm
+                options:
+                    class: "%tmonier_container_fill.model.container_type.class%"
+                    repository:
+                        method: createListQueryBuilder
+                        arguments:
+                            localeCode: "expr:service('sylius.context.locale').getLocaleCode()"
+            sorting:
+                position: asc
+            fields:
+                code:
+                    type: string
+                    label: sylius.ui.code
+                    sortable: ~
+                name:
+                    type: twig
+                    label: sylius.ui.name
+                    path: .
+                    options:
+                        template: "@TmonierSyliusContainerFillPlugin/admin/container_type/grid/field/name.html.twig"
+                        vars:
+                            th_class: "w-100"
+                kind:
+                    type: twig
+                    label: tmonier_container_fill.form.kind
+                    path: kind
+                    sortable: ~
+                    options:
+                        template: "@TmonierSyliusContainerFillPlugin/admin/container_type/grid/field/kind.html.twig"
+                capacity:
+                    type: twig
+                    label: tmonier_container_fill.ui.capacity
+                    path: .
+                    options:
+                        template: "@TmonierSyliusContainerFillPlugin/admin/container_type/grid/field/capacity.html.twig"
+                position:
+                    type: string
+                    label: sylius.ui.position
+                    sortable: ~
+                enabled:
+                    type: twig
+                    label: sylius.ui.enabled
+                    sortable: ~
+                    options:
+                        template: "@SyliusAdmin/shared/grid/field/boolean.html.twig"
+            filters:
+                search:
+                    type: string
+                    label: sylius.ui.search
+                    options:
+                        fields: [code, translation.name]
+                enabled:
+                    type: boolean
+                    label: sylius.ui.enabled
+            actions:
+                main:
+                    create:
+                        type: create
+                item:
+                    update:
+                        type: update
+                    delete:
+                        type: delete
+                bulk:
+                    delete:
+                        type: delete

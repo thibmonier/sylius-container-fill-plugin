@@ -1,0 +1,4 @@
+<span class="text-nowrap">{{ 'tmonier_container_fill.ui.payload_kg'|trans({'%kg%': (data.maxPayload / 1000)|number_format(0, '.', ' ')}) }}</span>
+{% if data.slots > 1 %}
+    <span class="text-nowrap text-secondary">· {{ 'tmonier_container_fill.ui.places'|trans({'%count%': data.slots, '%type%': data.nestedType ? data.nestedType.name|default(data.nestedType.code) : '-'}) }}</span>
+{% endif %}

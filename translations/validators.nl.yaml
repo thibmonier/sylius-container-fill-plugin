@@ -1,0 +1,38 @@
+tmonier_container_fill:
+    violation:
+        incomplete_data: 'Logistieke gegevens onvolledig (capaciteit of gewicht) voor: %products%.'
+        under_filled: 'Laadeenheid %index% is voor %percent% % gevuld; minstens %required% % is vereist.'
+        not_full: 'Laadeenheid %index% is voor %percent% % gevuld; alleen volle laadeenheden kunnen worden besteld.'
+        not_multiple: '%product%: %quantity% is geen veelvoud van %multiple%.'
+        too_many_containers: 'Deze bestelling heeft %count% laadeenheden nodig; hoogstens %maximum% zijn toegestaan.'
+        overloaded: 'Laadeenheid %index% is overbeladen (%percent% %): één eenheid overschrijdt de capaciteit.'
+    case_multiple: 'Dit product wordt per volle doos verkocht: bestel een veelvoud van %multiple%.'
+    container_type:
+        code:
+            not_blank: 'Voer een code in.'
+            unique: 'Deze code is al in gebruik.'
+            regex: 'Gebruik alleen letters, cijfers, streepjes en underscores.'
+        name:
+            not_blank: 'Voer een naam in.'
+        nested_type:
+            invalid: 'De plaatsen moeten een ander type met één plaats bevatten.'
+            slots: 'Een type met plaatsen van een ander type heeft minstens 2 plaatsen nodig.'
+    container_rule:
+        name:
+            not_blank: 'Voer een naam in.'
+        channel:
+            not_null: 'Kies een kanaal.'
+        container_types:
+            min: 'Kies minstens één type laadeenheid.'
+        scope:
+            invalid: 'Kies waarvoor de regel geldt.'
+        taxon:
+            not_null: 'Kies een categorie.'
+        product:
+            not_null: 'Kies een product.'
+        threshold:
+            percent: 'Voer een percentage van 1 tot 100 in.'
+            containers: 'Voer een aantal van 1 of meer in.'
+            multiple: 'Voer een veelvoud van 1 of meer in, of laat het leeg.'
+        mode:
+            invalid: 'Kies een eis.'

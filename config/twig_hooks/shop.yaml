@@ -1,0 +1,26 @@
+sylius_twig_hooks:
+    hooks:
+        # Between the summary (100) and the checkout button (0), inside the cart form component.
+        'sylius_shop.cart.index.content.form.sections.general#right':
+            tmonier_container_fill_gauge:
+                component: 'tmonier_container_fill:gauge'
+                props:
+                    context: 'cart'
+                priority: 50
+            checkout:
+                template: '@TmonierSyliusContainerFillPlugin/shop/cart/checkout.html.twig'
+
+        # Indicative preview under the quantity of the add to cart form (re-rendered by the
+        # add to cart live component when the variant or the quantity changes).
+        'sylius_shop.product.show.content.info.summary.add_to_cart':
+            tmonier_container_fill_preview:
+                template: '@TmonierSyliusContainerFillPlugin/shop/product/preview.html.twig'
+                priority: 50
+
+        # Under the order matrix of tmonier/sylius-quick-order-plugin 1.1+ (no effect without it).
+        'tmonier_quick_order.shop.product.matrix':
+            tmonier_container_fill_gauge:
+                component: 'tmonier_container_fill:gauge'
+                props:
+                    context: 'embedded'
+                priority: 0
