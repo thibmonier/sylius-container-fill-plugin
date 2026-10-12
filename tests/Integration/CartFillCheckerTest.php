@@ -140,11 +140,11 @@ final class CartFillCheckerTest extends KernelTestCase
         self::assertCount(2, $report->outcomes);
         $byRule = [];
         foreach ($report->outcomes as $outcome) {
-            $byRule[$outcome->rule->id] = array_keys($outcome->result->containers[0]->units);
+            $byRule[(int) $outcome->rule->id] = array_keys($outcome->result->containers[0]->units);
         }
         self::assertEqualsCanonicalizing([$childRule->getId(), $general->getId()], array_keys($byRule));
-        self::assertSame([(string) $drink->getCode()], $byRule[$childRule->getId()]);
-        self::assertSame([(string) $other->getCode()], $byRule[$general->getId()]);
+        self::assertSame([(string) $drink->getCode()], $byRule[(int) $childRule->getId()]);
+        self::assertSame([(string) $other->getCode()], $byRule[(int) $general->getId()]);
         self::assertArrayNotHasKey((int) $parentRule->getId(), $byRule);
         self::assertTrue($report->isSatisfied());
     }

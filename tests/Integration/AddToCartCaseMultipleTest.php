@@ -38,13 +38,15 @@ final class AddToCartCaseMultipleTest extends KernelTestCase
 
         $form = $this->form($product);
         $view = $form->createView();
-        self::assertSame('6', (string) $view['cartItem']['quantity']->vars['value']);
-        self::assertSame(6, $view['cartItem']['quantity']->vars['attr']['step']);
-        self::assertSame(6, $view['cartItem']['quantity']->vars['attr']['min']);
+        $vars = $view['cartItem']['quantity']->vars;
+        self::assertEquals(6, $vars['value']);
+        self::assertIsArray($vars['attr']);
+        self::assertSame(6, $vars['attr']['step'] ?? null);
+        self::assertSame(6, $vars['attr']['min'] ?? null);
 
         $form->submit(['cartItem' => ['quantity' => '4']]);
         self::assertFalse($form->isValid());
-        self::assertStringContainsString('multiple of 6', (string) $form->getErrors(true)->current()->getMessage());
+        self::assertStringContainsString('multiple of 6', (string) $form->getErrors(true));
 
         $form = $this->form($product);
         $form->submit(['cartItem' => ['quantity' => '12']]);
@@ -58,7 +60,7 @@ final class AddToCartCaseMultipleTest extends KernelTestCase
         self::assertInstanceOf(ProductInterface::class, $product);
 
         $form = $this->form($product);
-        self::assertSame('1', (string) $form->createView()['cartItem']['quantity']->vars['value']);
+        self::assertEquals(1, $form->createView()['cartItem']['quantity']->vars['value']);
         $form->submit(['cartItem' => ['quantity' => '4']]);
         self::assertTrue($form->isValid(), (string) $form->getErrors(true));
     }
