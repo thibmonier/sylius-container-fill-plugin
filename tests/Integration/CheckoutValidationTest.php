@@ -136,8 +136,8 @@ final class CheckoutValidationTest extends KernelTestCase
         $priorities = [];
         foreach ($dispatcher->getListeners(KernelEvents::REQUEST) as $listener) {
             $object = \is_array($listener) ? $listener[0] : $listener;
-            if (\is_object($object) && \is_callable($listener)) {
-                $priorities[$object::class] = $dispatcher->getListenerPriority(KernelEvents::REQUEST, $listener);
+            if (\is_object($object)) {
+                $priorities[$object::class] = self::priority($dispatcher, $listener);
             }
         }
 
@@ -169,5 +169,11 @@ final class CheckoutValidationTest extends KernelTestCase
         self::assertInstanceOf(OrderLoadPlanSnapshotRepositoryInterface::class, $repository);
 
         return $repository;
+    }
+
+    /** The listener type of getListeners() differs between Symfony 6.4/7.4 and 8. */
+    private static function priority(EventDispatcherInterface $dispatcher, mixed $listener): ?int
+    {
+        return \is_callable($listener) ? $dispatcher->getListenerPriority(KernelEvents::REQUEST, $listener) : null;
     }
 }

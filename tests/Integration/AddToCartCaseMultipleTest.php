@@ -38,7 +38,7 @@ final class AddToCartCaseMultipleTest extends KernelTestCase
 
         $form = $this->form($product);
         $view = $form->createView();
-        $vars = $view['cartItem']['quantity']->vars;
+        $vars = (array) $view->children['cartItem']->children['quantity']->vars; // untyped on Symfony 6.4
         self::assertEquals(6, $vars['value']);
         self::assertIsArray($vars['attr']);
         self::assertSame(6, $vars['attr']['step'] ?? null);
@@ -60,7 +60,7 @@ final class AddToCartCaseMultipleTest extends KernelTestCase
         self::assertInstanceOf(ProductInterface::class, $product);
 
         $form = $this->form($product);
-        self::assertEquals(1, $form->createView()['cartItem']['quantity']->vars['value']);
+        self::assertEquals(1, ((array) $form->createView()->children['cartItem']->children['quantity']->vars)['value'] ?? null);
         $form->submit(['cartItem' => ['quantity' => '4']]);
         self::assertTrue($form->isValid(), (string) $form->getErrors(true));
     }

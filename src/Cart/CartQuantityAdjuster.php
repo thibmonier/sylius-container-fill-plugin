@@ -15,6 +15,9 @@ use Tmonier\SyliusContainerFillPlugin\Logistics\EntityId;
 /** Changes the quantity of a cart line like the cart form does (cart change events, processing, flush). */
 final class CartQuantityAdjuster
 {
+    /** SyliusCartEvents::CART_POST_CHANGE exists since Sylius 2.3 only: the event name, dispatched on 2.2 too. */
+    public const CART_POST_CHANGE = 'sylius.cart_post_change';
+
     public function __construct(
         private readonly OrderItemQuantityModifierInterface $quantityModifier,
         private readonly EventDispatcherInterface $eventDispatcher,
@@ -58,7 +61,7 @@ final class CartQuantityAdjuster
         $this->quantityModifier->modify($line, $quantity - $others);
         $this->eventDispatcher->dispatch(new GenericEvent($cart), SyliusCartEvents::CART_CHANGE);
         $this->manager->flush();
-        $this->eventDispatcher->dispatch(new GenericEvent($cart), SyliusCartEvents::CART_POST_CHANGE);
+        $this->eventDispatcher->dispatch(new GenericEvent($cart), self::CART_POST_CHANGE);
 
         return true;
     }

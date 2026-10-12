@@ -69,6 +69,12 @@ final class ShopGaugeActionsTest extends WebTestCase
         $user = $customer->getUser();
         self::assertInstanceOf(ShopUserInterface::class, $user);
 
+        // Outside a request the router context has no locale (the shop live component route is
+        // localized); in a real request Symfony's LocaleListener sets it.
+        $router = self::getContainer()->get('router');
+        self::assertInstanceOf(\Symfony\Component\Routing\RequestContextAwareInterface::class, $router);
+        $router->getContext()->setParameter('_locale', (string) $this->catalog->channel()->getDefaultLocale()?->getCode());
+
         $component = $this->createLiveComponent('tmonier_container_fill:gauge', ['context' => $context], $this->client)->actingAs($user, 'shop');
 
         return [$cart, $variant, $component];

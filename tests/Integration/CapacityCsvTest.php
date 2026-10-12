@@ -123,7 +123,9 @@ final class CapacityCsvTest extends KernelTestCase
         $a = $this->catalog->plainVariant('A');
         $file = tempnam(sys_get_temp_dir(), 'tmonier_cf');
         self::assertIsString($file);
-        $application = new Application(self::$kernel ?? self::bootKernel());
+        $kernel = self::getContainer()->get('kernel');
+        self::assertInstanceOf(\Symfony\Component\HttpKernel\KernelInterface::class, $kernel);
+        $application = new Application($kernel);
         $tester = new CommandTester($application->find('tmonier:container-fill:import-capacities'));
 
         try {
