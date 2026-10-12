@@ -6,6 +6,7 @@ tmonier_container_fill:
         not_multiple: '%product%: %quantity% no es múltiplo de %multiple%.'
         too_many_containers: 'Este pedido necesita %count% contenedores; se permiten como máximo %maximum%.'
         overloaded: 'El contenedor %index% está sobrecargado (%percent% %): una unidad supera su capacidad.'
+        no_container_type: 'La regla «%rule%» no tiene ningún tipo de contenedor activo: los pedidos afectados no se pueden realizar. Contáctenos.'
     case_multiple: 'Este producto se vende por cajas completas: pida un múltiplo de %multiple%.'
     container_type:
         code:

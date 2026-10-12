@@ -149,6 +149,20 @@ final class CartFillCheckerTest extends KernelTestCase
         self::assertTrue($report->isSatisfied());
     }
 
+    public function testARuleWithoutEnabledContainerTypeBlocks(): void
+    {
+        $pallet = $this->catalog->pallet();
+        $this->catalog->rule([$pallet]);
+        $variant = $this->catalog->variant('A', [[$pallet, 40, null]]);
+        $pallet->setEnabled(false);
+        $this->entityManager()->flush();
+
+        $report = $this->checker()->check($this->catalog->cart([[$variant, 80]]));
+
+        self::assertFalse($report->isSatisfied());
+        self::assertSame(Violation::NO_CONTAINER_TYPE, $report->lineViolations[0]->code);
+    }
+
     public function testCaseMultipleLines(): void
     {
         $pallet = $this->catalog->pallet();

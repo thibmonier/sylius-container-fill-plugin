@@ -35,6 +35,8 @@ tmonier_container_fill:
         case_multiple_required: 'nur ganze Kartons'
         preview_row: '%quantity% = %percent% % eines %type% (%capacity% füllen ihn)'
         preview_help: 'Ihr Warenkorb kombiniert alle Produkte: dort sehen Sie den genauen Plan.'
+        disabled: 'deaktiviert'
+        rule_without_type: 'Kein aktiver Behältertyp: Diese Regel blockiert die Bestellung der betroffenen Produkte.'
         volume_warning: 'Laut Produktabmessungen könnte die Ware das Volumen dieses Behälters überschreiten (%volume% %): wir prüfen das.'
     form:
         kind: 'Art'

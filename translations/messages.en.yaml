@@ -35,6 +35,8 @@ tmonier_container_fill:
         case_multiple_required: 'whole cases only'
         preview_row: '%quantity% = %percent% % of a %type% (%capacity% fill one)'
         preview_help: 'Your cart combines all products: it shows the exact plan.'
+        disabled: 'disabled'
+        rule_without_type: 'No enabled container type: this rule blocks the checkout of the products it applies to.'
         volume_warning: 'By the product dimensions, the goods may exceed the volume of this container (%volume% %): we will check it.'
     form:
         kind: 'Kind'

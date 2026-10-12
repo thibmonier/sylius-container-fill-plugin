@@ -6,6 +6,7 @@ tmonier_container_fill:
         not_multiple: '%product%: %quantity% nie jest wielokrotnością %multiple%.'
         too_many_containers: 'To zamówienie wymaga %count% nośników; dozwolone jest co najwyżej %maximum%.'
         overloaded: 'Nośnik %index% jest przeciążony (%percent% %): jedna jednostka przekracza jego pojemność.'
+        no_container_type: 'Reguła „%rule%” nie ma żadnego aktywnego typu kontenera: zamówień, których dotyczy, nie można złożyć. Skontaktuj się z nami.'
     case_multiple: 'Ten produkt jest sprzedawany w pełnych kartonach: zamów wielokrotność %multiple%.'
     container_type:
         code:

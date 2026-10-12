@@ -116,6 +116,11 @@ final class CartFillChecker implements CartFillCheckerInterface, ResetInterface
             if (!isset($inScope[$index])) {
                 continue;
             }
+            if (!$this->hasEnabledContainerType($rule)) {
+                $lineViolations[] = new Violation(Violation::NO_CONTAINER_TYPE, ['rule' => (string) $rule->getName()]);
+
+                continue;
+            }
             $outcome = $this->evaluateRule($rule, $inScope[$index], $logistics);
             if (null !== $outcome) {
                 $outcomes[] = $outcome;
@@ -172,6 +177,17 @@ final class CartFillChecker implements CartFillCheckerInterface, ResetInterface
         [$result, $violations] = $retained;
 
         return new RuleOutcome($spec, $result, $violations, $this->suggestionFinder->find($spec, $result));
+    }
+
+    private function hasEnabledContainerType(ContainerRuleInterface $rule): bool
+    {
+        foreach ($rule->getContainerTypes() as $type) {
+            if ($type->isEnabled()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** @return list<ContainerRuleInterface> */

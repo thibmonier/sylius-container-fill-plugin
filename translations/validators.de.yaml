@@ -6,6 +6,7 @@ tmonier_container_fill:
         not_multiple: '%product%: %quantity% ist kein Vielfaches von %multiple%.'
         too_many_containers: 'Diese Bestellung benötigt %count% Ladungsträger; höchstens %maximum% sind erlaubt.'
         overloaded: 'Ladungsträger %index% ist überladen (%percent% %): eine Einheit übersteigt seine Kapazität.'
+        no_container_type: 'Die Regel „%rule%“ hat keinen aktiven Behältertyp: betroffene Bestellungen können nicht aufgegeben werden. Kontaktieren Sie uns.'
     case_multiple: 'Dieses Produkt wird nur in ganzen Kartons verkauft: bestellen Sie ein Vielfaches von %multiple%.'
     container_type:
         code:

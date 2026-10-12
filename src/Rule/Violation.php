@@ -19,6 +19,9 @@ final class Violation
 
     public const OVERLOADED = 'overloaded';
 
+    /** An enabled rule applies but none of its container types is enabled: never ignored silently. */
+    public const NO_CONTAINER_TYPE = 'no_container_type';
+
     /** @param array<string, string|int> $parameters */
     public function __construct(
         public readonly string $code,

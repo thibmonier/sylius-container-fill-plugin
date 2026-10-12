@@ -102,7 +102,9 @@ violations and suggestion are shown).
 | `multiple_of` | every line is a multiple of `threshold`, or of its case when empty |
 | `max_containers` | the plan needs at most `threshold` containers |
 
-Any mode also fails on incomplete data and on overloaded containers.
+Any mode also fails on incomplete data and on overloaded containers. An enabled rule whose
+container types are all disabled is not ignored: it blocks the lines it plans
+(`no_container_type`) and the rule grid flags it.
 
 `Rule\CartFillChecker` computes the report on read, cached per request (key: lines and
 quantities, channel, customer group, data version bumped by `EventListener\CacheInvalidator`

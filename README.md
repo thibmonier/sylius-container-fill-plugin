@@ -172,7 +172,9 @@ rule is not met and the gauge names the product. The plugin never assumes missin
 | Container types | allowed types, tried in order: the first one meeting the rule is retained |
 | Mode | `full_only`; `min_fill_percent` (threshold 1-100); `multiple_of` (threshold, or the case of each line when empty); `max_containers` (threshold) |
 
-Overloaded containers and incomplete data fail every mode. Rules apply to the lines in their
+Overloaded containers and incomplete data fail every mode. An enabled rule whose container
+types are all disabled blocks the checkout of its products (flagged in the rule grid): disable
+the rule rather than its types. Rules apply to the lines in their
 scope; carts without lines in the scope of a rule show no gauge. When several rules match a
 line, only the most specific one plans it: product, then taxon (deepest first), then all
 products; at equal scope the customer group rule, then the oldest. Lines of different rules

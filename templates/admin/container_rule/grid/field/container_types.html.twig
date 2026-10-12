@@ -1,1 +1,5 @@
-{% for type in data.containerTypes %}{{ type.name|default(type.code) }}{% if not loop.last %}, {% endif %}{% endfor %}
+{% set enabled = data.containerTypes|filter(type => type.enabled) %}
+{% for type in data.containerTypes %}{{ type.name|default(type.code) }}{% if not type.enabled %} <span class="badge bg-secondary-lt">{{ 'tmonier_container_fill.ui.disabled'|trans }}</span>{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}
+{% if data.enabled and enabled is empty %}
+    <div class="text-danger small" {{ sylius_test_html_attribute('tmonier-container-fill-rule-without-type') }}>{{ ux_icon('tabler:alert-triangle', {'class': 'icon', 'aria-hidden': 'true'}) }} {{ 'tmonier_container_fill.ui.rule_without_type'|trans }}</div>
+{% endif %}

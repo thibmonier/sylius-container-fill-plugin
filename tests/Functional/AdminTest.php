@@ -42,6 +42,14 @@ final class AdminTest extends WebTestCase
         $crawler = $this->client->request('GET', '/admin/container-rules/');
         self::assertResponseIsSuccessful();
         self::assertStringContainsString('Rule min_fill_percent ' . $this->catalog->suffix, $crawler->filter('table')->text());
+        self::assertCount(0, $crawler->filter('[data-test-tmonier-container-fill-rule-without-type]'));
+
+        $pallet = $this->entityManager()->find(ContainerTypeInterface::class, $pallet->getId());
+        self::assertInstanceOf(ContainerTypeInterface::class, $pallet);
+        $pallet->setEnabled(false);
+        $this->entityManager()->flush();
+        $crawler = $this->client->request('GET', '/admin/container-rules/');
+        self::assertCount(1, $crawler->filter('[data-test-tmonier-container-fill-rule-without-type]'));
     }
 
     public function testTheMerchantCreatesAndEditsAContainerType(): void

@@ -6,6 +6,7 @@ tmonier_container_fill:
         not_multiple: '%product%: %quantity% is geen veelvoud van %multiple%.'
         too_many_containers: 'Deze bestelling heeft %count% laadeenheden nodig; hoogstens %maximum% zijn toegestaan.'
         overloaded: 'Laadeenheid %index% is overbeladen (%percent% %): één eenheid overschrijdt de capaciteit.'
+        no_container_type: 'De regel "%rule%" heeft geen actief containertype: bestellingen waarop hij van toepassing is, kunnen niet worden geplaatst. Neem contact met ons op.'
     case_multiple: 'Dit product wordt per volle doos verkocht: bestel een veelvoud van %multiple%.'
     container_type:
         code:

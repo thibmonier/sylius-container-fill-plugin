@@ -6,6 +6,7 @@ tmonier_container_fill:
         not_multiple: '%product% : %quantity% n’est pas un multiple de %multiple%.'
         too_many_containers: 'Cette commande nécessite %count% contenants ; %maximum% au plus sont autorisés.'
         overloaded: 'Le contenant %index% est surchargé (%percent% %) : une unité dépasse sa capacité.'
+        no_container_type: 'La règle « %rule% » n’a aucun type de contenant actif : les commandes concernées ne peuvent pas être passées. Contactez-nous.'
     case_multiple: 'Ce produit est vendu par cartons complets : commandez un multiple de %multiple%.'
     container_type:
         code:
