@@ -46,8 +46,13 @@ final class ImportCapacitiesCommand extends Command
         foreach ($result->errors as $line => $error) {
             $io->writeln(sprintf('<comment>Line %d:</comment> %s', $line, $error));
         }
-        $io->success(sprintf('%s%d capacities imported, %d removed, %d lines rejected.', $result->dryRun ? '[dry run] ' : '', $result->imported, $result->removed, \count($result->errors)));
+        if ($result->hasErrors()) {
+            $io->error(sprintf('%d lines rejected: nothing was written.', \count($result->errors)));
 
-        return $result->hasErrors() ? Command::FAILURE : Command::SUCCESS;
+            return Command::FAILURE;
+        }
+        $io->success(sprintf('%s%d capacities imported, %d removed.', $result->dryRun ? '[dry run] ' : '', $result->imported, $result->removed));
+
+        return Command::SUCCESS;
     }
 }

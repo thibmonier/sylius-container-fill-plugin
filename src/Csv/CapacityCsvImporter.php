@@ -16,7 +16,8 @@ use Tmonier\SyliusContainerFillPlugin\Repository\VariantContainerCapacityReposit
 
 /**
  * Imports capacities (and optionally case data) per variant and container type. Every line is
- * checked first; valid lines are written in one flush, invalid ones are reported by line number.
+ * checked first; the lines are written in one flush only when none is rejected (rejected lines
+ * are reported by line number).
  */
 final class CapacityCsvImporter
 {
@@ -92,21 +93,23 @@ final class CapacityCsvImporter
             $valid[] = $line;
         }
 
+        // All or nothing: a rejected line leaves the stored data unchanged.
+        $write = !$dryRun && [] === $errors;
         $imported = 0;
         $removed = 0;
         foreach ($valid as $line) {
             '' === $line['capacity'] ? ++$removed : ++$imported;
-            if (!$dryRun) {
+            if ($write) {
                 $this->apply($line);
             }
         }
-        if (!$dryRun) {
+        if ($write) {
             $this->entityManager->flush();
         }
 
         ksort($errors);
 
-        return new CapacityImportResult($imported, $removed, $errors, $dryRun);
+        return new CapacityImportResult($imported, $removed, $errors, $dryRun, $write);
     }
 
     /** @param array<string, string> $line */
