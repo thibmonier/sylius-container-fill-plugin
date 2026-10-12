@@ -234,9 +234,17 @@ The gauge is the Live component `tmonier_container_fill:gauge`: it listens to
 
 ## Screenshots
 
-`docs/images/` is reserved for screenshots (not included yet): cart gauge with a truck,
-mixed pallet with the "complete" suggestion, product page preview, variant Logistics tab, rule
-form, order load plan.
+![Cart gauge: a semi-trailer filled to 95 % by weight, 23 of 33 places used](docs/images/shop-cart-truck.jpg)
+
+![Mixed pallet filled to 87 %: checkout blocked, with the "complete the pallet" and "round up to the layer" suggestions](docs/images/shop-cart-mixed-pallet.jpg)
+
+![Indicative preview on the product page](docs/images/shop-product-preview.jpg)
+
+![Logistics tab of a product: case, weight and capacity per container](docs/images/admin-product-logistics.jpg)
+
+![Fill rule form](docs/images/admin-container-rule-form.jpg)
+
+![Load plan recorded on the order](docs/images/admin-order-load-plan.jpg)
 
 ## Limitations
 
