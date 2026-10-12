@@ -62,7 +62,7 @@ tmonier_container_fill:
         layer_height: 'Altura de una capa (mm)'
         max_layers_help: 'Opcional, además de la altura de carga.'
         max_layers: 'Número máximo de capas'
-        layer_mode_help: 'Un producto por capa (unidades por capa y altura de capa de cada producto), limitado por la altura de carga y/o el número máximo de capas. Solo tipos de una plaza; sin datos de capa se aplica la capacidad.'
+        layer_mode_help: 'Un producto por capa (unidades por capa y altura de capa de cada producto), limitado por la altura de carga y/o el número máximo de capas. Solo tipos de una plaza. Si un producto del carrito no tiene datos de capa, todo el palé se planifica por capacidades.'
         layer_mode: 'Planificar por capas'
         max_load_height_help: 'Altura disponible para la mercancía, en mm (palé: altura total admitida por la red menos la base).'
         max_payload: 'Carga útil máxima (kg)'

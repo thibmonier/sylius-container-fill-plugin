@@ -62,7 +62,7 @@ tmonier_container_fill:
         layer_height: 'Altezza di uno strato (mm)'
         max_layers_help: 'Facoltativo, oltre all’altezza di carico.'
         max_layers: 'Numero massimo di strati'
-        layer_mode_help: 'Un prodotto per strato (unità per strato e altezza dello strato di ogni prodotto), limitato dall’altezza di carico e/o dal numero massimo di strati. Solo tipi a un posto; senza dati di strato vale la capacità.'
+        layer_mode_help: 'Un prodotto per strato (unità per strato e altezza dello strato di ogni prodotto), limitato dall’altezza di carico e/o dal numero massimo di strati. Solo tipi a un posto. Se un prodotto del carrello non ha dati di strato, l’intero pallet è pianificato per capacità.'
         layer_mode: 'Pianifica per strati'
         max_load_height_help: 'Altezza disponibile per la merce, in mm (pallet: altezza totale ammessa dalla rete meno la base).'
         max_payload: 'Portata massima (kg)'

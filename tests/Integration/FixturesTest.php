@@ -64,6 +64,16 @@ final class FixturesTest extends KernelTestCase
         self::assertNotEmpty($rules);
         self::assertSame(ContainerFillDemoFixture::TAXON_CODE, $rules[0]->getTaxon()?->getCode());
 
+        // 1.1: the demo plans the EUR pallet by layers (also when upgrading a 1.0 demo).
+        $eur = $types->findOneBy(['code' => 'EUR_PALLET']);
+        self::assertInstanceOf(ContainerTypeInterface::class, $eur);
+        self::assertTrue($eur->isLayerMode());
+        foreach ($products as $product) {
+            $logistics = $this->entityManager()->getRepository(\Tmonier\SyliusContainerFillPlugin\Entity\ProductVariantLogisticsInterface::class)->findOneBy(['variant' => $product->getVariants()->first()]);
+            self::assertInstanceOf(\Tmonier\SyliusContainerFillPlugin\Entity\ProductVariantLogisticsInterface::class, $logistics);
+            self::assertNotNull($logistics->getLayerHeight(), (string) $product->getCode());
+        }
+
         $buyer = $this->entityManager()->getRepository(ShopUserInterface::class)->findOneBy(['username' => ContainerFillDemoFixture::BUYER_EMAIL]);
         self::assertInstanceOf(ShopUserInterface::class, $buyer);
         self::assertNotNull($buyer->getVerifiedAt());

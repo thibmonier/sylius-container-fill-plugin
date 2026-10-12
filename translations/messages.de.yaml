@@ -62,7 +62,7 @@ tmonier_container_fill:
         layer_height: 'Lagenhöhe (mm)'
         max_layers_help: 'Optional, zusätzlich zur Ladehöhe.'
         max_layers: 'Maximale Lagenzahl'
-        layer_mode_help: 'Ein Produkt pro Lage (Einheiten pro Lage und Lagenhöhe jedes Produkts), begrenzt durch die Ladehöhe und/oder die maximale Lagenzahl. Nur Typen mit einem Platz; ohne Lagendaten gilt die Kapazität.'
+        layer_mode_help: 'Ein Produkt pro Lage (Einheiten pro Lage und Lagenhöhe jedes Produkts), begrenzt durch die Ladehöhe und/oder die maximale Lagenzahl. Nur Typen mit einem Platz. Hat ein Produkt im Warenkorb keine Lagendaten, wird die ganze Palette nach Kapazitäten geplant.'
         layer_mode: 'Nach Lagen planen'
         max_load_height_help: 'Für die Ware verfügbare Höhe in mm (Palette: zulässige Gesamthöhe des Netzwerks abzüglich des Palettenbodens).'
         max_payload: 'Maximale Nutzlast (kg)'

@@ -85,6 +85,8 @@ final class ContainerFillDemoFixture extends AbstractFixture
         $this->createBuyer();
 
         if (null !== $this->productRepository->findOneBy(['code' => self::PRODUCTS[0][0]])) {
+            // Demo of 1.0 already loaded: switch it to the layer mode of 1.1.
+            $this->upgradeToLayers();
             $this->manager->flush();
 
             return;
@@ -187,6 +189,23 @@ final class ContainerFillDemoFixture extends AbstractFixture
         }
 
         $this->manager->flush();
+    }
+
+    /** Layer heights of the demo products and layer mode of the EUR pallet, when missing. */
+    private function upgradeToLayers(): void
+    {
+        $this->containerTypeRepository->findOneByCode('EUR_PALLET')?->setLayerMode(true);
+        foreach (self::PRODUCTS as $row) {
+            $product = $this->productRepository->findOneBy(['code' => $row[0]]);
+            $variant = $product instanceof ProductInterface ? $product->getVariants()->first() : null;
+            if (!$variant instanceof ProductVariantInterface) {
+                continue;
+            }
+            $logistics = $this->manager->getRepository(ProductVariantLogisticsInterface::class)->findOneBy(['variant' => $variant]);
+            if ($logistics instanceof ProductVariantLogisticsInterface && null === $logistics->getLayerHeight()) {
+                $logistics->setLayerHeight($row[10]);
+            }
+        }
     }
 
     protected function configureOptionsNode(ArrayNodeDefinition $optionsNode): void

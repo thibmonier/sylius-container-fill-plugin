@@ -29,7 +29,10 @@ by whole cases, cement bags on their own pallet, floor tiles; EUR pallet capacit
 derives from them; rule "full pallets or a full truck" on that taxon in every channel; buyer
 `pallet@example.com` / `sylius`, verified). The core `shop_user` fixture leaves
 `verified_at` NULL: use the demo buyer, or
-`UPDATE sylius_shop_user SET verified_at = NOW() WHERE verified_at IS NULL;`. Dev server:
+`UPDATE sylius_shop_user SET verified_at = NOW() WHERE verified_at IS NULL;`. A 1.0 demo
+database: run the migrations, then the demo fixture again (`sylius:fixtures:load -n`, or the
+`tmonier_container_fill_demo` fixture alone): it switches the EUR pallet to the layer mode and
+sets the layer heights of the demo products when missing. Dev server:
 `symfony server:start -d --port=8097 --no-tls` (admin `sylius` / `sylius`), e.g.
 `/en_US/products/spring-water-case`, then the cart. Stop it with `symfony server:stop`.
 

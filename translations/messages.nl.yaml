@@ -62,7 +62,7 @@ tmonier_container_fill:
         layer_height: 'Laaghoogte (mm)'
         max_layers_help: 'Optioneel, naast de laadhoogte.'
         max_layers: 'Maximaal aantal lagen'
-        layer_mode_help: 'Eén product per laag (eenheden per laag en laaghoogte van elk product), beperkt door de laadhoogte en/of het maximale aantal lagen. Alleen types met één plaats; zonder laaggegevens geldt de capaciteit.'
+        layer_mode_help: 'Eén product per laag (eenheden per laag en laaghoogte van elk product), beperkt door de laadhoogte en/of het maximale aantal lagen. Alleen types met één plaats. Heeft één product in de winkelwagen geen laaggegevens, dan wordt de hele pallet volgens capaciteiten gepland.'
         layer_mode: 'Plannen per laag'
         max_load_height_help: 'Beschikbare hoogte voor de goederen, in mm (pallet: door het netwerk toegestane totale hoogte min de palletvloer).'
         max_payload: 'Maximaal laadvermogen (kg)'

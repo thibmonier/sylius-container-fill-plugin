@@ -62,7 +62,7 @@ tmonier_container_fill:
         layer_height: 'Layer height (mm)'
         max_layers_help: 'Optional, in addition to the load height.'
         max_layers: 'Maximum layers'
-        layer_mode_help: 'One product per layer (units per layer and layer height of each product), limited by the load height and/or the maximum number of layers. Single-place types only; products without layer data keep the capacity.'
+        layer_mode_help: 'One product per layer (units per layer and layer height of each product), limited by the load height and/or the maximum number of layers. Single-place types only. If one product of the cart has no layer data, the whole pallet is planned by capacities.'
         layer_mode: 'Plan by layers'
         max_load_height_help: 'Height available for the goods, in mm (for a pallet: total height allowed by the network minus the deck).'
         max_payload: 'Maximum payload (kg)'

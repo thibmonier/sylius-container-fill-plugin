@@ -62,7 +62,7 @@ tmonier_container_fill:
         layer_height: 'Hauteur d’une couche (mm)'
         max_layers_help: 'Facultatif, en plus de la hauteur de chargement.'
         max_layers: 'Nombre maximum de couches'
-        layer_mode_help: 'Un produit par couche (unités par couche et hauteur de couche de chaque produit), limité par la hauteur de chargement et/ou le nombre maximum de couches. Types à une place uniquement ; sans données de couche, la capacité s’applique.'
+        layer_mode_help: 'Un produit par couche (unités par couche et hauteur de couche de chaque produit), limité par la hauteur de chargement et/ou le nombre maximum de couches. Types à une place uniquement. Si un produit du panier n’a pas de données de couche, toute la palette est planifiée par capacités.'
         layer_mode: 'Planifier par couches'
         max_load_height_help: 'Hauteur disponible pour la marchandise, en mm (palette : hauteur totale admise par le réseau moins le plancher).'
         max_payload: 'Charge utile maximale (kg)'

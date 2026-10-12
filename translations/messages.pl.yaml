@@ -62,7 +62,7 @@ tmonier_container_fill:
         layer_height: 'Wysokość warstwy (mm)'
         max_layers_help: 'Opcjonalnie, oprócz wysokości ładunku.'
         max_layers: 'Maksymalna liczba warstw'
-        layer_mode_help: 'Jeden produkt na warstwę (jednostki na warstwę i wysokość warstwy każdego produktu), ograniczone wysokością ładunku i/lub maksymalną liczbą warstw. Tylko typy z jednym miejscem; bez danych warstw obowiązuje pojemność.'
+        layer_mode_help: 'Jeden produkt na warstwę (jednostki na warstwę i wysokość warstwy każdego produktu), ograniczone wysokością ładunku i/lub maksymalną liczbą warstw. Tylko typy z jednym miejscem. Jeśli jeden produkt w koszyku nie ma danych warstw, cała paleta jest planowana według pojemności.'
         layer_mode: 'Planuj według warstw'
         max_load_height_help: 'Wysokość dostępna dla towaru w mm (paleta: łączna wysokość dopuszczona przez sieć minus podest).'
         max_payload: 'Maksymalna ładowność (kg)'
