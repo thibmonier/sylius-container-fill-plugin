@@ -8,6 +8,7 @@ tmonier_container_fill:
         overloaded: 'Laadeenheid %index% is overbeladen (%percent% %): één eenheid overschrijdt de capaciteit.'
         no_container_type: 'De regel "%rule%" heeft geen actief containertype: bestellingen waarop hij van toepassing is, kunnen niet worden geplaatst. Neem contact met ons op.'
     case_multiple: 'Dit product wordt per volle doos verkocht: bestel een veelvoud van %multiple%.'
+    case_multiple_limit: 'Maximaal %limit% stuks per winkelwagenregel: dit product wordt per volle doos van %multiple% verkocht, bestel maximaal %maximum%.'
     container_type:
         code:
             not_blank: 'Voer een code in.'

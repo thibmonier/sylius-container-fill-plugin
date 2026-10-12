@@ -12,6 +12,9 @@ final class CaseMultiple extends Constraint
 {
     public string $message = 'tmonier_container_fill.case_multiple';
 
+    /** The core caps a cart line (sylius.order_item_quantity_modifier.limit): a larger quantity is cut to the limit. */
+    public string $limitMessage = 'tmonier_container_fill.case_multiple_limit';
+
     public function getTargets(): string
     {
         return self::CLASS_CONSTRAINT;

@@ -16,7 +16,8 @@
                 {% endif %}
                 <ul class="list-unstyled mb-1">
                     {% for row in rows %}
-                        <li>{{ 'tmonier_container_fill.ui.preview_row'|trans({'%quantity%': quantity, '%percent%': row.percent, '%type%': row.name, '%capacity%': row.capacity}) }}</li>
+                        {% set parameters = {'%quantity%': quantity, '%percent%': row.percent, '%count%': row.count, '%type%': row.name, '%capacity%': row.capacity} %}
+                        <li {{ sylius_test_html_attribute('tmonier-container-fill-preview-row') }}>{{ (row.percent >= 100 ? 'tmonier_container_fill.ui.preview_row_many' : 'tmonier_container_fill.ui.preview_row')|trans(parameters) }}</li>
                     {% endfor %}
                 </ul>
                 {% set cart = form.vars.data.cart|default(null) %}

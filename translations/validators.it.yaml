@@ -8,6 +8,7 @@ tmonier_container_fill:
         overloaded: 'Il contenitore %index% è sovraccarico (%percent% %): un’unità supera la sua capacità.'
         no_container_type: 'La regola «%rule%» non ha alcun tipo di contenitore attivo: gli ordini interessati non possono essere effettuati. Contattaci.'
     case_multiple: 'Questo prodotto è venduto a cartoni interi: ordinate un multiplo di %multiple%.'
+    case_multiple_limit: 'Al massimo %limit% unità per riga del carrello: questo prodotto è venduto per cartoni completi da %multiple%, ordinane al massimo %maximum%.'
     container_type:
         code:
             not_blank: 'Inserite un codice.'

@@ -8,6 +8,7 @@ tmonier_container_fill:
         overloaded: 'Container %index% is overloaded (%percent% %): one unit exceeds its capacity.'
         no_container_type: 'The rule "%rule%" has no enabled container type: orders it applies to cannot be placed. Contact us.'
     case_multiple: 'This product is sold by whole cases: order a multiple of %multiple%.'
+    case_multiple_limit: 'At most %limit% units per cart line: this product is sold by whole cases of %multiple%, order at most %maximum%.'
     container_type:
         code:
             not_blank: 'Enter a code.'

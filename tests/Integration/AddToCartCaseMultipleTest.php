@@ -48,6 +48,14 @@ final class AddToCartCaseMultipleTest extends KernelTestCase
         self::assertFalse($form->isValid());
         self::assertStringContainsString('multiple of 6', (string) $form->getErrors(true));
 
+        // Above the core line limit (9999), cut to 9999 by the core: the message says why.
+        self::assertSame(9996, $vars['attr']['max'] ?? null);
+        $form = $this->form($product);
+        $form->submit(['cartItem' => ['quantity' => '15840']]);
+        self::assertFalse($form->isValid());
+        self::assertStringContainsString('At most 9999 units per cart line', (string) $form->getErrors(true));
+        self::assertStringContainsString('order at most 9996', (string) $form->getErrors(true));
+
         $form = $this->form($product);
         $form->submit(['cartItem' => ['quantity' => '12']]);
         self::assertTrue($form->isValid(), (string) $form->getErrors(true));

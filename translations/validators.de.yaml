@@ -8,6 +8,7 @@ tmonier_container_fill:
         overloaded: 'Ladungsträger %index% ist überladen (%percent% %): eine Einheit übersteigt seine Kapazität.'
         no_container_type: 'Die Regel „%rule%“ hat keinen aktiven Behältertyp: betroffene Bestellungen können nicht aufgegeben werden. Kontaktieren Sie uns.'
     case_multiple: 'Dieses Produkt wird nur in ganzen Kartons verkauft: bestellen Sie ein Vielfaches von %multiple%.'
+    case_multiple_limit: 'Höchstens %limit% Einheiten pro Warenkorbposition: Dieses Produkt wird nur in ganzen Kartons zu %multiple% verkauft, bestellen Sie höchstens %maximum%.'
     container_type:
         code:
             not_blank: 'Geben Sie einen Code ein.'

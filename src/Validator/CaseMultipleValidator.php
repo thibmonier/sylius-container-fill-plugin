@@ -32,6 +32,7 @@ final class CaseMultipleValidator extends ConstraintValidator
         private readonly VariantLogisticsProviderInterface $logisticsProvider,
         private readonly RepositoryInterface $variantRepository,
         private readonly OrderItemRepositoryInterface $orderItemRepository,
+        private readonly int $quantityLimit = 9999,
     ) {
     }
 
@@ -57,9 +58,13 @@ final class CaseMultipleValidator extends ConstraintValidator
             return;
         }
 
+        // The core silently cuts a line to its quantity limit: say so instead of "not a multiple".
+        $case = $logistics->unitsPerCase();
         $this->context
-            ->buildViolation($constraint->message)
-            ->setParameter('%multiple%', (string) $logistics->unitsPerCase())
+            ->buildViolation($quantity >= $this->quantityLimit ? $constraint->limitMessage : $constraint->message)
+            ->setParameter('%multiple%', (string) $case)
+            ->setParameter('%limit%', (string) $this->quantityLimit)
+            ->setParameter('%maximum%', (string) (intdiv($this->quantityLimit, $case) * $case))
             ->atPath($path)
             ->addViolation()
         ;

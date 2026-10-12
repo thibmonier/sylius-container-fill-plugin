@@ -8,6 +8,7 @@ tmonier_container_fill:
         overloaded: 'Nośnik %index% jest przeciążony (%percent% %): jedna jednostka przekracza jego pojemność.'
         no_container_type: 'Reguła „%rule%” nie ma żadnego aktywnego typu kontenera: zamówień, których dotyczy, nie można złożyć. Skontaktuj się z nami.'
     case_multiple: 'Ten produkt jest sprzedawany w pełnych kartonach: zamów wielokrotność %multiple%.'
+    case_multiple_limit: 'Maksymalnie %limit% sztuk w jednej pozycji koszyka: ten produkt jest sprzedawany w pełnych kartonach po %multiple%, zamów maksymalnie %maximum%.'
     container_type:
         code:
             not_blank: 'Podaj kod.'

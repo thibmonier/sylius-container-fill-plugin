@@ -24,6 +24,7 @@ final class CartItemTypeExtension extends AbstractTypeExtension
     public function __construct(
         private readonly VariantLogisticsProviderInterface $logisticsProvider,
         private readonly OrderItemQuantityModifierInterface $quantityModifier,
+        private readonly int $quantityLimit = 9999,
     ) {
     }
 
@@ -49,7 +50,8 @@ final class CartItemTypeExtension extends AbstractTypeExtension
             $attr = \is_array($fieldOptions['attr'] ?? null) ? $fieldOptions['attr'] : [];
             $form->add('quantity', IntegerType::class, [
                 'label' => $fieldOptions['label'] ?? 'sylius.ui.quantity',
-                'attr' => ['min' => $case, 'step' => $case] + $attr,
+                // The core caps a line at its quantity limit: the largest whole-case quantity below it.
+                'attr' => ['min' => $case, 'step' => $case, 'max' => max($case, intdiv($this->quantityLimit, $case) * $case)] + $attr,
                 'help' => 'tmonier_container_fill.ui.whole_cases_help',
                 'help_translation_parameters' => ['%units%' => $case],
             ]);

@@ -59,7 +59,7 @@ final class ContainerFillExtension extends AbstractExtension
      * Indicative share of each enabled container type taken by $quantity units of the variant,
      * alone (the cart is the reference for mixed loads).
      *
-     * @return list<array{name: string, kind: string, capacity: int, percent: float, containers: int, indicative: bool, unitsPerLayer: ?int}>
+     * @return list<array{name: string, kind: string, capacity: int, percent: float, count: float, containers: int, indicative: bool, unitsPerLayer: ?int}> capacity: units that fit one container (places or payload)
      */
     public function preview(ProductVariantInterface $variant, mixed $quantity = 1): array
     {
@@ -71,17 +71,18 @@ final class ContainerFillExtension extends AbstractExtension
             if (null === $capacity) {
                 continue;
             }
-            // Places or payload, whichever fills first.
-            $share = $quantity / $capacity;
+            // Places or payload, whichever fills first: the units that fit one container.
             $unitWeight = $logistics->unitWeight();
-            if (null !== $unitWeight) {
-                $share = max($share, $quantity * $unitWeight / max(1, $type->getMaxPayload()));
+            if (null !== $unitWeight && $unitWeight > 0) {
+                $capacity = max(1, min($capacity, (int) floor($type->getMaxPayload() / $unitWeight + 1e-9)));
             }
+            $share = $quantity / $capacity;
             $rows[] = [
                 'name' => (string) ($type->getName() ?? $type->getCode()),
                 'kind' => $type->getKind(),
                 'capacity' => $capacity,
                 'percent' => round($share * 100, 1),
+                'count' => round($share, 1),
                 'containers' => (int) ceil($share - 1e-9),
                 'indicative' => $type->isIndicative(),
                 'unitsPerLayer' => $logistics->unitsPerLayer($type),

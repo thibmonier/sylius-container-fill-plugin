@@ -119,7 +119,7 @@ return static function (ContainerConfigurator $container): void {
         ->tag('monolog.logger', ['channel' => 'tmonier_container_fill']);
 
     $services->set('tmonier_container_fill.validator.case_multiple', CaseMultipleValidator::class)
-        ->args([service('tmonier_container_fill.logistics_provider'), service('sylius.repository.product_variant'), service('sylius.repository.order_item')])
+        ->args([service('tmonier_container_fill.logistics_provider'), service('sylius.repository.product_variant'), service('sylius.repository.order_item'), param('sylius.order_item_quantity_modifier.limit')])
         ->tag('validator.constraint_validator', ['alias' => 'tmonier_container_fill_case_multiple']);
 
     $services->set('tmonier_container_fill.validator.container_type', ValidContainerTypeValidator::class)
@@ -215,7 +215,7 @@ return static function (ContainerConfigurator $container): void {
         ->public();
 
     $services->set('tmonier_container_fill.form.extension.cart_item', CartItemTypeExtension::class)
-        ->args([service('tmonier_container_fill.logistics_provider'), service('sylius.modifier.order_item_quantity')])
+        ->args([service('tmonier_container_fill.logistics_provider'), service('sylius.modifier.order_item_quantity'), param('sylius.order_item_quantity_modifier.limit')])
         ->tag('form.type_extension');
 
     $services->set('tmonier_container_fill.form.extension.product_variant', ProductVariantTypeExtension::class)

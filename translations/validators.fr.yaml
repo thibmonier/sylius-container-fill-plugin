@@ -8,6 +8,7 @@ tmonier_container_fill:
         overloaded: 'Le contenant %index% est surchargé (%percent% %) : une unité dépasse sa capacité.'
         no_container_type: 'La règle « %rule% » n’a aucun type de contenant actif : les commandes concernées ne peuvent pas être passées. Contactez-nous.'
     case_multiple: 'Ce produit est vendu par cartons complets : commandez un multiple de %multiple%.'
+    case_multiple_limit: 'Au plus %limit% unités par ligne de panier : ce produit est vendu par cartons complets de %multiple%, commandez au plus %maximum%.'
     container_type:
         code:
             not_blank: 'Saisissez un code.'
