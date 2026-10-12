@@ -5,6 +5,7 @@
     xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
     colors="true"
     bootstrap="vendor/sylius/test-application/config/bootstrap.php"
+    defaultTestSuite="all"
 >
     <php>
         <server name="KERNEL_CLASS" value="Sylius\TestApplication\Kernel" />

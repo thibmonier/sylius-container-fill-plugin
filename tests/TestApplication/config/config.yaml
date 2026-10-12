@@ -24,7 +24,8 @@ sylius_fixtures:
                 tmonier_container_fill_demo:
                     priority: -110
 
-services:
-    Tests\Tmonier\SyliusContainerFillPlugin\Cart\ResetNewCartOnRequestListener:
-        arguments: ['@sylius.context.cart.new_shop_based']
-        tags: [{ name: kernel.event_listener, event: kernel.request, priority: 4096 }]
+when@test:
+    services:
+        Tests\Tmonier\SyliusContainerFillPlugin\Cart\ResetNewCartOnRequestListener:
+            arguments: ['@sylius.context.cart.new_shop_based']
+            tags: [{ name: kernel.event_listener, event: kernel.request, priority: 4096 }]
