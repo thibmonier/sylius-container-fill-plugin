@@ -6,6 +6,7 @@ namespace Tmonier\SyliusContainerFillPlugin\Twig\Component;
 
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
+use Sylius\TwigHooks\LiveComponent\HookableLiveComponentTrait;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
@@ -34,6 +35,7 @@ final class ContainerGaugeComponent
 {
     use ComponentToolsTrait;
     use DefaultActionTrait;
+    use HookableLiveComponentTrait;
 
     public const CART_CHANGED = 'sylius:shop:cart_changed';
 

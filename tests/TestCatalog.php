@@ -292,7 +292,7 @@ final class TestCatalog
         /** @var FactoryInterface<CustomerInterface> $customerFactory */
         $customerFactory = $this->container->get('sylius.factory.customer');
         $guest = $customerFactory->createNew();
-        $guest->setEmail(strtolower('guest-' . $this->suffix . '@container-fill.test'));
+        $guest->setEmail(strtolower('guest-' . $this->suffix . '-' . bin2hex(random_bytes(3)) . '@container-fill.test'));
         $this->entityManager()->persist($guest);
 
         $cart = $this->cart($lines);
@@ -337,7 +337,7 @@ final class TestCatalog
         /** @var FactoryInterface<ZoneMemberInterface> $memberFactory */
         $memberFactory = $this->container->get('sylius.factory.zone_member');
         $zone = $zoneFactory->createNew();
-        $zone->setCode('ZONE_' . $this->suffix . random_int(10, 99));
+        $zone->setCode('ZONE_' . $this->suffix . bin2hex(random_bytes(2)));
         $zone->setName('Zone ' . $this->suffix);
         $zone->setType(ZoneInterface::TYPE_COUNTRY);
         $member = $memberFactory->createNew();
@@ -348,7 +348,7 @@ final class TestCatalog
         /** @var FactoryInterface<ShippingMethodInterface> $methodFactory */
         $methodFactory = $this->container->get('sylius.factory.shipping_method');
         $method = $methodFactory->createNew();
-        $method->setCode('SHIP_' . $this->suffix . random_int(10, 99));
+        $method->setCode('SHIP_' . $this->suffix . bin2hex(random_bytes(2)));
         $method->setCurrentLocale((string) $channel->getDefaultLocale()?->getCode());
         $method->setFallbackLocale((string) $channel->getDefaultLocale()?->getCode());
         $method->setName('Freight ' . $this->suffix);
@@ -426,7 +426,7 @@ final class TestCatalog
         /** @var FactoryInterface<PaymentMethodInterface> $factory */
         $factory = $this->container->get('sylius.factory.payment_method');
         $method = $factory->createNew();
-        $method->setCode('PAY_' . $this->suffix);
+        $method->setCode('PAY_' . $this->suffix . bin2hex(random_bytes(2)));
         $method->setCurrentLocale((string) $channel->getDefaultLocale()?->getCode());
         $method->setFallbackLocale((string) $channel->getDefaultLocale()?->getCode());
         $method->setName('Invoice ' . $this->suffix);
@@ -435,7 +435,7 @@ final class TestCatalog
         $gatewayConfig = $gatewayConfigFactory->createNew();
         Assert::isInstanceOf($gatewayConfig, \Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface::class);
         $gatewayConfig->setFactoryName('offline');
-        $gatewayConfig->setGatewayName('offline_' . strtolower($this->suffix));
+        $gatewayConfig->setGatewayName('offline_' . strtolower($this->suffix) . bin2hex(random_bytes(2)));
         $method->setGatewayConfig($gatewayConfig);
         $method->addChannel($channel);
         $method->setEnabled(true);

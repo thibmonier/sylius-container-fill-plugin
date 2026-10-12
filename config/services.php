@@ -143,6 +143,7 @@ return static function (ContainerConfigurator $container): void {
             service('router'),
             service('request_stack'),
         ])
+        ->call('setLiveResponder', [service('ux.live_component.live_responder')])
         ->tag('sylius.live_component.shop', [
             'key' => 'tmonier_container_fill:gauge',
             'template' => '@TmonierSyliusContainerFillPlugin/shop/gauge.html.twig',

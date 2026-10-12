@@ -1,5 +1,6 @@
 {# Replaces the core checkout button of the cart: disabled, with the reason, while the fill rules are not met. #}
-{% set cart = hookable_metadata.context.cart|default(null) ?? hookable_metadata.context.form.vars.data|default(null) %}
+{% set cart = hookable_metadata.context.cart|default(null) %}
+{% if cart is null %}{% set cart = hookable_metadata.context.form.vars.data|default(null) %}{% endif %}
 {% set report = tmonier_container_fill_cart_gauge_enabled() ? tmonier_container_fill_report(cart) : null %}
 <div class="d-grid">
     {% if report is not null and not report.satisfied %}

@@ -2,7 +2,8 @@
 {% if tmonier_container_fill_product_preview_enabled() %}
     {% set form = hookable_metadata.context.form %}
     {% set product = hookable_metadata.context.product %}
-    {% set variant = form.cartItem.vars.data.variant|default(null) ?? product.enabledVariants.first|default(null) %}
+    {% set variant = form.cartItem.vars.data.variant|default(null) %}
+    {% if variant is null and not product.enabledVariants.empty %}{% set variant = product.enabledVariants.first %}{% endif %}
     {% if variant %}
         {% set quantity = form.cartItem.quantity.vars.value|default(1) %}
         {% set rows = tmonier_container_fill_preview(variant, quantity) %}
