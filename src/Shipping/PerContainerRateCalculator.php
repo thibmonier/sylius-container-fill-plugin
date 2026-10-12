@@ -53,11 +53,7 @@ final class PerContainerRateCalculator implements CalculatorInterface
 
     public static function containerCount(CartFillCheckerInterface $checker, OrderInterface $order): int
     {
-        $count = 0;
-        foreach ($checker->check($order)->outcomes as $outcome) {
-            $count += $outcome->result->containerCount();
-        }
-
-        return max(1, $count);
+        // Load plan containers: each line counted once even when several rules apply to it.
+        return max(1, $checker->check($order)->containerCount());
     }
 }

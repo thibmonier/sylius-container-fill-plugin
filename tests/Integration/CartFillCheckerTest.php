@@ -124,7 +124,7 @@ final class CartFillCheckerTest extends KernelTestCase
         self::assertCount(1, $report->outcomes);
     }
 
-    public function testEachLineIsPlannedOnceByTheMostSpecificRule(): void
+    public function testEachLineIsPlannedOnceByTheMostSpecificRuleButEveryRuleIsChecked(): void
     {
         $pallet = $this->catalog->pallet();
         $parent = $this->catalog->taxon('GOODS');
@@ -137,9 +137,12 @@ final class CartFillCheckerTest extends KernelTestCase
 
         $report = $this->checker()->check($this->catalog->cart([[$drink, 40], [$other, 10]]));
 
-        self::assertCount(2, $report->outcomes);
+        // Blocking: the three rules are checked (on 2, 1 and 1 lines); plan: each line once.
+        self::assertCount(3, $report->outcomes);
+        self::assertCount(2, $report->plan);
+        self::assertSame(2, $report->containerCount());
         $byRule = [];
-        foreach ($report->outcomes as $outcome) {
+        foreach ($report->plan as $outcome) {
             $byRule[(int) $outcome->rule->id] = array_keys($outcome->result->containers[0]->units);
         }
         self::assertEqualsCanonicalizing([$childRule->getId(), $general->getId()], array_keys($byRule));
@@ -147,6 +150,36 @@ final class CartFillCheckerTest extends KernelTestCase
         self::assertSame([(string) $other->getCode()], $byRule[(int) $general->getId()]);
         self::assertArrayNotHasKey((int) $parentRule->getId(), $byRule);
         self::assertTrue($report->isSatisfied());
+    }
+
+    public function testTwoRulesOfTheSameScopeCombine(): void
+    {
+        $pallet = $this->catalog->pallet();
+        $this->catalog->rule([$pallet], ContainerRuleInterface::MODE_MIN_FILL_PERCENT, 50);
+        $this->catalog->rule([$pallet], ContainerRuleInterface::MODE_MAX_CONTAINERS, 1);
+        $variant = $this->catalog->variant('A', [[$pallet, 40, null]], 1000);
+
+        $report = $this->checker()->check($this->catalog->cart([[$variant, 120]]));
+
+        self::assertFalse($report->isSatisfied());
+        self::assertSame([Violation::TOO_MANY_CONTAINERS], array_map(static fn (Violation $violation): string => $violation->code, $report->violations()));
+        self::assertSame(3, $report->containerCount());
+        self::assertTrue($this->checker()->check($this->catalog->cart([[$variant, 40]]))->isSatisfied());
+    }
+
+    public function testAGlobalCapSeesTheLinesOfMoreSpecificRules(): void
+    {
+        $pallet = $this->catalog->pallet();
+        $taxon = $this->catalog->taxon('PALLETS');
+        $this->catalog->rule([$pallet], ContainerRuleInterface::MODE_MAX_CONTAINERS, 1);
+        $this->catalog->rule([$pallet], ContainerRuleInterface::MODE_FULL_ONLY, null, $taxon);
+        $variant = $this->catalog->variant('A', [[$pallet, 40, null]], 1000, taxon: $taxon);
+
+        $report = $this->checker()->check($this->catalog->cart([[$variant, 120]]));
+
+        self::assertFalse($report->isSatisfied());
+        self::assertContains(Violation::TOO_MANY_CONTAINERS, array_map(static fn (Violation $violation): string => $violation->code, $report->violations()));
+        self::assertSame(3, $report->containerCount());
     }
 
     public function testARuleWithoutEnabledContainerTypeBlocks(): void

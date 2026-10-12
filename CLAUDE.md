@@ -53,7 +53,9 @@ derives from them; rule "full pallets or a full truck" on that taxon in every ch
   (`ContainerFill`s, `BindingConstraint`). Unit tested with `tests/Unit/Planner/PlannerFixtures`.
 - `Rule/`: `RuleEvaluator` and `SuggestionFinder` (pure), `ScopeMatcher`, `CartFillChecker`
   (service `tmonier_container_fill.cart_fill_checker`: applicable rules, type selection,
-  `CartFillReport` with `toArray()` used by the API and the snapshot; per-request cache,
+  `CartFillReport`: `outcomes` = every rule on its whole scope (blocking), `plan` = each line
+  planned once by its most specific rule (`ScopeMatcher::precedence()`; display, container
+  counts for shipping); `toArray()` used by the API and the snapshot; per-request cache,
   invalidated by `EventListener/CacheInvalidator` on flush, `kernel.reset`).
 - Checkout: `Checkout/CheckoutEntrySubscriber` (kernel.request priority 4, routes
   `sylius_shop_checkout_*`), `Validator/OrderContainerFillSatisfied` (groups

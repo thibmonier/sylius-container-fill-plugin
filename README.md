@@ -176,9 +176,11 @@ Overloaded containers and incomplete data fail every mode. An enabled rule whose
 types are all disabled blocks the checkout of its products (flagged in the rule grid): disable
 the rule rather than its types. Rules apply to the lines in their
 scope; carts without lines in the scope of a rule show no gauge. When several rules match a
-line, only the most specific one plans it: product, then taxon (deepest first), then all
-products; at equal scope the customer group rule, then the oldest. Lines of different rules
-are planned in separate containers.
+line, **all of them must be met** (a global "at most 1 truck" rule also counts the products of
+a taxon rule). The load plan shown in the gauge, on the order and in the API, and counted by
+the per container shipping, plans each line once, with its most specific rule: product, then
+taxon (deepest first), then all products; at equal scope the customer group rule, then the
+oldest. Lines of different rules are planned in separate containers.
 
 ### Shipping
 
@@ -209,9 +211,11 @@ first: **one rejected line and nothing is written** (errors by line number).
 
 `GET /api/v2/shop/orders/{tokenValue}/load-plan` returns the plan of a cart (computed now,
 `source: cart`) or the plan recorded when the order was placed (`source: snapshot`):
-satisfied flag, per rule the container type, containers (fill %, places, weight and volume
-ratios, binding constraint, units per product), violations and suggestion, line violations
-("sold by whole cases"). A registered customer's order is only visible to that customer.
+satisfied flag, `plan` (the load plan: per planning rule the container type and containers,
+each line counted once) and `containerCount`, `rules` (every applicable rule checked on its
+whole scope: container type, containers with fill %, places, weight and volume ratios, binding
+constraint, units per product, violations and suggestion), line violations ("sold by whole
+cases"). A registered customer's order is only visible to that customer.
 `PATCH /api/v2/shop/orders/{tokenValue}/complete` answers 422 while the rules are not met.
 
 ### Twig hooks

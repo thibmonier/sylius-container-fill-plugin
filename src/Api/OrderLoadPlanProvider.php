@@ -38,9 +38,10 @@ final class OrderLoadPlanProvider implements ProviderInterface
         }
 
         if (BaseOrderInterface::STATE_CART === $order->getState()) {
-            $data = $this->checker->check($order)->toArray();
+            $report = $this->checker->check($order);
+            $data = $report->toArray();
 
-            return new OrderLoadPlan($tokenValue, 'cart', (bool) $data['satisfied'], (array) $data['rules'], (array) $data['lineViolations']);
+            return new OrderLoadPlan($tokenValue, 'cart', (bool) $data['satisfied'], (array) $data['rules'], (array) $data['lineViolations'], plan: (array) $data['plan'], containerCount: $report->containerCount());
         }
 
         $snapshot = $this->snapshotRepository->findOneByOrder($order);
@@ -49,7 +50,7 @@ final class OrderLoadPlanProvider implements ProviderInterface
         }
         $plan = $snapshot->getPlan();
 
-        return new OrderLoadPlan($tokenValue, 'snapshot', $snapshot->isSatisfied(), (array) ($plan['rules'] ?? []), (array) ($plan['lineViolations'] ?? []), $snapshot->getOverriddenBy());
+        return new OrderLoadPlan($tokenValue, 'snapshot', $snapshot->isSatisfied(), (array) ($plan['rules'] ?? []), (array) ($plan['lineViolations'] ?? []), $snapshot->getOverriddenBy(), plan: (array) ($plan['plan'] ?? []), containerCount: is_numeric($plan['containerCount'] ?? null) ? (int) $plan['containerCount'] : 0);
     }
 
     /**

@@ -18,12 +18,14 @@
                     {% endif %}
                 </div>
 
-                {% for outcome in report.outcomes %}
-                    {% set result = outcome.result %}
-                    {% set required = outcome.rule.requiredFill %}
-                    <div class="mb-3" {{ sylius_test_html_attribute('tmonier-container-fill-rule', loop.index0) }}>
+                {# Load plan: each line planned once, by its most specific rule. #}
+                {% for entry in report.plan %}
+                    {% set result = entry.result %}
+                    {% set blocking = report.outcomes|filter(candidate => candidate.rule.id == entry.rule.id)|first %}
+                    {% set required = blocking ? blocking.rule.requiredFill : entry.rule.requiredFill %}
+                    <div class="mb-3" {{ sylius_test_html_attribute('tmonier-container-fill-plan', loop.index0) }}>
                         <div class="small text-body-secondary mb-1">
-                            {{ outcome.rule.name }} ·
+                            {{ entry.rule.name }} ·
                             {{ 'tmonier_container_fill.ui.container_count'|trans({'%count%': result.containerCount, '%type%': result.container.name}) }}
                             {% if result.container.indicative %}<span class="badge text-bg-light border">{{ 'tmonier_container_fill.ui.indicative'|trans }}</span>{% endif %}
                         </div>
@@ -67,7 +69,17 @@
                                 {% endif %}
                             </div>
                         {% endfor %}
+                    </div>
+                {% endfor %}
 
+                {# Rules: every applicable rule is checked on all the lines of its scope. #}
+                {% for outcome in report.outcomes %}
+                    {% set result = outcome.result %}
+                    <div class="mb-2" {{ sylius_test_html_attribute('tmonier-container-fill-rule', loop.index0) }}>
+                        {% if outcome.satisfied %}
+                            <div class="small text-success">{{ ux_icon('tabler:check', {'class': 'icon', 'aria-hidden': 'true'}) }} {{ outcome.rule.name }} · {{ 'tmonier_container_fill.ui.rule_met'|trans }}</div>
+                        {% else %}
+                            <div class="small fw-semibold">{{ outcome.rule.name }}</div>
                         {% if not outcome.satisfied %}
                             <ul class="small text-danger ps-3 mb-2" {{ sylius_test_html_attribute('tmonier-container-fill-violations') }}>
                                 {% for violation in outcome.violations %}
@@ -96,6 +108,7 @@
                             >
                                 {{ 'tmonier_container_fill.ui.add_units'|trans({'%units%': suggestion.addUnits, '%product%': suggestion.label}) }}
                             </button>
+                        {% endif %}
                         {% endif %}
                     </div>
                 {% endfor %}

@@ -91,27 +91,33 @@ final class CartFillChecker implements CartFillCheckerInterface, ResetInterface
             }
         }
 
-        // Each line is planned once, by the most specific rule matching it (see ScopeMatcher::precedence()).
+        // Blocking: every applicable rule is checked on all the lines of its scope (rules combine).
+        // Load plan: each line is planned once, by the most specific rule matching it (see
+        // ScopeMatcher::precedence()); used to count containers (shipping) and for display.
         $rules = $this->applicableRules(EntityId::int($channel->getId()), $channel, $group?->getCode());
         $inScope = [];
+        $planned = [];
         foreach ($lines as $key => $line) {
             if (!isset($logistics[$key])) {
                 continue;
             }
             $winner = null;
             foreach ($rules as $index => $rule) {
-                if ($this->scopeMatcher->matches($rule, $line['product']) &&
-                    (null === $winner || $this->scopeMatcher->precedence($rule) > $this->scopeMatcher->precedence($rules[$winner]))
-                ) {
+                if (!$this->scopeMatcher->matches($rule, $line['product'])) {
+                    continue;
+                }
+                $inScope[$index][$key] = $line['quantity'];
+                if (null === $winner || $this->scopeMatcher->precedence($rule) > $this->scopeMatcher->precedence($rules[$winner])) {
                     $winner = $index;
                 }
             }
             if (null !== $winner) {
-                $inScope[$winner][$key] = $line['quantity'];
+                $planned[$winner][$key] = $line['quantity'];
             }
         }
 
         $outcomes = [];
+        $plan = [];
         foreach ($rules as $index => $rule) {
             if (!isset($inScope[$index])) {
                 continue;
@@ -122,12 +128,16 @@ final class CartFillChecker implements CartFillCheckerInterface, ResetInterface
                 continue;
             }
             $outcome = $this->evaluateRule($rule, $inScope[$index], $logistics);
-            if (null !== $outcome) {
-                $outcomes[] = $outcome;
+            if (null === $outcome) {
+                continue;
+            }
+            $outcomes[] = $outcome;
+            if (isset($planned[$index])) {
+                $plan[] = $planned[$index] === $inScope[$index] ? $outcome : ($this->evaluateRule($rule, $planned[$index], $logistics) ?? $outcome);
             }
         }
 
-        return $this->reports[$cacheKey] = new CartFillReport($outcomes, $lineViolations);
+        return $this->reports[$cacheKey] = new CartFillReport($outcomes, $lineViolations, $plan);
     }
 
     public function invalidate(): void

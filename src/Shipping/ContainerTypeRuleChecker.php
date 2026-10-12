@@ -34,7 +34,7 @@ final class ContainerTypeRuleChecker implements RuleCheckerInterface
             return false;
         }
 
-        $outcomes = $this->checker->check($order)->outcomes;
+        $outcomes = $this->checker->check($order)->plan;
         if ([] === $outcomes) {
             return false;
         }

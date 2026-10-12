@@ -82,7 +82,7 @@ final class ContainerGaugeComponent
     public function getLayerRoundings(): array
     {
         $roundings = [];
-        foreach ($this->getReport()->outcomes as $outcome) {
+        foreach ($this->getReport()->plan as $outcome) {
             foreach ($this->roundableLines($outcome->result) as $rounding) {
                 $roundings[$rounding['key']] ??= $rounding;
             }

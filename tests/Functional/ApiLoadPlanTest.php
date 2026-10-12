@@ -37,6 +37,9 @@ final class ApiLoadPlanTest extends WebTestCase
         self::assertNotSame([], $rule['violations']);
         self::assertNotNull($rule['suggestion']);
         self::assertSame(30, $rule['suggestion']['addUnits']);
+        self::assertSame(2, $data['containerCount']);
+        self::assertIsArray($data['plan']);
+        self::assertCount(1, $data['plan']);
     }
 
     public function testCustomerCartsAreOnlyReachableByTheirOwner(): void

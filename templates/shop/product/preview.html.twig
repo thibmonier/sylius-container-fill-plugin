@@ -21,7 +21,7 @@
                 </ul>
                 {% set cart = form.vars.data.cart|default(null) %}
                 {% if cart is not null and not cart.empty %}
-                    {% for outcome in tmonier_container_fill_report(cart).outcomes %}
+                    {% for outcome in tmonier_container_fill_report(cart).plan %}
                         {% set last = outcome.result.containers|last %}
                         {% if last %}
                             <div {{ sylius_test_html_attribute('tmonier-container-fill-preview-cart') }}>{{ 'tmonier_container_fill.ui.cart_fill_now'|trans({'%count%': outcome.result.containerCount, '%type%': outcome.result.container.name, '%percent%': last.percent}) }}</div>

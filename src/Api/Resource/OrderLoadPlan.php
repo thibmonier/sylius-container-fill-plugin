@@ -30,8 +30,9 @@ use Tmonier\SyliusContainerFillPlugin\Api\OrderLoadPlanProvider;
 final class OrderLoadPlan
 {
     /**
-     * @param array<mixed> $rules
+     * @param array<mixed> $rules every applicable rule, checked on all the lines of its scope
      * @param array<mixed> $lineViolations
+     * @param array<mixed> $plan the load plan: each line planned once, by its most specific rule
      */
     public function __construct(
         #[ApiProperty(identifier: true)]
@@ -43,6 +44,8 @@ final class OrderLoadPlan
         public readonly array $lineViolations = [],
         public readonly ?string $overriddenBy = null,
         public readonly bool $indicative = true,
+        public readonly array $plan = [],
+        public readonly int $containerCount = 0,
     ) {
     }
 }
