@@ -141,6 +141,24 @@ final class LayerPlannerTest extends TestCase
         self::assertSame([], $evaluator->evaluate($rule, $this->planner->plan(self::pallet(), [self::water(480)])));
     }
 
+    public function testSuggestionsWhenTheHeightIsNotAMultipleOfTheLayers(): void
+    {
+        // EUR preset: 1656 mm of goods, 8 layers of 200 mm fit (1600 mm, 96 %).
+        $pallet = new ContainerSpec('EUR', 'EUR pallet', 'pallet', 1, 1000000, null, false, true, 1656);
+        $finder = new SuggestionFinder($this->planner, new RuleEvaluator());
+        foreach ([66 => 414, 474 => 6] as $quantity => $add) {
+            $line = new PlanLine('WATER', 'Water', $quantity, 480, 1550.0, null, 6, false, 60, 200);
+            foreach ([new RuleSpec(ContainerRuleInterface::MODE_FULL_ONLY), new RuleSpec(ContainerRuleInterface::MODE_MIN_FILL_PERCENT, 96)] as $rule) {
+                $suggestion = $finder->find($rule, $this->planner->plan($pallet, [$line]));
+                self::assertNotNull($suggestion, sprintf('%d units, %s', $quantity, $rule->mode));
+                self::assertSame($add, $suggestion->addUnits, sprintf('%d units, %s', $quantity, $rule->mode));
+            }
+        }
+        $full = $this->planner->plan($pallet, [new PlanLine('WATER', 'Water', 480, 480, 1550.0, null, 6, false, 60, 200)])->containers[0];
+        self::assertTrue($full->full);
+        self::assertSame(96, $full->percent());
+    }
+
     private static function pallet(): ContainerSpec
     {
         return new ContainerSpec('EUR', 'EUR pallet', 'pallet', 1, 1000000, null, false, true, 1600);

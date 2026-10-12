@@ -96,11 +96,19 @@ final class SuggestionFinder
         $estimate = $this->estimate($result, $target, $line, $required);
         // Start one case below the estimate (rounding), aligned on whole cases of the line.
         $start = max($case, (int) (ceil(($line->quantity + $estimate) / $case) * $case) - $case);
+        $candidates = [];
         for ($attempt = 0; $attempt <= self::EXTRA_ATTEMPTS; ++$attempt) {
-            $quantity = $start + $attempt * $case;
-            if ($quantity <= $line->quantity) {
+            $candidates[] = $start + $attempt * $case;
+        }
+        // Layer mode: the stack is full before 100 % of its height when the height is not a
+        // multiple of the layer height; try whole layers from the current quantity first.
+        $candidates = [...$this->layerCandidates($result, $line), ...$candidates];
+        $tried = [];
+        foreach ($candidates as $quantity) {
+            if ($quantity <= $line->quantity || isset($tried[$quantity])) {
                 continue;
             }
+            $tried[$quantity] = true;
             $lines = array_map(static fn (PlanLine $other): PlanLine => $other->key === $line->key ? $other->withQuantity($quantity) : $other, $result->lines);
             $plan = $this->planner->plan($result->container, $lines);
             if ([] === $this->evaluator->evaluate($rule, $plan)) {
@@ -109,6 +117,34 @@ final class SuggestionFinder
         }
 
         return null;
+    }
+
+    /**
+     * Layer mode: quantities completing the partial layer of the line, then adding whole layers
+     * (as many as a container can hold, twice), rounded up to whole cases.
+     *
+     * @return list<int>
+     */
+    private function layerCandidates(FillResult $result, PlanLine $line): array
+    {
+        if (!$result->layerMode || !$line->hasLayerData()) {
+            return [];
+        }
+        $perLayer = (int) $line->unitsPerLayer;
+        $spec = $result->container;
+        $layers = $spec->maxLayers ?? \PHP_INT_MAX;
+        if (null !== $spec->maxStackHeight && $spec->maxStackHeight > 0) {
+            $layers = min($layers, intdiv($spec->maxStackHeight, max(1, (int) $line->layerHeight)));
+        }
+        $layers = max(1, min($layers, 100));
+        $case = $line->unitsPerCase;
+        $base = (int) ceil($line->quantity / $perLayer) * $perLayer;
+        $candidates = [];
+        for ($index = 0; $index <= 2 * $layers; ++$index) {
+            $candidates[] = (int) (ceil(($base + $index * $perLayer) / $case) * $case);
+        }
+
+        return $candidates;
     }
 
     /** Units of the line that bring the target container to the required fill in its first saturated dimension. */
