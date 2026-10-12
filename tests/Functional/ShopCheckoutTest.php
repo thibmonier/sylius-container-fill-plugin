@@ -207,7 +207,11 @@ final class ShopCheckoutTest extends WebTestCase
         self::assertStringContainsString('Room for 3 more layers of Product WATER', $stack->filter('[data-test-tmonier-container-fill-remaining-layers]')->text());
         self::assertCount(5, $stack->filter('svg rect[fill="#206bc4"]'));
         // Stacked from the bottom: one layer per height.
-        self::assertSame(['81', '69', '58', '46', '35'], array_map(static fn (string $y): string => (string) round((float) $y), $stack->filter('svg rect[fill="#206bc4"]')->each(static fn ($rect): string => (string) $rect->attr('y'))));
+        $ys = [];
+        foreach ($stack->filter('svg rect[fill="#206bc4"]') as $node) {
+            $ys[] = $node instanceof \DOMElement ? (string) round((float) $node->getAttribute('y')) : '';
+        }
+        self::assertSame(['81', '69', '58', '46', '35'], $ys);
         self::assertStringContainsString('limited by stack height', $crawler->filter('[data-test-tmonier-container-fill-container="1"]')->text());
         // Rounding up to the layer: 300 is 5 full layers, nothing to round.
         self::assertCount(0, $crawler->filter('[data-test-tmonier-container-fill-round-layer]'));
