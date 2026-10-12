@@ -91,18 +91,32 @@ final class CartFillChecker implements CartFillCheckerInterface, ResetInterface
             }
         }
 
-        $outcomes = [];
-        foreach ($this->applicableRules(EntityId::int($channel->getId()), $channel, $group?->getCode()) as $rule) {
-            $inScope = [];
-            foreach ($lines as $key => $line) {
-                if (isset($logistics[$key]) && $this->scopeMatcher->matches($rule, $line['product'])) {
-                    $inScope[$key] = $line['quantity'];
-                }
-            }
-            if ([] === $inScope) {
+        // Each line is planned once, by the most specific rule matching it (see ScopeMatcher::precedence()).
+        $rules = $this->applicableRules(EntityId::int($channel->getId()), $channel, $group?->getCode());
+        $inScope = [];
+        foreach ($lines as $key => $line) {
+            if (!isset($logistics[$key])) {
                 continue;
             }
-            $outcome = $this->evaluateRule($rule, $inScope, $logistics);
+            $winner = null;
+            foreach ($rules as $index => $rule) {
+                if ($this->scopeMatcher->matches($rule, $line['product']) &&
+                    (null === $winner || $this->scopeMatcher->precedence($rule) > $this->scopeMatcher->precedence($rules[$winner]))
+                ) {
+                    $winner = $index;
+                }
+            }
+            if (null !== $winner) {
+                $inScope[$winner][$key] = $line['quantity'];
+            }
+        }
+
+        $outcomes = [];
+        foreach ($rules as $index => $rule) {
+            if (!isset($inScope[$index])) {
+                continue;
+            }
+            $outcome = $this->evaluateRule($rule, $inScope[$index], $logistics);
             if (null !== $outcome) {
                 $outcomes[] = $outcome;
             }

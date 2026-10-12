@@ -86,7 +86,11 @@ constraint (exact units only when places bind).
 
 Per channel, the enabled rules whose scope matches at least one cart line apply to the lines in
 their scope. A rule of the customer's group **replaces** the rules without group of the same
-scope (same taxon / product / all). For each rule, the allowed types are tried in order: the
+scope (same taxon / product / all). **Each line is planned by one rule only**, the most
+specific one matching it: product scope, then taxon scope (deepest taxon first), then all
+products; at equal scope the customer group rule; then the oldest rule. Lines of different
+rules are planned in separate containers (a line is never counted twice, e.g. by the per
+container shipping calculator). For each rule, the allowed types are tried in order: the
 first type meeting the rule is retained, else the first type with complete data (its
 violations and suggestion are shown).
 

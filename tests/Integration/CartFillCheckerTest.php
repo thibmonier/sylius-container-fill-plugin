@@ -124,6 +124,31 @@ final class CartFillCheckerTest extends KernelTestCase
         self::assertCount(1, $report->outcomes);
     }
 
+    public function testEachLineIsPlannedOnceByTheMostSpecificRule(): void
+    {
+        $pallet = $this->catalog->pallet();
+        $parent = $this->catalog->taxon('GOODS');
+        $child = $this->catalog->taxon('DRINKS', $parent);
+        $general = $this->catalog->rule([$pallet], ContainerRuleInterface::MODE_MIN_FILL_PERCENT, 10);
+        $parentRule = $this->catalog->rule([$pallet], ContainerRuleInterface::MODE_MIN_FILL_PERCENT, 20, $parent);
+        $childRule = $this->catalog->rule([$pallet], ContainerRuleInterface::MODE_FULL_ONLY, null, $child);
+        $drink = $this->catalog->variant('DRINK', [[$pallet, 40, null]], 1000, 1, false, false, $child);
+        $other = $this->catalog->variant('OTHER', [[$pallet, 40, null]], 1000);
+
+        $report = $this->checker()->check($this->catalog->cart([[$drink, 40], [$other, 10]]));
+
+        self::assertCount(2, $report->outcomes);
+        $byRule = [];
+        foreach ($report->outcomes as $outcome) {
+            $byRule[$outcome->rule->id] = array_keys($outcome->result->containers[0]->units);
+        }
+        self::assertEqualsCanonicalizing([$childRule->getId(), $general->getId()], array_keys($byRule));
+        self::assertSame([(string) $drink->getCode()], $byRule[$childRule->getId()]);
+        self::assertSame([(string) $other->getCode()], $byRule[$general->getId()]);
+        self::assertArrayNotHasKey((int) $parentRule->getId(), $byRule);
+        self::assertTrue($report->isSatisfied());
+    }
+
     public function testCaseMultipleLines(): void
     {
         $pallet = $this->catalog->pallet();

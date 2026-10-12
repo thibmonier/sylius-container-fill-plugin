@@ -22,6 +22,22 @@ final class ScopeMatcher
         };
     }
 
+    /**
+     * Rank of a rule for a line matched by several rules: product scope, then taxon scope (the
+     * deepest taxon first), then all products; at equal scope a customer group rule wins. Ties
+     * keep the oldest rule.
+     */
+    public function precedence(ContainerRuleInterface $rule): int
+    {
+        $rank = match ($rule->getScope()) {
+            ContainerRuleInterface::SCOPE_PRODUCT => 1000000,
+            ContainerRuleInterface::SCOPE_TAXON => 1000 + min(998, (int) $rule->getTaxon()?->getLevel()),
+            default => 0,
+        };
+
+        return $rank * 2 + (null !== $rule->getCustomerGroup() ? 1 : 0);
+    }
+
     /** Scope identity: a rule of the customer's group replaces the rules without group of the same key. */
     public function scopeKey(ContainerRuleInterface $rule): string
     {

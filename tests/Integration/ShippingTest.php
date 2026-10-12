@@ -47,6 +47,19 @@ final class ShippingTest extends KernelTestCase
         self::assertSame(4500, $calculator->calculate($this->shipment($this->catalog->cart([[$this->catalog->plainVariant('B'), 3]])), $configuration));
     }
 
+    public function testOverlappingRulesDoNotCountAContainerTwice(): void
+    {
+        $pallet = $this->catalog->pallet();
+        $taxon = $this->catalog->taxon('PALLETS');
+        $this->catalog->rule([$pallet], ContainerRuleInterface::MODE_MIN_FILL_PERCENT, 10);
+        $this->catalog->rule([$pallet], ContainerRuleInterface::MODE_FULL_ONLY, null, $taxon);
+        $variant = $this->catalog->variant('A', [[$pallet, 40, null]], taxon: $taxon);
+
+        $amount = $this->calculator()->calculate($this->shipment($this->catalog->cart([[$variant, 40]])), [(string) $this->catalog->channel()->getCode() => ['amount' => 4500]]);
+
+        self::assertSame(4500, $amount);
+    }
+
     public function testAChannelWithoutAmountIsAConfigurationError(): void
     {
         $this->expectException(\Sylius\Component\Core\Exception\MissingChannelConfigurationException::class);

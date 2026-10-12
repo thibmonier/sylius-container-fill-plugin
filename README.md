@@ -173,7 +173,10 @@ rule is not met and the gauge names the product. The plugin never assumes missin
 | Mode | `full_only`; `min_fill_percent` (threshold 1-100); `multiple_of` (threshold, or the case of each line when empty); `max_containers` (threshold) |
 
 Overloaded containers and incomplete data fail every mode. Rules apply to the lines in their
-scope; carts without lines in the scope of a rule show no gauge.
+scope; carts without lines in the scope of a rule show no gauge. When several rules match a
+line, only the most specific one plans it: product, then taxon (deepest first), then all
+products; at equal scope the customer group rule, then the oldest. Lines of different rules
+are planned in separate containers.
 
 ### Shipping
 
