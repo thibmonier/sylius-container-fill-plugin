@@ -1,0 +1,8 @@
+{# Simple products: the variant form is embedded as "variant" in the product form. #}
+{% set form = hookable_metadata.context.form %}
+
+{% if form.variant.tmonierContainerFill is defined %}
+    <div class="tab-pane" id="product-tmonier-container-fill" role="tabpanel" tabindex="0" {{ sylius_test_html_attribute('tmonier-container-fill-tab') }}>
+        {% include '@TmonierSyliusContainerFillPlugin/admin/logistics/_fields.html.twig' with { logistics: form.variant.tmonierContainerFill } only %}
+    </div>
+{% endif %}

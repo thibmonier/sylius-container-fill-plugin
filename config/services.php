@@ -208,6 +208,9 @@ return static function (ContainerConfigurator $container): void {
         ])
         ->tag('kernel.event_listener', ['event' => 'sylius.product_variant.pre_create', 'method' => 'onPreSave'])
         ->tag('kernel.event_listener', ['event' => 'sylius.product_variant.pre_update', 'method' => 'onPreSave'])
+        // Simple products: the variant form is embedded in the product form.
+        ->tag('kernel.event_listener', ['event' => 'sylius.product.pre_create', 'method' => 'onPreSave'])
+        ->tag('kernel.event_listener', ['event' => 'sylius.product.pre_update', 'method' => 'onPreSave'])
         ->tag('kernel.reset', ['method' => 'reset'])
         ->public();
 

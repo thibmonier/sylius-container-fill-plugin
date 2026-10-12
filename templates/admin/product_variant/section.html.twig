@@ -2,51 +2,6 @@
 
 <div class="tab-pane" id="product-variant-tmonier-container-fill" role="tabpanel" tabindex="0" {{ sylius_test_html_attribute('tmonier-container-fill-tab') }}>
     {% if form.tmonierContainerFill is defined %}
-        {% set logistics = form.tmonierContainerFill %}
-        <div class="card mb-3">
-            <div class="card-header">
-                <h2 class="card-title">{{ 'tmonier_container_fill.ui.logistics'|trans }}</h2>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-12 col-md-6">{{ form_row(logistics.unitsPerCase) }}</div>
-                    <div class="col-12 col-md-6">{{ form_row(logistics.caseWeight) }}</div>
-                </div>
-                {{ form_row(logistics.caseMultipleRequired) }}
-                {{ form_row(logistics.ownPallet) }}
-                {{ form_row(logistics.stackable) }}
-                <p class="text-secondary small">{{ 'tmonier_container_fill.form.fallback_help'|trans }}</p>
-            </div>
-        </div>
-        <div class="card mb-3">
-            <div class="card-header">
-                <h2 class="card-title">{{ 'tmonier_container_fill.ui.capacities'|trans }}</h2>
-            </div>
-            {% if logistics.capacities|length == 0 %}
-                <div class="card-body text-secondary">{{ 'tmonier_container_fill.ui.no_container_types'|trans }}</div>
-            {% else %}
-                <div class="table-responsive">
-                    <table class="table card-table table-vcenter">
-                        <thead>
-                            <tr>
-                                <th>{{ 'tmonier_container_fill.ui.container_type'|trans }}</th>
-                                <th>{{ 'tmonier_container_fill.form.capacity'|trans }}</th>
-                                <th>{{ 'tmonier_container_fill.form.units_per_layer'|trans }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for row in logistics.capacities %}
-                                <tr {{ sylius_test_html_attribute('tmonier-container-fill-capacity', row.vars.name) }}>
-                                    <td>{{ row.vars.label }}</td>
-                                    <td>{{ form_widget(row.quantity, {attr: {'aria-label': row.vars.label ~ ' – ' ~ 'tmonier_container_fill.form.capacity'|trans}}) }}{{ form_errors(row.quantity) }}</td>
-                                    <td>{{ form_widget(row.unitsPerLayer, {attr: {'aria-label': row.vars.label ~ ' – ' ~ 'tmonier_container_fill.form.units_per_layer'|trans}}) }}{{ form_errors(row.unitsPerLayer) }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-footer text-secondary small">{{ 'tmonier_container_fill.form.capacity_help'|trans }}</div>
-            {% endif %}
-        </div>
+        {% include '@TmonierSyliusContainerFillPlugin/admin/logistics/_fields.html.twig' with { logistics: form.tmonierContainerFill } only %}
     {% endif %}
 </div>

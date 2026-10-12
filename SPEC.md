@@ -153,8 +153,9 @@ on any flush of a container type, rule, logistics, capacity or variant). No orde
   `caseMultipleRequired` get minimum = multiple = units per case. The gauge is registered under
   the quick order matrix hook `tmonier_quick_order.shop.product.matrix` (1.1+, harmless before).
 - **Admin**: CRUD container types and rules (Configuration menu), Logistics tab on the variant
-  form (unmapped field, written in the plugin tables on `sylius.product_variant.pre_create` /
-  `pre_update`), load plan card on the order page.
+  form and on the product form of simple products (unmapped field of the variant form, written
+  in the plugin tables on `sylius.product_variant.pre_create` / `pre_update` or
+  `sylius.product.pre_create` / `pre_update`), load plan card on the order page.
 - **CSV**: `tmonier:container-fill:import-capacities` / `export-capacities`
   (`variant_code;container_type;capacity;units_per_layer;units_per_case;case_weight_kg`), dry
   run, **all or nothing** (decision: a rejected line leaves the data unchanged).

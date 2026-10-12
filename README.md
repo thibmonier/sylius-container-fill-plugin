@@ -23,7 +23,7 @@ admin.
 | Need | What the plugin does |
 |---|---|
 | Describe the containers | **Container types**: pallet, truck, sea container, carton; inner dimensions, load height, **payload (mandatory)**, places (33 EUR pallets in a semi), nested type. Indicative presets: EUR / half / UK / US pallets, standard and mega semi-trailers, US 53 ft, 20 ft / 40 ft / 40 ft HC containers, cartons. |
-| Describe the products | **Logistics tab** on the variant form: units per case, case weight, own pallet, "sold by whole cases"; units filling each container type and units per layer. Falls back on the Sylius weight and dimensions (units set in the configuration). |
+| Describe the products | **Logistics tab** on the variant form and on the product form of simple products: units per case, case weight, own pallet, "sold by whole cases"; units filling each container type and units per layer. Falls back on the Sylius weight and dimensions (units set in the configuration). |
 | Know how full the order is | **Load planner**: fill = max(places, payload), the **binding constraint** is shown ("limited by the weight"), the volume is an indicator when every dimension is known (never blocking); lines split into N containers (first-fit decreasing), products on their own pallet kept apart. |
 | Commercial rules | **Rules** per channel, scope (all, taxon with its children, product) and optional customer group: **full containers only**, **minimum fill %**, **multiple of N** (or of the case), **maximum containers**, on a list of allowed container types. |
 | Help the buyer | **Gauge in the cart** (server-side SVG truck places and pallet stack, accessible meter, text next to every colour, reduced motion), "add 30 cases to complete pallet 2" and "round up to the layer" buttons, checkout button disabled with the reason. Indicative **preview on product pages**. |
@@ -150,7 +150,7 @@ The presets are indicative figures from public sources (see `SPEC.md`): check th
 carriers and pallet networks (load heights from 1.8 to 2.2 m, payloads from 1000 to 1500 kg per
 EUR pallet).
 
-### Logistics data (variant form, Logistics tab)
+### Logistics data (Logistics tab of the variant form, or of the product form for simple products)
 
 | Field | Notes |
 |---|---|
@@ -222,6 +222,7 @@ ratios, binding constraint, units per product), violations and suggestion, line 
 | `sylius_shop.product.show.content.info.summary.add_to_cart` | `tmonier_container_fill_preview` |
 | `tmonier_quick_order.shop.product.matrix` | `tmonier_container_fill_gauge` (quick order 1.1+) |
 | `sylius_admin.product_variant.{create,update}.content.form.*` | Logistics tab |
+| `sylius_admin.product.{create,update}.content.form.*` | Logistics tab of simple products |
 | `sylius_admin.order.show.content.sections#left` | load plan card |
 
 The gauge is the Live component `tmonier_container_fill:gauge`: it listens to

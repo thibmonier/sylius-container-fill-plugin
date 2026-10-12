@@ -76,7 +76,9 @@ derives from them; rule "full pallets or a full truck" on that taxon in every ch
   `tmonier_container_fill_admin.container_type` / `.container_rule`), grids `config/grids`,
   forms `src/Form`, variant Logistics tab = unmapped field added by
   `Form/Type/Extension/ProductVariantTypeExtension`, written by
-  `Form/Logistics/VariantLogisticsManager` on `sylius.product_variant.pre_create/pre_update`.
+  `Form/Logistics/VariantLogisticsManager` on `sylius.product_variant.pre_create/pre_update`
+  (and `sylius.product.*` for simple products, tab in `templates/admin/product`, fields in
+  `templates/admin/logistics/_fields.html.twig`).
 - Quick order bridge: `DependencyInjection/Compiler/QuickOrderBridgePass` decorates
   `tmonier_quick_order.quantity_constraint_provider` only when quick order is installed.
 - CSV: `Csv/CapacityCsvImporter` (all or nothing) / `CapacityCsvExporter`, commands in `src/Command`.

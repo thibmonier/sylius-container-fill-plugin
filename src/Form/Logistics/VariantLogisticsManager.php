@@ -6,6 +6,7 @@ namespace Tmonier\SyliusContainerFillPlugin\Form\Logistics;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Bundle\ResourceBundle\Event\ResourceControllerEvent;
+use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 use Sylius\Resource\Factory\FactoryInterface;
 use Tmonier\SyliusContainerFillPlugin\Entity\ProductVariantLogisticsInterface;
@@ -17,7 +18,8 @@ use Tmonier\SyliusContainerFillPlugin\Repository\VariantContainerCapacityReposit
 /**
  * Loads the logistics tab data and writes it back. The variant form is a live component that
  * submits on every change: submitted data is only staged, and written on the resource
- * controller events "sylius.product_variant.pre_create" / "pre_update" (then flushed with the
+ * controller events "sylius.product_variant.pre_create" / "pre_update", or "sylius.product.*"
+ * for simple products whose variant form is embedded (then flushed with the
  * variant).
  */
 final class VariantLogisticsManager
@@ -73,10 +75,13 @@ final class VariantLogisticsManager
 
     public function onPreSave(ResourceControllerEvent $event): void
     {
-        $variant = $event->getSubject();
-        if ($variant instanceof ProductVariantInterface && isset($this->staged[$variant])) {
-            $this->write($variant, $this->staged[$variant]);
-            unset($this->staged[$variant]);
+        $subject = $event->getSubject();
+        $variants = $subject instanceof ProductInterface ? $subject->getVariants()->toArray() : [$subject];
+        foreach ($variants as $variant) {
+            if ($variant instanceof ProductVariantInterface && isset($this->staged[$variant])) {
+                $this->write($variant, $this->staged[$variant]);
+                unset($this->staged[$variant]);
+            }
         }
     }
 

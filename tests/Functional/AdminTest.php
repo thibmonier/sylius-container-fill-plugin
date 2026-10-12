@@ -192,6 +192,43 @@ final class AdminTest extends WebTestCase
         self::assertNull($this->entityManager()->getRepository(VariantContainerCapacityInterface::class)->findOneBy(['variant' => $variant->getId(), 'containerType' => $pallet->getId()]));
     }
 
+    public function testTheLogisticsTabOfASimpleProduct(): void
+    {
+        $pallet = $this->catalog->pallet();
+        $variant = $this->catalog->plainVariant('SIMPLE');
+        $product = $variant->getProduct();
+        self::assertNotNull($product);
+        $this->loginAdmin();
+        $url = sprintf('/admin/products/%d/edit', EntityId::int($product->getId()));
+
+        $crawler = $this->client->request('GET', $url);
+        self::assertResponseIsSuccessful();
+        self::assertCount(1, $crawler->filter('[data-test-tmonier-container-fill-tab]'));
+        self::assertCount(1, $crawler->filter('[data-test-side-navigation-tab="tmonier-container-fill"]'));
+
+        $values = $crawler->selectButton('Update')->form()->getPhpValues();
+        $formName = array_key_first(array_filter($values, static fn (mixed $value): bool => \is_array($value) && \is_array($value['variant'] ?? null)));
+        self::assertIsString($formName);
+        self::assertIsArray($values[$formName]);
+        self::assertIsArray($values[$formName]['variant']);
+        $values[$formName]['variant']['tmonierContainerFill'] = [
+            'unitsPerCase' => '4',
+            'caseWeight' => '20',
+            'caseMultipleRequired' => '1',
+            'capacities' => [sprintf('t%d', EntityId::int($pallet->getId())) => ['quantity' => '60', 'unitsPerLayer' => '']],
+        ];
+        $this->client->request('POST', $url, $values);
+        self::assertResponseRedirects();
+
+        $this->entityManager()->clear();
+        $logistics = $this->entityManager()->getRepository(ProductVariantLogisticsInterface::class)->findOneBy(['variant' => $variant->getId()]);
+        self::assertInstanceOf(ProductVariantLogisticsInterface::class, $logistics);
+        self::assertSame([4, 20000, true], [$logistics->getUnitsPerCase(), $logistics->getCaseWeight(), $logistics->isCaseMultipleRequired()]);
+        $capacity = $this->entityManager()->getRepository(VariantContainerCapacityInterface::class)->findOneBy(['variant' => $variant->getId(), 'containerType' => $pallet->getId()]);
+        self::assertInstanceOf(VariantContainerCapacityInterface::class, $capacity);
+        self::assertSame(60, $capacity->getQuantity());
+    }
+
     public function testTheOrderPageShowsTheRecordedLoadPlan(): void
     {
         $pallet = $this->catalog->pallet();
