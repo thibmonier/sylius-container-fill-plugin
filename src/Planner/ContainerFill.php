@@ -21,10 +21,19 @@ final class ContainerFill
     ) {
     }
 
-    /** Fill of the container: the highest of places, weight and volume (when known). */
+    /**
+     * Fill of the container: the highest of places and weight. The volume (when known) is an
+     * indicator only, never the blocking criterion (core dimensions are often rough).
+     */
     public function ratio(): float
     {
-        return max($this->slotRatio, $this->weightRatio, $this->volumeRatio ?? 0.0);
+        return max($this->slotRatio, $this->weightRatio);
+    }
+
+    /** The goods may not fit by volume (indicator, does not block). */
+    public function volumeExceeded(): bool
+    {
+        return null !== $this->volumeRatio && $this->volumeRatio > 1 + 1e-6;
     }
 
     public function percent(): int
@@ -38,11 +47,8 @@ final class ContainerFill
         if ($this->slotRatio >= $ratio - self::EPSILON) {
             return BindingConstraint::Slots;
         }
-        if ($this->weightRatio >= $ratio - self::EPSILON) {
-            return BindingConstraint::Weight;
-        }
 
-        return BindingConstraint::Volume;
+        return BindingConstraint::Weight;
     }
 
     public function isOverloaded(): bool

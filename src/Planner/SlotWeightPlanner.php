@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Tmonier\SyliusContainerFillPlugin\Planner;
 
 /**
- * Default planner: capacity units ("40 cases fill one EUR pallet"), a mandatory payload cap and
- * the volume as a third dimension when every line and the container have dimensions.
+ * Default planner: capacity units ("40 cases fill one EUR pallet") and a mandatory payload cap.
+ * The volume is computed as an indicator when every line and the container have dimensions; it
+ * never splits, fills or blocks a container (memo section 2: core dimensions are often rough).
  *
  * Lines are split into containers by first-fit decreasing on whole cases (a partial last case
  * is one smaller item). "Own pallet" lines never share a container (single-place containers)
@@ -159,7 +160,8 @@ final class SlotWeightPlanner implements LoadPlannerInterface
     /** @param array{float, float, float} $dims */
     private function size(array $dims): float
     {
-        return max($dims);
+        // The volume is informative only (memo section 2): it never splits nor fills a container.
+        return max($dims[0], $dims[1]);
     }
 
     /**
@@ -169,7 +171,8 @@ final class SlotWeightPlanner implements LoadPlannerInterface
     private function fitCount(array $bin, array $dims): int
     {
         $fit = \PHP_INT_MAX;
-        foreach ([$bin['slot'], $bin['weight'], $bin['volume']] as $dimension => $used) {
+        // Places and payload only: the volume is reported, never binding.
+        foreach ([$bin['slot'], $bin['weight']] as $dimension => $used) {
             if ($dims[$dimension] <= 0.0) {
                 continue;
             }
@@ -206,7 +209,7 @@ final class SlotWeightPlanner implements LoadPlannerInterface
      */
     private function isFull(array $bin, array $lines, ContainerSpec $container, bool $volumeAvailable): bool
     {
-        if (max($bin['slot'], $bin['weight'], $volumeAvailable ? $bin['volume'] : 0.0) >= 1.0 - 1e-6) {
+        if (max($bin['slot'], $bin['weight']) >= 1.0 - 1e-6) {
             return true;
         }
         foreach ($lines as $line) {

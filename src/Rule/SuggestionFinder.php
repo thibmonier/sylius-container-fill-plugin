@@ -118,9 +118,6 @@ final class SuggestionFinder
             [$target->slotRatio, $line->slotShare()],
             [$target->weightRatio, (float) $line->unitWeight / $result->container->maxPayload],
         ];
-        if (null !== $target->volumeRatio && null !== $result->container->usableVolume && null !== $line->unitVolume) {
-            $perUnit[] = [$target->volumeRatio, $line->unitVolume / $result->container->usableVolume];
-        }
 
         $estimate = \PHP_INT_MAX;
         foreach ($perUnit as [$used, $share]) {

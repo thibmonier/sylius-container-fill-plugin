@@ -62,6 +62,9 @@
                                     </svg>
                                     <div class="small text-body-secondary">{{ 'tmonier_container_fill.ui.places_used'|trans({'%used%': used|round(1), '%slots%': slots}) }}</div>
                                 {% endif %}
+                                {% if container.volumeExceeded %}
+                                    <div class="small text-body-secondary" {{ sylius_test_html_attribute('tmonier-container-fill-volume-warning', container.index) }}>{{ ux_icon('tabler:info-circle', {'class': 'icon', 'aria-hidden': 'true'}) }} {{ 'tmonier_container_fill.ui.volume_warning'|trans({'%volume%': (container.volumeRatio * 100)|round}) }}</div>
+                                {% endif %}
                             </div>
                         {% endfor %}
 

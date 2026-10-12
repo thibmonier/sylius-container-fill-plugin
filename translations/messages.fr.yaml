@@ -35,6 +35,7 @@ tmonier_container_fill:
         case_multiple_required: 'cartons complets uniquement'
         preview_row: '%quantity% = %percent% % d’un(e) %type% (%capacity% pour le remplir)'
         preview_help: 'Votre panier combine tous les produits : il affiche le plan exact.'
+        volume_warning: 'D’après les dimensions des produits, la marchandise pourrait dépasser le volume de ce contenant (%volume% %) : nous le vérifierons.'
     form:
         kind: 'Nature'
         inner_length: 'Longueur intérieure'

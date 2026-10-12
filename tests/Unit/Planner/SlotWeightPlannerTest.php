@@ -142,11 +142,28 @@ final class SlotWeightPlannerTest extends TestCase
         $result = $this->planner->plan($pallet, [$withVolume]);
         self::assertTrue($result->volumeAvailable);
         self::assertEqualsWithDelta(0.5, $result->containers[0]->volumeRatio, 1e-9);
-        self::assertSame(BindingConstraint::Volume, $result->containers[0]->binding());
+        // Informative only: the fill and the binding constraint come from places and weight.
+        self::assertSame(25, $result->containers[0]->percent());
+        self::assertSame(BindingConstraint::Slots, $result->containers[0]->binding());
 
         $result = $this->planner->plan($pallet, [$withVolume, new PlanLine('B', 'B', 1, 40, 1000.0)]);
         self::assertFalse($result->volumeAvailable);
         self::assertNull($result->containers[0]->volumeRatio);
+    }
+
+    public function testTheVolumeNeverSplitsNorBlocks(): void
+    {
+        // Declared capacity 40 per pallet, rough core dimensions giving 20 per pallet volume.
+        $result = $this->planner->plan(PlannerFixtures::pallet(1000, 1000.0), [new PlanLine('A', 'A', 40, 40, 1000.0, 50.0)]);
+
+        self::assertSame(1, $result->containerCount());
+        $container = $result->containers[0];
+        self::assertTrue($container->full);
+        self::assertSame(100, $container->percent());
+        self::assertFalse($container->isOverloaded());
+        self::assertTrue($container->volumeExceeded());
+        self::assertSame(BindingConstraint::Slots, $container->binding());
+        self::assertSame([], (new \Tmonier\SyliusContainerFillPlugin\Rule\RuleEvaluator())->evaluate(new \Tmonier\SyliusContainerFillPlugin\Rule\RuleSpec(\Tmonier\SyliusContainerFillPlugin\Entity\ContainerRuleInterface::MODE_MAX_CONTAINERS, 1), $result));
     }
 
     public function testAnItemHeavierThanTheContainerIsPlacedAloneAndOverloaded(): void

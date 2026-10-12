@@ -10,7 +10,7 @@ Wholesalers of drinks, building materials, packaging or food often sell by the p
 truckload: a mixed pallet must be complete, a truck must be worth the trip, a product ships by
 whole cases. Sylius 2 has no minimum, step or multiple of quantity, and no notion of container.
 Checkout blocking on a total weight exists on other platforms, but nobody combines B2B
-container types, a binding constraint over places, payload and volume, the split into several
+container types, a binding constraint over places and payload, the split into several
 containers and an accessible gauge.
 
 This plugin adds container types (pallets, trucks, sea containers, cartons), logistics data per
@@ -24,7 +24,7 @@ admin.
 |---|---|
 | Describe the containers | **Container types**: pallet, truck, sea container, carton; inner dimensions, load height, **payload (mandatory)**, places (33 EUR pallets in a semi), nested type. Indicative presets: EUR / half / UK / US pallets, standard and mega semi-trailers, US 53 ft, 20 ft / 40 ft / 40 ft HC containers, cartons. |
 | Describe the products | **Logistics tab** on the variant form: units per case, case weight, own pallet, "sold by whole cases"; units filling each container type and units per layer. Falls back on the Sylius weight and dimensions (units set in the configuration). |
-| Know how full the order is | **Load planner**: fill = max(places, payload, volume when every dimension is known), the **binding constraint** is shown ("limited by the weight"); lines split into N containers (first-fit decreasing), products on their own pallet kept apart. |
+| Know how full the order is | **Load planner**: fill = max(places, payload), the **binding constraint** is shown ("limited by the weight"), the volume is an indicator when every dimension is known (never blocking); lines split into N containers (first-fit decreasing), products on their own pallet kept apart. |
 | Commercial rules | **Rules** per channel, scope (all, taxon with its children, product) and optional customer group: **full containers only**, **minimum fill %**, **multiple of N** (or of the case), **maximum containers**, on a list of allowed container types. |
 | Help the buyer | **Gauge in the cart** (server-side SVG truck places and pallet stack, accessible meter, text next to every colour, reduced motion), "add 30 cases to complete pallet 2" and "round up to the layer" buttons, checkout button disabled with the reason. Indicative **preview on product pages**. |
 | Enforce the rules | Checkout entry redirected to the cart, **checkout completion refused in the shop and the shop API (422)**, workflow guard as defence in depth. Partial carts always save; placed orders stay valid when rules change. |
@@ -143,7 +143,7 @@ plan of the order.
 | Maximum payload | **required**, in kg: the payload cap applies to every container |
 | Places | 1 for a pallet or a carton; 33 for a standard semi-trailer (EUR pallets) |
 | Places hold | the single-place type filling the places: a truck of 33 EUR pallet places derives the capacity of a product from its EUR pallet capacity |
-| Inner dimensions, load height, volume efficiency | optional; the volume is a third dimension only when the container and every product have dimensions |
+| Inner dimensions, load height, volume efficiency | optional; when the container and every product have dimensions, the volume is shown as an indicator ("may exceed the volume"): it never splits nor blocks, the capacities you enter decide |
 | Indicative | shown as "indicative" to buyers; untick once checked with your carrier |
 
 The presets are indicative figures from public sources (see `SPEC.md`): check them with your

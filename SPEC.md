@@ -29,7 +29,7 @@ Functional specification and design decisions. Public documentation: `README.md`
 |---|---|
 | (a) Capacity units / places ("40 cases fill one EUR pallet", a semi has 33 places) | **Yes, primary**: exact for the commercial rule, explainable ("add 7 cases"), O(n) |
 | Payload cap | **Yes, mandatory in v1**: 33 pallets for 24 t is ~727 kg per pallet, drinks or building materials reach 800-1000 kg: a places-only truck gauge would show 100 % for an illegal load |
-| (b) Volume x efficiency | Secondary dimension, only when the container and every line have dimensions; never the only blocking criterion |
+| (b) Volume x efficiency | Indicator only, when the container and every line have dimensions: reported (ratio, "may exceed the volume" note), never used to split, fill or block (core dimensions are often rough; the declared capacity is the commercial truth) |
 | (c) 3D bin packing (`dvdoug/boxpacker`) | No (v2, carton mode only, optional bridge) |
 | (d) Layers | Partial: units per layer stored per capacity, "round up to the layer" action; full layer mode (stack height, side view) in v1.1 |
 
@@ -69,8 +69,9 @@ logistics data" names the products). Missing data never passes silently.
 `LoadPlannerInterface::plan(ContainerSpec, list<PlanLine>): FillResult`; default
 `SlotWeightPlanner` (pure, unit tested on reference fixtures):
 
-- Fill of a container = max(places ratio, payload ratio, volume ratio when available); the
-  **binding constraint** (`slots` | `weight` | `volume`) is exposed.
+- Fill of a container = max(places ratio, payload ratio); the **binding constraint** (`slots` |
+  `weight`) is exposed. The volume ratio is computed when available and reported only
+  (`ContainerFill::volumeExceeded()` shows a note in the gauge).
 - Split into N containers by first-fit decreasing on whole cases (a partial last case is one
   smaller item); `ownPallet` lines never share a single-place container and take whole places
   in multi-place ones.
