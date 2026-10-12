@@ -23,6 +23,12 @@
             <span class="text-success">{{ rule.rule.name }} · {{ 'tmonier_container_fill.ui.rule_met'|trans }}</span>
         {% else %}
             <span class="fw-semibold">{{ rule.rule.name }}</span>
+            {% if not rule.planned|default(true) %}
+                <div class="text-secondary" {{ sylius_test_html_attribute('tmonier-container-fill-plan-rule-containers', loop.index0) }}>
+                    {{ 'tmonier_container_fill.ui.rule_containers'|trans({'%count%': rule.containerCount, '%type%': rule.containerType.name}) }}
+                    {% for container in rule.containers %}{{ 'tmonier_container_fill.ui.container_fill'|trans({'%index%': container.index, '%count%': rule.containerCount, '%percent%': container.percent, '%binding%': ('tmonier_container_fill.binding.' ~ container.binding)|trans}) }}{% if not loop.last %} · {% endif %}{% endfor %}
+                </div>
+            {% endif %}
             <ul class="text-danger mb-0">
                 {% for violation in rule.violations %}<li>{% include '@TmonierSyliusContainerFillPlugin/shared/violation.html.twig' %}</li>{% endfor %}
             </ul>

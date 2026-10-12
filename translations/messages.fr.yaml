@@ -35,6 +35,7 @@ tmonier_container_fill:
         case_multiple_required: 'cartons complets uniquement'
         preview_row: '%quantity% = %percent% % d’un(e) %type% (%capacity% pour le remplir)'
         preview_help: 'Votre panier combine tous les produits : il affiche le plan exact.'
+        rule_containers: 'Vérifiée sur tous ses produits ensemble (%count% x %type%) :'
         cart_fill_now: 'Votre panier actuel : %count% x %type%, le dernier rempli à %percent% %.'
         whole_cases_help: 'Vendu par cartons complets de %units%.'
         disabled: 'désactivé'

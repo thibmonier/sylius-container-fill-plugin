@@ -35,6 +35,7 @@ tmonier_container_fill:
         case_multiple_required: 'tylko pełne kartony'
         preview_row: '%quantity% = %percent% % nośnika %type% (%capacity% wypełnia go)'
         preview_help: 'Koszyk łączy wszystkie produkty: pokazuje dokładny plan.'
+        rule_containers: 'Sprawdzana łącznie dla wszystkich jej produktów (%count% x %type%):'
         cart_fill_now: 'Twój koszyk teraz: %count% x %type%, ostatni wypełniony w %percent% %.'
         whole_cases_help: 'Sprzedawane w pełnych kartonach po %units%.'
         disabled: 'wyłączony'

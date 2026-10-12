@@ -149,6 +149,10 @@ final class CartFillCheckerTest extends KernelTestCase
         self::assertSame([(string) $drink->getCode()], $byRule[(int) $childRule->getId()]);
         self::assertSame([(string) $other->getCode()], $byRule[(int) $general->getId()]);
         self::assertArrayNotHasKey((int) $parentRule->getId(), $byRule);
+        // The general rule is checked on both lines: its own containers differ from the plan.
+        $data = $report->toArray();
+        self::assertIsArray($data['rules']);
+        self::assertSame([false, false, true], array_map(static fn (mixed $rule): mixed => \is_array($rule) ? $rule['planned'] : null, $data['rules']));
         self::assertTrue($report->isSatisfied());
     }
 

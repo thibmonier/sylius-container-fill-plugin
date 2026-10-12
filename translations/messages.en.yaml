@@ -35,6 +35,7 @@ tmonier_container_fill:
         case_multiple_required: 'whole cases only'
         preview_row: '%quantity% = %percent% % of a %type% (%capacity% fill one)'
         preview_help: 'Your cart combines all products: it shows the exact plan.'
+        rule_containers: 'Checked on all its products together (%count% x %type%):'
         cart_fill_now: 'Your cart now: %count% x %type%, the last one filled to %percent% %.'
         whole_cases_help: 'Sold by whole cases of %units%.'
         disabled: 'disabled'

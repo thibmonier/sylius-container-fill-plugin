@@ -80,6 +80,13 @@
                             <div class="small text-success">{{ ux_icon('tabler:check', {'class': 'icon', 'aria-hidden': 'true'}) }} {{ outcome.rule.name }} · {{ 'tmonier_container_fill.ui.rule_met'|trans }}</div>
                         {% else %}
                             <div class="small fw-semibold">{{ outcome.rule.name }}</div>
+                            {% if not report.isPlanned(outcome) %}
+                                {# The rule also covers lines planned by a more specific rule: its violations number its own containers. #}
+                                <div class="small text-body-secondary" {{ sylius_test_html_attribute('tmonier-container-fill-rule-containers', loop.index0) }}>
+                                    {{ 'tmonier_container_fill.ui.rule_containers'|trans({'%count%': result.containerCount, '%type%': result.container.name}) }}
+                                    {% for container in result.containers %}{{ 'tmonier_container_fill.ui.container_fill'|trans({'%index%': container.index, '%count%': result.containerCount, '%percent%': container.percent, '%binding%': ('tmonier_container_fill.binding.' ~ container.binding.value)|trans}) }}{% if not loop.last %} · {% endif %}{% endfor %}
+                                </div>
+                            {% endif %}
                         {% if not outcome.satisfied %}
                             <ul class="small text-danger ps-3 mb-2" {{ sylius_test_html_attribute('tmonier-container-fill-violations') }}>
                                 {% for violation in outcome.violations %}

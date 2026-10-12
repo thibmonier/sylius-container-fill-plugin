@@ -35,6 +35,7 @@ tmonier_container_fill:
         case_multiple_required: 'nur ganze Kartons'
         preview_row: '%quantity% = %percent% % eines %type% (%capacity% füllen ihn)'
         preview_help: 'Ihr Warenkorb kombiniert alle Produkte: dort sehen Sie den genauen Plan.'
+        rule_containers: 'Geprüft über alle ihre Produkte zusammen (%count% x %type%):'
         cart_fill_now: 'Ihr Warenkorb jetzt: %count% x %type%, der letzte zu %percent% % gefüllt.'
         whole_cases_help: 'Nur in ganzen Kartons zu %units% erhältlich.'
         disabled: 'deaktiviert'

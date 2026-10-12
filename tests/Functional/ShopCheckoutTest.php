@@ -123,4 +123,27 @@ final class ShopCheckoutTest extends WebTestCase
         self::assertCount(1, $line);
         self::assertStringContainsString('2 x ' . $pallet->getName() . ', the last one filled to 25 %', $line->text());
     }
+
+    public function testACombinedRuleShowsTheContainersItsViolationRefersTo(): void
+    {
+        $pallet = $this->catalog->pallet();
+        $taxon = $this->catalog->taxon('PALLETS');
+        $this->catalog->rule([$pallet], ContainerRuleInterface::MODE_FULL_ONLY, null, $taxon);
+        $this->catalog->rule([$pallet], ContainerRuleInterface::MODE_MIN_FILL_PERCENT, 50);
+        $customer = $this->catalog->customer();
+        $this->catalog->cart([[$this->catalog->variant('A', [[$pallet, 40, null]], taxon: $taxon), 40], [$this->catalog->variant('B', [[$pallet, 40, null]]), 10]], $customer);
+        $this->loginShopUser($customer);
+
+        $crawler = $this->client->request('GET', $this->url('/cart/'));
+
+        self::assertResponseIsSuccessful();
+        // Plan: one pallet per rule; the "all" rule is checked on A + B (2 pallets) and says "container 2".
+        self::assertCount(2, $crawler->filter('[data-test-tmonier-container-fill-plan]'));
+        $rule = $crawler->filter('[data-test-tmonier-container-fill-rule="1"]');
+        self::assertStringContainsString('Container 2 is filled to 25 %', $rule->text());
+        $containers = $rule->filter('[data-test-tmonier-container-fill-rule-containers]');
+        self::assertCount(1, $containers);
+        self::assertStringContainsString('2 of 2: 25 %', $containers->text());
+        self::assertCount(0, $crawler->filter('[data-test-tmonier-container-fill-rule="0"] [data-test-tmonier-container-fill-rule-containers]'));
+    }
 }

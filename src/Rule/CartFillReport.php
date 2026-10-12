@@ -23,6 +23,16 @@ final class CartFillReport
     ) {
     }
 
+    /**
+     * Whether the containers of this rule outcome are the ones of the displayed load plan. When
+     * not (the rule also covers lines planned by a more specific rule), its violations and
+     * suggestion number its own containers: show them next to it.
+     */
+    public function isPlanned(RuleOutcome $outcome): bool
+    {
+        return \in_array($outcome, $this->plan, true);
+    }
+
     /** Physical containers of the load plan (each line counted once). */
     public function containerCount(): int
     {
@@ -87,6 +97,7 @@ final class CartFillReport
                 'containerCount' => $result->containerCount(),
                 'volumeAvailable' => $result->volumeAvailable,
                 'containers' => $containers,
+                'planned' => $this->isPlanned($outcome),
                 'satisfied' => $outcome->isSatisfied(),
                 'violations' => array_map(static fn (Violation $violation): array => ['code' => $violation->code, 'parameters' => $violation->parameters], $outcome->violations),
                 'suggestion' => null === $outcome->suggestion ? null : [
