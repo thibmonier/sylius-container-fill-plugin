@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tmonier\SyliusContainerFillPlugin\Rule;
 
 use Sylius\Component\Core\Model\OrderInterface;
-use Sylius\Component\Core\Model\OrderItemInterface;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 use Symfony\Contracts\Service\ResetInterface;
 use Tmonier\SyliusContainerFillPlugin\Entity\ContainerRuleInterface;
 use Tmonier\SyliusContainerFillPlugin\Entity\ContainerTypeInterface;
+use Tmonier\SyliusContainerFillPlugin\Logistics\EntityId;
 use Tmonier\SyliusContainerFillPlugin\Logistics\VariantLogistics;
 use Tmonier\SyliusContainerFillPlugin\Logistics\VariantLogisticsProviderInterface;
 use Tmonier\SyliusContainerFillPlugin\Planner\ContainerSpec;
@@ -55,15 +55,12 @@ final class CartFillChecker implements CartFillCheckerInterface, ResetInterface
         /** @var array<string, array{variant: ProductVariantInterface, product: ProductInterface, quantity: int}> $lines */
         $lines = [];
         foreach ($order->getItems() as $item) {
-            if (!$item instanceof OrderItemInterface) {
-                continue;
-            }
             $variant = $item->getVariant();
             $product = $variant?->getProduct();
             if (!$variant instanceof ProductVariantInterface || !$product instanceof ProductInterface || $item->getQuantity() < 1) {
                 continue;
             }
-            $key = (string) ($variant->getCode() ?? ('#' . (string) $variant->getId()));
+            $key = (string) ($variant->getCode() ?? ('#' . EntityId::string($variant->getId())));
             $lines[$key] ??= ['variant' => $variant, 'product' => $product, 'quantity' => 0];
             $lines[$key]['quantity'] += $item->getQuantity();
         }
@@ -95,7 +92,7 @@ final class CartFillChecker implements CartFillCheckerInterface, ResetInterface
         }
 
         $outcomes = [];
-        foreach ($this->applicableRules((int) $channel->getId(), $channel, $group?->getCode()) as $rule) {
+        foreach ($this->applicableRules(EntityId::int($channel->getId()), $channel, $group?->getCode()) as $rule) {
             $inScope = [];
             foreach ($lines as $key => $line) {
                 if (isset($logistics[$key]) && $this->scopeMatcher->matches($rule, $line['product'])) {

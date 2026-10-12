@@ -42,8 +42,8 @@ final class CapacityCsvImporter
     {
         $contents = str_replace(["\r\n", "\r"], "\n", preg_replace('/^\xEF\xBB\xBF/', '', $contents) ?? $contents);
         $rows = explode("\n", $contents);
-        $header = array_shift($rows);
-        if (null === $header || '' === trim($header)) {
+        $header = (string) array_shift($rows);
+        if ('' === trim($header)) {
             return new CapacityImportResult(0, 0, [1 => 'The file is empty.'], $dryRun);
         }
         $delimiter = substr_count($header, ';') >= substr_count($header, ',') ? ';' : ',';

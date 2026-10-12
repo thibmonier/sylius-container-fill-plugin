@@ -134,7 +134,7 @@ final class ContainerGaugeComponent
         }
         $this->report = null;
 
-        $session = $this->requestStack->getMainRequest()?->hasSession() ? $this->requestStack->getMainRequest()?->getSession() : null;
+        $session = $this->requestStack->getMainRequest()?->hasSession() ? $this->requestStack->getMainRequest()->getSession() : null;
         if ($session instanceof FlashBagAwareSessionInterface) {
             $session->getFlashBag()->add('success', ['message' => $flash, 'parameters' => ['%product%' => $label, '%quantity%' => $added]]);
         }

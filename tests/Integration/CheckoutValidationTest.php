@@ -43,8 +43,9 @@ final class CheckoutValidationTest extends KernelTestCase
         self::assertCount(0, $this->validator()->validate($cart, null, ['sylius']));
         $violations = $this->validator()->validate($cart, null, ['sylius_checkout_complete']);
         self::assertCount(1, $violations);
-        self::assertSame('not_full', $violations[0]->getCode());
-        self::assertStringContainsString('75', (string) $violations[0]->getMessage());
+        $violation = $violations->get(0);
+        self::assertSame('not_full', $violation->getCode());
+        self::assertStringContainsString('75', (string) $violation->getMessage());
     }
 
     public function testTheApiCompleteCommandIsValidatedToo(): void
@@ -65,8 +66,9 @@ final class CheckoutValidationTest extends KernelTestCase
 
         $violations = $this->validator()->validate($cart->getItems()->first(), null, ['sylius']);
         self::assertCount(1, $violations);
-        self::assertSame('quantity', $violations[0]->getPropertyPath());
-        self::assertStringContainsString('6', (string) $violations[0]->getMessage());
+        $violation = $violations->get(0);
+        self::assertSame('quantity', $violation->getPropertyPath());
+        self::assertStringContainsString('6', (string) $violation->getMessage());
     }
 
     public function testPlacedOrdersAreNotRevalidated(): void
@@ -98,6 +100,8 @@ final class CheckoutValidationTest extends KernelTestCase
         self::assertTrue($snapshot->isSatisfied());
         self::assertNull($snapshot->getOverriddenBy());
         $plan = $snapshot->getPlan();
+        self::assertIsArray($plan['rules'] ?? null);
+        self::assertIsArray($plan['rules'][0] ?? null);
         self::assertSame(1, $plan['rules'][0]['containerCount'] ?? null);
     }
 
@@ -132,7 +136,7 @@ final class CheckoutValidationTest extends KernelTestCase
         $priorities = [];
         foreach ($dispatcher->getListeners(KernelEvents::REQUEST) as $listener) {
             $object = \is_array($listener) ? $listener[0] : $listener;
-            if (\is_object($object)) {
+            if (\is_object($object) && \is_callable($listener)) {
                 $priorities[$object::class] = $dispatcher->getListenerPriority(KernelEvents::REQUEST, $listener);
             }
         }

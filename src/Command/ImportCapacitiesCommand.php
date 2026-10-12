@@ -33,7 +33,8 @@ final class ImportCapacitiesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $file = (string) $input->getArgument('file');
+        $file = $input->getArgument('file');
+        $file = \is_string($file) ? $file : '';
         $contents = is_file($file) && is_readable($file) ? file_get_contents($file) : false;
         if (false === $contents) {
             $io->error(sprintf('Cannot read "%s".', $file));

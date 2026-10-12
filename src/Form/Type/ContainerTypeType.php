@@ -10,6 +10,7 @@ use Sylius\Bundle\ResourceBundle\Form\EventSubscriber\AddCodeFormSubscriber;
 use Sylius\Bundle\ResourceBundle\Form\Type\AbstractResourceType;
 use Sylius\Bundle\ResourceBundle\Form\Type\ResourceTranslationsType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -47,10 +48,12 @@ final class ContainerTypeType extends AbstractResourceType
             ->add('maxPayload', KilogramType::class, [
                 'label' => 'tmonier_container_fill.form.max_payload',
                 'help' => 'tmonier_container_fill.form.max_payload_help',
+                'empty_data' => '0',
             ])
             ->add('slots', IntegerType::class, [
                 'label' => 'tmonier_container_fill.form.slots',
                 'help' => 'tmonier_container_fill.form.slots_help',
+                'empty_data' => '0',
                 'attr' => ['min' => 1],
             ])
             ->add('nestedType', EntityType::class, [
@@ -66,6 +69,7 @@ final class ContainerTypeType extends AbstractResourceType
             ->add('volumeEfficiency', IntegerType::class, [
                 'label' => 'tmonier_container_fill.form.volume_efficiency',
                 'help' => 'tmonier_container_fill.form.volume_efficiency_help',
+                'empty_data' => '0',
                 'attr' => ['min' => 1, 'max' => 100],
             ])
             ->add('position', IntegerType::class, [
@@ -83,6 +87,9 @@ final class ContainerTypeType extends AbstractResourceType
                 'required' => false,
             ])
         ;
+
+        // Non-nullable string properties: no choice submitted becomes a validation error, not a type error.
+        $builder->get('kind')->addModelTransformer(new CallbackTransformer(static fn (mixed $value): mixed => $value, static fn (mixed $value): string => \is_string($value) ? $value : ''));
     }
 
     public function getBlockPrefix(): string

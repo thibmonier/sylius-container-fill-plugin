@@ -48,7 +48,6 @@ final class ContainerFillDemoFixture extends AbstractFixture
      * @param FactoryInterface<ChannelPricingInterface> $channelPricingFactory
      * @param RepositoryInterface<ProductInterface> $productRepository
      * @param FactoryInterface<TaxonInterface> $taxonFactory
-     * @param RepositoryInterface<TaxonInterface> $taxonRepository
      * @param FactoryInterface<ProductTaxonInterface> $productTaxonFactory
      * @param FactoryInterface<ProductVariantLogisticsInterface> $logisticsFactory
      * @param FactoryInterface<VariantContainerCapacityInterface> $capacityFactory
@@ -65,7 +64,6 @@ final class ContainerFillDemoFixture extends AbstractFixture
         private readonly FactoryInterface $channelPricingFactory,
         private readonly RepositoryInterface $productRepository,
         private readonly FactoryInterface $taxonFactory,
-        private readonly RepositoryInterface $taxonRepository,
         private readonly FactoryInterface $productTaxonFactory,
         private readonly ContainerTypeRepositoryInterface $containerTypeRepository,
         private readonly FactoryInterface $logisticsFactory,

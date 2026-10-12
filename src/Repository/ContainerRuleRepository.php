@@ -8,7 +8,6 @@ use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Tmonier\SyliusContainerFillPlugin\Entity\ContainerRuleInterface;
 
-/** @extends EntityRepository<ContainerRuleInterface> */
 class ContainerRuleRepository extends EntityRepository implements ContainerRuleRepositoryInterface
 {
     public function findEnabledByChannel(ChannelInterface $channel): array

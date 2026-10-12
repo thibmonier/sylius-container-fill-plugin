@@ -24,7 +24,7 @@ final class VariantLogisticsProvider implements VariantLogisticsProviderInterfac
         $ids = [];
         foreach ($variants as $variant) {
             if (null !== $variant->getId()) {
-                $ids[] = (int) $variant->getId();
+                $ids[] = EntityId::int($variant->getId());
             }
         }
 
@@ -36,7 +36,7 @@ final class VariantLogisticsProvider implements VariantLogisticsProviderInterfac
 
         $result = [];
         foreach ($variants as $variant) {
-            $id = (int) $variant->getId();
+            $id = EntityId::int($variant->getId());
             $data = new VariantLogistics($variant, $logistics[$id] ?? null, $capacities[$id] ?? [], $this->units);
             $result[$data->key()] = $data;
         }
@@ -57,7 +57,7 @@ final class VariantLogisticsProvider implements VariantLogisticsProviderInterfac
         $variantId = $capacity->getVariant()?->getId();
         $code = $capacity->getContainerType()?->getCode();
         if (null !== $variantId && null !== $code) {
-            $capacities[(int) $variantId][$code] = $capacity;
+            $capacities[EntityId::int($variantId)][$code] = $capacity;
         }
     }
 }

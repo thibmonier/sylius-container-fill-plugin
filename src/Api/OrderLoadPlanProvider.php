@@ -33,7 +33,7 @@ final class OrderLoadPlanProvider implements ProviderInterface
     {
         $tokenValue = $uriVariables['tokenValue'] ?? null;
         $order = \is_string($tokenValue) ? $this->orderRepository->findOneBy(['tokenValue' => $tokenValue]) : null;
-        if (!$order instanceof OrderInterface || !\is_string($tokenValue) || !$this->isAccessible($order)) {
+        if (!$order instanceof OrderInterface || !$this->isAccessible($order)) {
             throw new NotFoundHttpException('Order not found.');
         }
 

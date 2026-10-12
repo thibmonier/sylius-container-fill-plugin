@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tmonier\SyliusContainerFillPlugin\Csv;
 
+use Tmonier\SyliusContainerFillPlugin\Logistics\EntityId;
 use Tmonier\SyliusContainerFillPlugin\Repository\ProductVariantLogisticsRepositoryInterface;
 use Tmonier\SyliusContainerFillPlugin\Repository\VariantContainerCapacityRepositoryInterface;
 
@@ -19,7 +20,7 @@ final class CapacityCsvExporter
     public function export(): string
     {
         $capacities = $this->capacityRepository->findAllForExport();
-        $variantIds = array_values(array_unique(array_map(static fn ($capacity): int => (int) $capacity->getVariant()?->getId(), $capacities)));
+        $variantIds = array_values(array_unique(array_map(static fn ($capacity): int => EntityId::int($capacity->getVariant()?->getId()), $capacities)));
         $logistics = [] === $variantIds ? [] : $this->logisticsRepository->findByVariantIds($variantIds);
 
         $stream = fopen('php://temp', 'r+');
@@ -28,7 +29,7 @@ final class CapacityCsvExporter
         }
         fputcsv($stream, CapacityCsvFormat::COLUMNS, ';', '"', '');
         foreach ($capacities as $capacity) {
-            $data = $logistics[(int) $capacity->getVariant()?->getId()] ?? null;
+            $data = $logistics[EntityId::int($capacity->getVariant()?->getId())] ?? null;
             $weight = $data?->getCaseWeight();
             fputcsv($stream, [
                 (string) $capacity->getVariant()?->getCode(),

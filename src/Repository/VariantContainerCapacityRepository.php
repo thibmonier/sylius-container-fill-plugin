@@ -8,8 +8,8 @@ use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 use Tmonier\SyliusContainerFillPlugin\Entity\ContainerTypeInterface;
 use Tmonier\SyliusContainerFillPlugin\Entity\VariantContainerCapacityInterface;
+use Tmonier\SyliusContainerFillPlugin\Logistics\EntityId;
 
-/** @extends EntityRepository<VariantContainerCapacityInterface> */
 class VariantContainerCapacityRepository extends EntityRepository implements VariantContainerCapacityRepositoryInterface
 {
     public function findByVariantIds(array $variantIds): array
@@ -29,7 +29,7 @@ class VariantContainerCapacityRepository extends EntityRepository implements Var
 
     public function findByVariant(ProductVariantInterface $variant): array
     {
-        return null === $variant->getId() ? [] : $this->findByVariantIds([(int) $variant->getId()]);
+        return null === $variant->getId() ? [] : $this->findByVariantIds([EntityId::int($variant->getId())]);
     }
 
     public function findOneByVariantAndType(ProductVariantInterface $variant, ContainerTypeInterface $type): ?VariantContainerCapacityInterface

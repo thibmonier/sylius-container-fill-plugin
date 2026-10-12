@@ -7,10 +7,10 @@ namespace Tmonier\SyliusContainerFillPlugin\DependencyInjection;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
 use Sylius\Resource\Factory\Factory;
+use Sylius\Resource\Factory\TranslatableFactory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Tmonier\SyliusContainerFillPlugin\Logistics\Units;
 use Tmonier\SyliusContainerFillPlugin\Entity\ContainerRule;
 use Tmonier\SyliusContainerFillPlugin\Entity\ContainerRuleInterface;
 use Tmonier\SyliusContainerFillPlugin\Entity\ContainerType;
@@ -23,6 +23,7 @@ use Tmonier\SyliusContainerFillPlugin\Entity\ProductVariantLogistics;
 use Tmonier\SyliusContainerFillPlugin\Entity\ProductVariantLogisticsInterface;
 use Tmonier\SyliusContainerFillPlugin\Entity\VariantContainerCapacity;
 use Tmonier\SyliusContainerFillPlugin\Entity\VariantContainerCapacityInterface;
+use Tmonier\SyliusContainerFillPlugin\Logistics\Units;
 use Tmonier\SyliusContainerFillPlugin\Repository\ContainerRuleRepository;
 use Tmonier\SyliusContainerFillPlugin\Repository\ContainerTypeRepository;
 use Tmonier\SyliusContainerFillPlugin\Repository\OrderLoadPlanSnapshotRepository;
@@ -78,7 +79,7 @@ final class Configuration implements ConfigurationInterface
                                         ->scalarNode('interface')->defaultValue(ContainerTypeInterface::class)->cannotBeEmpty()->end()
                                         ->scalarNode('controller')->defaultValue(ResourceController::class)->cannotBeEmpty()->end()
                                         ->scalarNode('repository')->defaultValue(ContainerTypeRepository::class)->cannotBeEmpty()->end()
-                                        ->scalarNode('factory')->defaultValue(Factory::class)->end()
+                                        ->scalarNode('factory')->defaultValue(TranslatableFactory::class)->end()
                                     ->end()
                                 ->end()
                                 ->arrayNode('translation')

@@ -8,7 +8,6 @@ use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 use Sylius\Component\Order\Model\OrderInterface;
 use Tmonier\SyliusContainerFillPlugin\Entity\OrderLoadPlanSnapshotInterface;
 
-/** @extends EntityRepository<OrderLoadPlanSnapshotInterface> */
 class OrderLoadPlanSnapshotRepository extends EntityRepository implements OrderLoadPlanSnapshotRepositoryInterface
 {
     public function findOneByOrder(OrderInterface $order): ?OrderLoadPlanSnapshotInterface

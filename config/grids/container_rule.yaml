@@ -6,7 +6,7 @@ sylius_grid:
                 options:
                     class: "%tmonier_container_fill.model.container_rule.class%"
             sorting:
-                id: asc
+                name: asc
             fields:
                 name:
                     type: string

@@ -61,6 +61,7 @@ final class TranslationsTest extends TestCase
             self::assertArrayHasKey('tmonier_container_fill.binding.' . $binding->value, $messages);
         }
         foreach ((new \ReflectionClass(Violation::class))->getConstants() as $code) {
+            self::assertIsString($code);
             self::assertArrayHasKey('tmonier_container_fill.violation.' . $code, $validators);
         }
     }

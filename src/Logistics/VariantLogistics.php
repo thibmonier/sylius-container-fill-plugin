@@ -27,7 +27,7 @@ final class VariantLogistics
 
     public function key(): string
     {
-        return (string) ($this->variant->getCode() ?? ('#' . (string) $this->variant->getId()));
+        return (string) ($this->variant->getCode() ?? ('#' . EntityId::string($this->variant->getId())));
     }
 
     public function label(): string

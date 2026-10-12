@@ -7,8 +7,8 @@ namespace Tmonier\SyliusContainerFillPlugin\Repository;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 use Tmonier\SyliusContainerFillPlugin\Entity\ProductVariantLogisticsInterface;
+use Tmonier\SyliusContainerFillPlugin\Logistics\EntityId;
 
-/** @extends EntityRepository<ProductVariantLogisticsInterface> */
 class ProductVariantLogisticsRepository extends EntityRepository implements ProductVariantLogisticsRepositoryInterface
 {
     public function findOneByVariant(ProductVariantInterface $variant): ?ProductVariantLogisticsInterface
@@ -33,7 +33,7 @@ class ProductVariantLogisticsRepository extends EntityRepository implements Prod
 
         $result = [];
         foreach ($rows as $row) {
-            $result[(int) $row->getVariant()?->getId()] = $row;
+            $result[EntityId::int($row->getVariant()?->getId())] = $row;
         }
 
         return $result;

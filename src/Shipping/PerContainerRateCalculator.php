@@ -40,7 +40,7 @@ final class PerContainerRateCalculator implements CalculatorInterface
 
         $channelConfiguration = $configuration[$channelCode] ?? null;
         if (!\is_array($channelConfiguration) || !isset($channelConfiguration['amount']) || !is_numeric($channelConfiguration['amount'])) {
-            throw new MissingChannelConfigurationException(sprintf('Channel %s has no amount defined for shipping method %s', (string) $order->getChannel()?->getName(), (string) $subject->getMethod()?->getName()));
+            throw new MissingChannelConfigurationException(sprintf('Channel %s has no amount defined for shipping method %s', (string) $order->getChannel()->getName(), (string) $subject->getMethod()?->getName()));
         }
 
         return (int) $channelConfiguration['amount'] * self::containerCount($this->checker, $order);

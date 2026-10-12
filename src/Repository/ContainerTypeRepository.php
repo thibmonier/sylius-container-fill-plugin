@@ -8,7 +8,6 @@ use Doctrine\ORM\QueryBuilder;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 use Tmonier\SyliusContainerFillPlugin\Entity\ContainerTypeInterface;
 
-/** @extends EntityRepository<ContainerTypeInterface> */
 class ContainerTypeRepository extends EntityRepository implements ContainerTypeRepositoryInterface
 {
     public function findAllOrdered(): array

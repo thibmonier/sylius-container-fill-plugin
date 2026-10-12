@@ -6,11 +6,11 @@ namespace Tmonier\SyliusContainerFillPlugin\Cart;
 
 use Doctrine\Persistence\ObjectManager;
 use Sylius\Component\Core\Model\OrderInterface;
-use Sylius\Component\Core\Model\OrderItemInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\SyliusCartEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Tmonier\SyliusContainerFillPlugin\Logistics\EntityId;
 
 /** Changes the quantity of a cart line like the cart form does (cart change events, processing, flush). */
 final class CartQuantityAdjuster
@@ -32,8 +32,8 @@ final class CartQuantityAdjuster
 
         $line = null;
         foreach ($cart->getItems() as $item) {
-            if ($item instanceof OrderItemInterface && null !== $item->getVariant() &&
-                ($item->getVariant()->getCode() ?? ('#' . (string) $item->getVariant()->getId())) === $variantKey
+            if (null !== $item->getVariant() &&
+                ($item->getVariant()->getCode() ?? ('#' . EntityId::string($item->getVariant()->getId()))) === $variantKey
             ) {
                 $line = $item;
 
@@ -47,7 +47,7 @@ final class CartQuantityAdjuster
         // Several lines of one variant (rare): the others keep their quantity.
         $others = 0;
         foreach ($cart->getItems() as $item) {
-            if ($item !== $line && $item instanceof OrderItemInterface && $item->getVariant() === $line->getVariant()) {
+            if ($item !== $line && $item->getVariant() === $line->getVariant()) {
                 $others += $item->getQuantity();
             }
         }

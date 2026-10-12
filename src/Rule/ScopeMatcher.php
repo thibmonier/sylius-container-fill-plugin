@@ -7,6 +7,7 @@ namespace Tmonier\SyliusContainerFillPlugin\Rule;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Model\TaxonInterface;
 use Tmonier\SyliusContainerFillPlugin\Entity\ContainerRuleInterface;
+use Tmonier\SyliusContainerFillPlugin\Logistics\EntityId;
 
 /** Products in the scope of a rule (taxon scope includes the descendants of the taxon). */
 final class ScopeMatcher
@@ -25,8 +26,8 @@ final class ScopeMatcher
     public function scopeKey(ContainerRuleInterface $rule): string
     {
         return match ($rule->getScope()) {
-            ContainerRuleInterface::SCOPE_PRODUCT => 'product:' . (string) $rule->getProduct()?->getId(),
-            ContainerRuleInterface::SCOPE_TAXON => 'taxon:' . (string) $rule->getTaxon()?->getId(),
+            ContainerRuleInterface::SCOPE_PRODUCT => 'product:' . EntityId::string($rule->getProduct()?->getId()),
+            ContainerRuleInterface::SCOPE_TAXON => 'taxon:' . EntityId::string($rule->getTaxon()?->getId()),
             default => 'all',
         };
     }
@@ -38,9 +39,6 @@ final class ScopeMatcher
             $taxons[] = $product->getMainTaxon();
         }
         foreach ($taxons as $candidate) {
-            if (!$candidate instanceof TaxonInterface) {
-                continue;
-            }
             if ($candidate->getCode() === $taxon->getCode()) {
                 return true;
             }

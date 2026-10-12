@@ -252,7 +252,6 @@ return static function (ContainerConfigurator $container): void {
             service('sylius.factory.channel_pricing'),
             service('sylius.repository.product'),
             service('sylius.factory.taxon'),
-            service('sylius.repository.taxon'),
             service('sylius.factory.product_taxon'),
             service('tmonier_container_fill.repository.container_type'),
             service('tmonier_container_fill.factory.variant_logistics'),

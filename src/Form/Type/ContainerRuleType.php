@@ -12,6 +12,7 @@ use Sylius\Bundle\ChannelBundle\Form\Type\ChannelChoiceType;
 use Sylius\Bundle\CustomerBundle\Form\Type\CustomerGroupChoiceType;
 use Sylius\Bundle\ResourceBundle\Form\Type\AbstractResourceType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -104,6 +105,10 @@ final class ContainerRuleType extends AbstractResourceType
                 }
             })
         ;
+
+        // Non-nullable string properties: no choice submitted becomes a validation error, not a type error.
+        $builder->get('scope')->addModelTransformer(new CallbackTransformer(static fn (mixed $value): mixed => $value, static fn (mixed $value): string => \is_string($value) ? $value : ''));
+        $builder->get('mode')->addModelTransformer(new CallbackTransformer(static fn (mixed $value): mixed => $value, static fn (mixed $value): string => \is_string($value) ? $value : ''));
     }
 
     public function getBlockPrefix(): string

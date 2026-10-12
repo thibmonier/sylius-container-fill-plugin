@@ -74,9 +74,9 @@ final class VariantLogisticsManager
     public function onPreSave(ResourceControllerEvent $event): void
     {
         $variant = $event->getSubject();
-        if ($variant instanceof ProductVariantInterface && $this->staged->contains($variant)) {
+        if ($variant instanceof ProductVariantInterface && isset($this->staged[$variant])) {
             $this->write($variant, $this->staged[$variant]);
-            $this->staged->detach($variant);
+            unset($this->staged[$variant]);
         }
     }
 

@@ -36,6 +36,9 @@ final class ConfigurationTest extends TestCase
      */
     private function process(array $configs): array
     {
-        return (new Processor())->processConfiguration(new Configuration(), $configs);
+        /** @var array<string, mixed> $processed */
+        $processed = (new Processor())->processConfiguration(new Configuration(), $configs);
+
+        return $processed;
     }
 }
