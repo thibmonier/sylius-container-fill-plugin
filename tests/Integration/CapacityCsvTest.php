@@ -57,6 +57,26 @@ final class CapacityCsvTest extends KernelTestCase
         self::assertNull($this->capacity($b, $truck));
     }
 
+    public function testSeveralLinesOfAVariantWithoutLogisticsData(): void
+    {
+        $pallet = $this->catalog->pallet();
+        $truck = $this->catalog->truck($pallet);
+        $a = $this->catalog->plainVariant('A');
+        $csv = "variant_code;container_type;capacity;units_per_layer;units_per_case;case_weight_kg\n" .
+            sprintf("%s;%s;48;;6;9\n", $a->getCode(), $pallet->getCode()) .
+            sprintf("%s;%s;1584;;6;9\n", $a->getCode(), $truck->getCode());
+
+        $result = $this->importer()->import($csv);
+
+        self::assertSame([], $result->errors);
+        self::assertTrue($result->written);
+        $this->entityManager()->clear();
+        $logistics = $this->entityManager()->getRepository(ProductVariantLogisticsInterface::class)->findBy(['variant' => $a->getId()]);
+        self::assertCount(1, $logistics);
+        self::assertSame([6, 9000], [$logistics[0]->getUnitsPerCase(), $logistics[0]->getCaseWeight()]);
+        self::assertSame(1584, $this->capacity($a, $truck)?->getQuantity());
+    }
+
     public function testTheImportIsAllOrNothing(): void
     {
         $pallet = $this->catalog->pallet();

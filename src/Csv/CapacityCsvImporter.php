@@ -23,6 +23,9 @@ final class CapacityCsvImporter
 {
     private const MAX_INT = 100000000;
 
+    /** @var array<string, ProductVariantLogisticsInterface> created during the current import (not flushed yet), by variant code */
+    private array $createdLogistics = [];
+
     /**
      * @param RepositoryInterface<ProductVariantInterface> $variantRepository
      * @param FactoryInterface<ProductVariantLogisticsInterface> $logisticsFactory
@@ -95,6 +98,7 @@ final class CapacityCsvImporter
 
         // All or nothing: a rejected line leaves the stored data unchanged.
         $write = !$dryRun && [] === $errors;
+        $this->createdLogistics = [];
         $imported = 0;
         $removed = 0;
         foreach ($valid as $line) {
@@ -167,11 +171,14 @@ final class CapacityCsvImporter
         if ('' === $unitsPerCase && '' === $weight) {
             return;
         }
-        $logistics = $this->logisticsRepository->findOneByVariant($variant);
+        // Several lines of one variant (one per container type, the export format) share the
+        // logistics row created for the first one: the repository does not see it before the flush.
+        $logistics = $this->createdLogistics[$line['variant_code']] ?? $this->logisticsRepository->findOneByVariant($variant);
         if (null === $logistics) {
             $logistics = $this->logisticsFactory->createNew();
             $logistics->setVariant($variant);
             $this->entityManager->persist($logistics);
+            $this->createdLogistics[$line['variant_code']] = $logistics;
         }
         if ('' !== $unitsPerCase) {
             $logistics->setUnitsPerCase((int) $unitsPerCase);
