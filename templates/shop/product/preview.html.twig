@@ -1,4 +1,4 @@
-{# Indicative preview under the add to cart quantity: share of each container taken by the quantity typed. #}
+{# Indicative preview under the add to cart quantity: share of each container taken by the quantity typed, and the current fill of the cart (the cart stays the reference for mixed loads). #}
 {% if tmonier_container_fill_product_preview_enabled() %}
     {% set form = hookable_metadata.context.form %}
     {% set product = hookable_metadata.context.product %}
@@ -19,6 +19,15 @@
                         <li>{{ 'tmonier_container_fill.ui.preview_row'|trans({'%quantity%': quantity, '%percent%': row.percent, '%type%': row.name, '%capacity%': row.capacity}) }}</li>
                     {% endfor %}
                 </ul>
+                {% set cart = form.vars.data.cart|default(null) %}
+                {% if cart is not null and not cart.empty %}
+                    {% for outcome in tmonier_container_fill_report(cart).outcomes %}
+                        {% set last = outcome.result.containers|last %}
+                        {% if last %}
+                            <div {{ sylius_test_html_attribute('tmonier-container-fill-preview-cart') }}>{{ 'tmonier_container_fill.ui.cart_fill_now'|trans({'%count%': outcome.result.containerCount, '%type%': outcome.result.container.name, '%percent%': last.percent}) }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
                 <div class="text-body-secondary">{{ 'tmonier_container_fill.ui.preview_help'|trans }}</div>
             </div>
         {% endif %}

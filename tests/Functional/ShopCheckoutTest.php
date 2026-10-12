@@ -106,4 +106,21 @@ final class ShopCheckoutTest extends WebTestCase
         self::assertStringContainsString('Sold by case of 4', $preview->text());
         self::assertStringContainsString('2.5 %', $preview->text());
     }
+
+    public function testThePreviewShowsTheCurrentFillOfTheCart(): void
+    {
+        $pallet = $this->catalog->pallet();
+        $this->catalog->rule([$pallet], ContainerRuleInterface::MODE_MIN_FILL_PERCENT, 10);
+        $variant = $this->catalog->variant('A', [[$pallet, 40, null]], 10000, 4);
+        $customer = $this->catalog->customer();
+        $this->catalog->cart([[$variant, 50]], $customer);
+        $this->loginShopUser($customer);
+
+        $crawler = $this->client->request('GET', $this->url('/products/' . $variant->getProduct()?->getSlug()));
+
+        self::assertResponseIsSuccessful();
+        $line = $crawler->filter('[data-test-tmonier-container-fill-preview-cart]');
+        self::assertCount(1, $line);
+        self::assertStringContainsString('2 x ' . $pallet->getName() . ', the last one filled to 25 %', $line->text());
+    }
 }
