@@ -9,5 +9,9 @@ enum BindingConstraint: string
 {
     case Slots = 'slots';
     case Weight = 'weight';
+
+    /** Stack height or number of layers (layer mode, 1.1). */
+    case Layers = 'layers';
+
     case Volume = 'volume';
 }

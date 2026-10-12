@@ -9,6 +9,7 @@ use Sylius\Component\Core\Model\ProductVariantInterface;
 use Tmonier\SyliusContainerFillPlugin\Entity\OrderLoadPlanSnapshotInterface;
 use Tmonier\SyliusContainerFillPlugin\Logistics\VariantLogistics;
 use Tmonier\SyliusContainerFillPlugin\Logistics\VariantLogisticsProviderInterface;
+use Tmonier\SyliusContainerFillPlugin\Planner\ContainerSpec;
 use Tmonier\SyliusContainerFillPlugin\Repository\ContainerTypeRepositoryInterface;
 use Tmonier\SyliusContainerFillPlugin\Repository\OrderLoadPlanSnapshotRepositoryInterface;
 use Tmonier\SyliusContainerFillPlugin\Rule\CartFillCheckerInterface;
@@ -59,7 +60,7 @@ final class ContainerFillExtension extends AbstractExtension
      * Indicative share of each enabled container type taken by $quantity units of the variant,
      * alone (the cart is the reference for mixed loads).
      *
-     * @return list<array{name: string, kind: string, capacity: int, percent: float, count: float, containers: int, indicative: bool, unitsPerLayer: ?int}> capacity: units that fit one container (places or payload)
+     * @return list<array{layers: ?float, name: string, kind: string, capacity: int, percent: float, count: float, containers: int, indicative: bool, unitsPerLayer: ?int}> capacity: units that fit one container (places or payload); layers: layer mode only
      */
     public function preview(ProductVariantInterface $variant, mixed $quantity = 1): array
     {
@@ -77,7 +78,26 @@ final class ContainerFillExtension extends AbstractExtension
                 $capacity = max(1, min($capacity, (int) floor($type->getMaxPayload() / $unitWeight + 1e-9)));
             }
             $share = $quantity / $capacity;
+            // Layer mode: layers of the product and the stack height (or layer count) they take.
+            $layers = null;
+            $spec = ContainerSpec::fromContainerType($type);
+            $perLayer = $logistics->unitsPerLayer($type);
+            $layerHeight = $logistics->layerHeight();
+            if ($spec->supportsLayers() && null !== $perLayer && $perLayer > 0 && null !== $layerHeight) {
+                $layers = $quantity / $perLayer;
+                $share = 0.0;
+                if (null !== $spec->maxStackHeight && $spec->maxStackHeight > 0) {
+                    $share = $layers * $layerHeight / $spec->maxStackHeight;
+                }
+                if (null !== $spec->maxLayers && $spec->maxLayers > 0) {
+                    $share = max($share, $layers / $spec->maxLayers);
+                }
+                if (null !== $unitWeight && $unitWeight > 0) {
+                    $share = max($share, $quantity * $unitWeight / max(1, $type->getMaxPayload()));
+                }
+            }
             $rows[] = [
+                'layers' => null === $layers ? null : round($layers, $layers < 1 ? 2 : 1),
                 'name' => (string) ($type->getName() ?? $type->getCode()),
                 'kind' => $type->getKind(),
                 'capacity' => $capacity,

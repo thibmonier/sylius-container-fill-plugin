@@ -18,6 +18,8 @@ final class FillResult
         public readonly array $lines,
         public readonly bool $volumeAvailable,
         public readonly array $incomplete = [],
+        /** Planned by layers (1.1): containers carry their layers, the stack height binds. */
+        public readonly bool $layerMode = false,
     ) {
     }
 

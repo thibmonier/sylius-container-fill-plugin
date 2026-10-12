@@ -11,6 +11,7 @@
         <field name="unitsPerCase" column="units_per_case" type="integer" />
         <field name="caseWeight" column="case_weight" type="integer" nullable="true" />
         <field name="stackable" column="stackable" type="boolean" />
+        <field name="layerHeight" column="layer_height" type="integer" nullable="true" />
         <field name="ownPallet" column="own_pallet" type="boolean" />
         <field name="caseMultipleRequired" column="case_multiple_required" type="boolean" />
 

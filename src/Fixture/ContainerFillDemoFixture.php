@@ -34,11 +34,11 @@ final class ContainerFillDemoFixture extends AbstractFixture
 
     public const BUYER_EMAIL = 'pallet@example.com';
 
-    /** code, name, slug, price (cents), units per case, case weight (g), own pallet, case multiple, EUR pallet capacity (units), units per layer */
+    /** code, name, slug, price (cents), units per case, case weight (g), own pallet, case multiple, EUR pallet capacity (units), units per layer, layer height (mm) */
     private const PRODUCTS = [
-        ['TMONIER_CF_WATER', 'Spring water 1.5 L (case of 6)', 'spring-water-case', 390, 6, 9300, false, true, 480, 60],
-        ['TMONIER_CF_CEMENT', 'Cement bag 25 kg', 'cement-bag-25-kg', 790, 1, 25000, true, false, 40, 5],
-        ['TMONIER_CF_TILES', 'Ceramic floor tiles (box of 1.44 m²)', 'ceramic-floor-tiles-box', 3400, 1, 22000, false, false, 48, 8],
+        ['TMONIER_CF_WATER', 'Spring water 1.5 L (case of 6)', 'spring-water-case', 390, 6, 9300, false, true, 480, 60, 200],
+        ['TMONIER_CF_CEMENT', 'Cement bag 25 kg', 'cement-bag-25-kg', 790, 1, 25000, true, false, 40, 5, 120],
+        ['TMONIER_CF_TILES', 'Ceramic floor tiles (box of 1.44 m²)', 'ceramic-floor-tiles-box', 3400, 1, 22000, false, false, 48, 8, 250],
     ];
 
     /**
@@ -96,6 +96,9 @@ final class ContainerFillDemoFixture extends AbstractFixture
             throw new \RuntimeException('Load the "tmonier_container_fill_container_types" fixture first.');
         }
 
+        // Demo of the layer mode (1.1): the EUR pallet is planned by layers (1656 mm of goods).
+        $pallet->setLayerMode(true);
+
         /** @var list<ChannelInterface> $channels */
         $channels = $this->channelRepository->findAll();
         $locales = [];
@@ -117,7 +120,7 @@ final class ContainerFillDemoFixture extends AbstractFixture
         }
         $this->manager->persist($taxon);
 
-        foreach (self::PRODUCTS as [$code, $name, $slug, $price, $unitsPerCase, $caseWeight, $ownPallet, $caseMultiple, $capacity, $layer]) {
+        foreach (self::PRODUCTS as [$code, $name, $slug, $price, $unitsPerCase, $caseWeight, $ownPallet, $caseMultiple, $capacity, $layer, $layerHeight]) {
             $product = $this->productFactory->createNew();
             $product->setCode($code);
             $product->setEnabled(true);
@@ -159,6 +162,7 @@ final class ContainerFillDemoFixture extends AbstractFixture
             $logistics->setCaseWeight($caseWeight);
             $logistics->setOwnPallet($ownPallet);
             $logistics->setCaseMultipleRequired($caseMultiple);
+            $logistics->setLayerHeight($layerHeight);
             $this->manager->persist($logistics);
 
             $palletCapacity = $this->capacityFactory->createNew();

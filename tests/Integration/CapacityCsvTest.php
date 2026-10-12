@@ -77,6 +77,27 @@ final class CapacityCsvTest extends KernelTestCase
         self::assertSame(1584, $this->capacity($a, $truck)?->getQuantity());
     }
 
+    public function testTheLayerHeightColumn(): void
+    {
+        $pallet = $this->catalog->layerPallet();
+        $a = $this->catalog->plainVariant('A');
+        $csv = "variant_code;container_type;capacity;units_per_layer;units_per_case;case_weight_kg;layer_height_mm\n" .
+            sprintf("%s;%s;480;60;6;9.3;200\n", $a->getCode(), $pallet->getCode());
+
+        self::assertSame([], $this->importer()->import($csv)->errors);
+        $this->entityManager()->clear();
+        $logistics = $this->entityManager()->getRepository(ProductVariantLogisticsInterface::class)->findOneBy(['variant' => $a->getId()]);
+        self::assertInstanceOf(ProductVariantLogisticsInterface::class, $logistics);
+        self::assertSame(200, $logistics->getLayerHeight());
+
+        $exporter = self::getContainer()->get('tmonier_container_fill.csv.exporter');
+        self::assertInstanceOf(CapacityCsvExporter::class, $exporter);
+        self::assertStringContainsString(sprintf("%s;%s;480;60;6;9.3;200\n", $a->getCode(), $pallet->getCode()), $exporter->export());
+
+        $bad = "variant_code;container_type;capacity;layer_height_mm\n" . sprintf("%s;%s;480;0\n", $a->getCode(), $pallet->getCode());
+        self::assertStringContainsString('layer_height_mm', $this->importer()->import($bad)->errors[2] ?? '');
+    }
+
     public function testTheImportIsAllOrNothing(): void
     {
         $pallet = $this->catalog->pallet();
@@ -111,8 +132,8 @@ final class CapacityCsvTest extends KernelTestCase
         self::assertInstanceOf(CapacityCsvExporter::class, $exporter);
         $csv = $exporter->export();
 
-        self::assertStringStartsWith("variant_code;container_type;capacity;units_per_layer;units_per_case;case_weight_kg\n", $csv);
-        self::assertStringContainsString(sprintf("%s;%s;40;8;4;12.5\n", $a->getCode(), $pallet->getCode()), $csv);
+        self::assertStringStartsWith("variant_code;container_type;capacity;units_per_layer;units_per_case;case_weight_kg;layer_height_mm\n", $csv);
+        self::assertStringContainsString(sprintf("%s;%s;40;8;4;12.5;\n", $a->getCode(), $pallet->getCode()), $csv);
         $result = $this->importer()->import($csv, true);
         self::assertSame([], $result->errors);
     }

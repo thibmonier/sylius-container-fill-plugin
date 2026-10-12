@@ -133,6 +133,10 @@ final class CartFillReport
                 'binding' => $container->binding()->value,
                 'full' => $container->full,
                 'units' => $container->units,
+                // Layer mode (1.1), null / empty otherwise.
+                'layers' => null === $container->layerRatio ? null : round($container->layerRatio * 100, 1),
+                'layerGroups' => $container->layerGroups(),
+                'remainingHeight' => $container->remainingHeight,
             ];
         }
 

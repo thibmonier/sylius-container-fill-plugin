@@ -12,6 +12,12 @@
                 <li>
                     {{ 'tmonier_container_fill.ui.container_fill'|trans({'%index%': container.index, '%count%': entry.containerCount, '%percent%': container.percent, '%binding%': ('tmonier_container_fill.binding.' ~ container.binding)|trans}) }}
                     <span class="text-secondary">({{ container.volume is null ? 'tmonier_container_fill.ui.dimensions_detail_no_volume'|trans({'%slots%': container.slots, '%weight%': container.weight}) : 'tmonier_container_fill.ui.dimensions_detail'|trans({'%slots%': container.slots, '%weight%': container.weight, '%volume%': container.volume}) }})</span>
+                
+                    {% if container.layerGroups is defined and container.layerGroups is not empty %}
+                        <div class="text-secondary" {{ sylius_test_html_attribute('tmonier-container-fill-plan-layers', container.index) }}>
+                            {% for group in container.layerGroups|reverse %}{{ 'tmonier_container_fill.ui.layer_group'|trans({'%count%': group.count, '%product%': group.label, '%units%': group.units, '%perLayer%': group.unitsPerLayer}) }}{% if not loop.last %} · {% endif %}{% endfor %}
+                        </div>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>

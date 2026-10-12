@@ -19,6 +19,9 @@ tmonier_container_fill:
         nested_type:
             invalid: 'Las plazas deben contener otro tipo de una sola plaza.'
             slots: 'Un tipo con plazas de otro tipo necesita al menos 2 plazas.'
+        layer_mode:
+            slots: 'El modo por capas requiere una sola plaza (un palé o una caja).'
+            limit: 'El modo por capas requiere una altura de carga (o interior) o un número máximo de capas.'
     container_rule:
         name:
             not_blank: 'Introduzca un nombre.'

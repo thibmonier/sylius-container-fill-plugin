@@ -36,6 +36,13 @@ final class VariantLogisticsType extends AbstractType
                 'required' => false,
                 'constraints' => [new Range(min: 1, max: 100000000, groups: ['sylius'])],
             ])
+            ->add('layerHeight', IntegerType::class, [
+                'label' => 'tmonier_container_fill.form.layer_height',
+                'help' => 'tmonier_container_fill.form.layer_height_help',
+                'required' => false,
+                'attr' => ['min' => 1],
+                'constraints' => [new Range(min: 1, max: 100000, groups: ['sylius'])],
+            ])
             ->add('stackable', CheckboxType::class, [
                 'label' => 'tmonier_container_fill.form.stackable',
                 'help' => 'tmonier_container_fill.form.stackable_help',

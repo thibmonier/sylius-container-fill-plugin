@@ -63,6 +63,28 @@ final class TestCatalog
         return $this->containerType($code, ContainerTypeInterface::KIND_PALLET, 1, $payloadKg, null);
     }
 
+    /** A pallet planned by layers (1.1): load height in mm and/or a maximum number of layers. */
+    public function layerPallet(string $code = 'LPAL', int $payloadKg = 1000, ?int $stackHeight = 1600, ?int $maxLayers = null): ContainerTypeInterface
+    {
+        $pallet = $this->pallet($code, $payloadKg);
+        $pallet->setLayerMode(true);
+        $pallet->setMaxLoadHeight($stackHeight);
+        $pallet->setMaxLayers($maxLayers);
+        $this->entityManager()->flush();
+
+        return $pallet;
+    }
+
+    /** Layer data of a variant created by variant(): layer height in mm, stackable. */
+    public function layers(ProductVariantInterface $variant, int $layerHeight, bool $stackable = true): void
+    {
+        $logistics = $this->entityManager()->getRepository(ProductVariantLogisticsInterface::class)->findOneBy(['variant' => $variant]);
+        Assert::isInstanceOf($logistics, ProductVariantLogisticsInterface::class);
+        $logistics->setLayerHeight($layerHeight);
+        $logistics->setStackable($stackable);
+        $this->entityManager()->flush();
+    }
+
     /** A truck whose places hold $nested. */
     public function truck(ContainerTypeInterface $nested, string $code = 'TRUCK', int $places = 33, int $payloadKg = 24000): ContainerTypeInterface
     {

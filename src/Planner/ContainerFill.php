@@ -9,7 +9,10 @@ final class ContainerFill
 {
     private const EPSILON = 1e-9;
 
-    /** @param array<string, int> $units */
+    /**
+     * @param array<string, int> $units
+     * @param list<array{key: string, label: string, units: int, unitsPerLayer: int, height: int}> $layers
+     */
     public function __construct(
         public readonly int $index,
         public readonly float $slotRatio,
@@ -18,16 +21,22 @@ final class ContainerFill
         public readonly array $units,
         public readonly bool $full,
         public readonly ?string $dedicatedTo = null,
+        /** Layer mode: share of the stack height / layer count used. */
+        public readonly ?float $layerRatio = null,
+        /** Layer mode: layers from the bottom (a partial layer has units < unitsPerLayer). */
+        public readonly array $layers = [],
+        /** Layer mode: stack height left in mm (null without height limit). */
+        public readonly ?int $remainingHeight = null,
     ) {
     }
 
     /**
-     * Fill of the container: the highest of places and weight. The volume (when known) is an
-     * indicator only, never the blocking criterion (core dimensions are often rough).
+     * Fill of the container: the highest of places, weight and (layer mode) stack height. The
+     * volume (when known) is an indicator only, never the blocking criterion.
      */
     public function ratio(): float
     {
-        return max($this->slotRatio, $this->weightRatio);
+        return max($this->slotRatio, $this->weightRatio, $this->layerRatio ?? 0.0);
     }
 
     /** The goods may not fit by volume (indicator, does not block). */
@@ -47,6 +56,9 @@ final class ContainerFill
         if ($this->slotRatio >= $ratio - self::EPSILON) {
             return BindingConstraint::Slots;
         }
+        if (null !== $this->layerRatio && $this->layerRatio >= $ratio - self::EPSILON) {
+            return BindingConstraint::Layers;
+        }
 
         return BindingConstraint::Weight;
     }
@@ -59,5 +71,38 @@ final class ContainerFill
     public function unitCount(): int
     {
         return array_sum($this->units);
+    }
+
+    /** Layer mode: a layer is not complete. */
+    public function hasPartialLayer(): bool
+    {
+        foreach ($this->layers as $layer) {
+            if ($layer['units'] < $layer['unitsPerLayer']) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Layer mode: consecutive identical layers grouped, from the bottom (side view legend).
+     *
+     * @return list<array{key: string, label: string, count: int, units: int, unitsPerLayer: int}>
+     */
+    public function layerGroups(): array
+    {
+        $groups = [];
+        foreach ($this->layers as $layer) {
+            $last = array_key_last($groups);
+            if (null !== $last && $groups[$last]['key'] === $layer['key'] && $groups[$last]['units'] === $layer['units']) {
+                ++$groups[$last]['count'];
+
+                continue;
+            }
+            $groups[] = ['key' => $layer['key'], 'label' => $layer['label'], 'count' => 1, 'units' => $layer['units'], 'unitsPerLayer' => $layer['unitsPerLayer']];
+        }
+
+        return $groups;
     }
 }

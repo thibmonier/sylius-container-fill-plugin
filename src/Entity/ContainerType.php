@@ -40,6 +40,11 @@ class ContainerType implements ContainerTypeInterface, \Stringable
 
     protected int $volumeEfficiency = 85;
 
+    /** Layer mode (1.1): plan by layers of the products, limited by the load height and/or maxLayers. */
+    protected bool $layerMode = false;
+
+    protected ?int $maxLayers = null;
+
     protected bool $indicative = false;
 
     protected int $position = 0;
@@ -168,6 +173,26 @@ class ContainerType implements ContainerTypeInterface, \Stringable
     public function setVolumeEfficiency(int $volumeEfficiency): void
     {
         $this->volumeEfficiency = $volumeEfficiency;
+    }
+
+    public function isLayerMode(): bool
+    {
+        return $this->layerMode;
+    }
+
+    public function setLayerMode(bool $layerMode): void
+    {
+        $this->layerMode = $layerMode;
+    }
+
+    public function getMaxLayers(): ?int
+    {
+        return $this->maxLayers;
+    }
+
+    public function setMaxLayers(?int $maxLayers): void
+    {
+        $this->maxLayers = $maxLayers;
     }
 
     public function isIndicative(): bool

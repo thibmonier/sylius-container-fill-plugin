@@ -14,6 +14,9 @@ final class VariantLogisticsData
 
     public bool $stackable = true;
 
+    /** Millimetres (layer mode). */
+    public ?int $layerHeight = null;
+
     public bool $ownPallet = false;
 
     public bool $caseMultipleRequired = false;
@@ -23,7 +26,7 @@ final class VariantLogisticsData
 
     public function isEmpty(): bool
     {
-        if ((null !== $this->unitsPerCase && 1 !== $this->unitsPerCase) || null !== $this->caseWeight || !$this->stackable || $this->ownPallet || $this->caseMultipleRequired) {
+        if ((null !== $this->unitsPerCase && 1 !== $this->unitsPerCase) || null !== $this->caseWeight || !$this->stackable || null !== $this->layerHeight || $this->ownPallet || $this->caseMultipleRequired) {
             return false;
         }
         foreach ($this->capacities as $capacity) {

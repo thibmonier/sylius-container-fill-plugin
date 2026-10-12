@@ -73,6 +73,15 @@ interface ContainerTypeInterface extends ResourceInterface, CodeAwareInterface, 
 
     public function setVolumeEfficiency(int $volumeEfficiency): void;
 
+    /** Layer mode (1.1): plan by layers, limited by the load height and/or the maximum number of layers. */
+    public function isLayerMode(): bool;
+
+    public function setLayerMode(bool $layerMode): void;
+
+    public function getMaxLayers(): ?int;
+
+    public function setMaxLayers(?int $maxLayers): void;
+
     /** Preset figures to check with the carrier: shown as "indicative". */
     public function isIndicative(): bool;
 

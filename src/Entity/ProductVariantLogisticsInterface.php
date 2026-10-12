@@ -32,6 +32,11 @@ interface ProductVariantLogisticsInterface extends ResourceInterface
 
     public function setStackable(bool $stackable): void;
 
+    /** Height of one layer of the product in mm (layer mode, 1.1). */
+    public function getLayerHeight(): ?int;
+
+    public function setLayerHeight(?int $layerHeight): void;
+
     /** Never mixed with other products: whole pallets (places) of its own. */
     public function isOwnPallet(): bool;
 

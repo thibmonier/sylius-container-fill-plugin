@@ -17,7 +17,7 @@
                 <ul class="list-unstyled mb-1">
                     {% for row in rows %}
                         {% set parameters = {'%quantity%': quantity, '%percent%': row.percent, '%count%': row.count, '%type%': row.name, '%capacity%': row.capacity} %}
-                        <li {{ sylius_test_html_attribute('tmonier-container-fill-preview-row') }}>{{ (row.percent >= 100 ? 'tmonier_container_fill.ui.preview_row_many' : 'tmonier_container_fill.ui.preview_row')|trans(parameters) }}</li>
+                        <li {{ sylius_test_html_attribute('tmonier-container-fill-preview-row') }}>{% if row.layers is not null %}{{ (row.percent >= 100 ? 'tmonier_container_fill.ui.preview_layers_many' : 'tmonier_container_fill.ui.preview_layers')|trans(parameters|merge({'%layers%': row.layers})) }}{% else %}{{ (row.percent >= 100 ? 'tmonier_container_fill.ui.preview_row_many' : 'tmonier_container_fill.ui.preview_row')|trans(parameters) }}{% endif %}</li>
                     {% endfor %}
                 </ul>
                 {% set cart = form.vars.data.cart|default(null) %}

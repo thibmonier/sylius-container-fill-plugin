@@ -72,6 +72,17 @@ final class ContainerTypeType extends AbstractResourceType
                 'empty_data' => '0',
                 'attr' => ['min' => 1, 'max' => 100],
             ])
+            ->add('layerMode', CheckboxType::class, [
+                'label' => 'tmonier_container_fill.form.layer_mode',
+                'help' => 'tmonier_container_fill.form.layer_mode_help',
+                'required' => false,
+            ])
+            ->add('maxLayers', IntegerType::class, [
+                'label' => 'tmonier_container_fill.form.max_layers',
+                'help' => 'tmonier_container_fill.form.max_layers_help',
+                'required' => false,
+                'attr' => ['min' => 1],
+            ])
             ->add('position', IntegerType::class, [
                 'label' => 'sylius.ui.position',
                 'required' => false,

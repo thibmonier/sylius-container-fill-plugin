@@ -19,6 +19,9 @@ tmonier_container_fill:
         nested_type:
             invalid: 'Les places doivent contenir un autre type à une seule place.'
             slots: 'Un type dont les places contiennent un autre type doit avoir au moins 2 places.'
+        layer_mode:
+            slots: 'Le mode couches nécessite une seule place (une palette ou un carton).'
+            limit: 'Le mode couches nécessite une hauteur de chargement (ou intérieure) ou un nombre maximum de couches.'
     container_rule:
         name:
             not_blank: 'Saisissez un nom.'

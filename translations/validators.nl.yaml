@@ -19,6 +19,9 @@ tmonier_container_fill:
         nested_type:
             invalid: 'De plaatsen moeten een ander type met één plaats bevatten.'
             slots: 'Een type met plaatsen van een ander type heeft minstens 2 plaatsen nodig.'
+        layer_mode:
+            slots: 'De lagenmodus vereist één plaats (een pallet of een doos).'
+            limit: 'De lagenmodus vereist een laadhoogte (of binnenhoogte) of een maximaal aantal lagen.'
     container_rule:
         name:
             not_blank: 'Voer een naam in.'

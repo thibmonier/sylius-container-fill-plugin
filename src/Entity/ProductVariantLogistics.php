@@ -18,6 +18,9 @@ class ProductVariantLogistics implements ProductVariantLogisticsInterface
 
     protected bool $stackable = true;
 
+    /** Height of one layer of the product in mm (layer mode, 1.1). */
+    protected ?int $layerHeight = null;
+
     protected bool $ownPallet = false;
 
     protected bool $caseMultipleRequired = false;
@@ -65,6 +68,16 @@ class ProductVariantLogistics implements ProductVariantLogisticsInterface
     public function setStackable(bool $stackable): void
     {
         $this->stackable = $stackable;
+    }
+
+    public function getLayerHeight(): ?int
+    {
+        return $this->layerHeight;
+    }
+
+    public function setLayerHeight(?int $layerHeight): void
+    {
+        $this->layerHeight = $layerHeight;
     }
 
     public function isOwnPallet(): bool

@@ -38,6 +38,7 @@ final class CapacityCsvExporter
                 null === $capacity->getUnitsPerLayer() ? '' : (string) $capacity->getUnitsPerLayer(),
                 null === $data ? '' : (string) $data->getUnitsPerCase(),
                 null === $weight ? '' : rtrim(rtrim(number_format($weight / 1000, 3, '.', ''), '0'), '.'),
+                null === $data?->getLayerHeight() ? '' : (string) $data->getLayerHeight(),
             ], ';', '"', '');
         }
         rewind($stream);

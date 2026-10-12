@@ -31,7 +31,7 @@ Functional specification and design decisions. Public documentation: `README.md`
 | Payload cap | **Yes, mandatory in v1**: 33 pallets for 24 t is ~727 kg per pallet, drinks or building materials reach 800-1000 kg: a places-only truck gauge would show 100 % for an illegal load |
 | (b) Volume x efficiency | Indicator only, when the container and every line have dimensions: reported (ratio, "may exceed the volume" note), never used to split, fill or block (core dimensions are often rough; the declared capacity is the commercial truth) |
 | (c) 3D bin packing (`dvdoug/boxpacker`) | No (v2, carton mode only, optional bridge) |
-| (d) Layers | Partial: units per layer stored per capacity, "round up to the layer" action; full layer mode (stack height, side view) in v1.1 |
+| (d) Layers | **Yes since 1.1, opt-in per container type** (single place): stack height and/or layer count, stackable, side view, layer suggestions; capacities otherwise (section 4b) |
 
 ## 3. Model
 
@@ -43,7 +43,7 @@ All in plugin tables (`tmonier_container_*`), no core entity change.
   places, e.g. EUR pallet in a semi), `volumeEfficiency` (%), `indicative`, `position`,
   `enabled`. Presets are shipped as a fixture, editable, flagged indicative (section 8).
 - `ProductVariantLogistics` (1-1 with the variant): `unitsPerCase`, `caseWeight` (g),
-  `stackable` (stored for v1.1, unused in v1), `ownPallet`, `caseMultipleRequired`. **This
+  `stackable` (layer mode), `layerHeight` (mm, layer mode, 1.1), `ownPallet`, `caseMultipleRequired`. **This
   plugin owns the case data and the per-line "multiple of N" rule** (memo section 4); other
   plugins read it (quick order, section 7).
 - `VariantContainerCapacity` (variant x container type): units filling one container,
@@ -82,6 +82,32 @@ logistics data" names the products). Missing data never passes silently.
 `Rule\SuggestionFinder` proposes the smallest addition completing a container or meeting the
 rule ("Add 30 x Cement bag to complete pallet 2"); the wording depends on the binding
 constraint (exact units only when places bind).
+
+## 4b. Layer mode (1.1)
+
+Memo approach (d), opt-in per container type (`layerMode`, `maxLayers`; `maxLoadHeight` or
+`innerHeight` as stack height), single-place types only (pallets, cartons): a truck keeps
+counting pallet places by capacity (its nested pallet type).
+
+- `Planner/LayerPlanner` (pure), used by `SlotWeightPlanner` when the type supports layers and
+  every line has units per layer (capacity row) and a layer height (`ProductVariantLogistics`);
+  otherwise the 1.0 capacity plan (no data loss, no new blocking: BC with 1.0 data).
+- One product per layer; layers sorted stackable first, heavier first (bottom); first fit by
+  stack height, layer count and payload. A partial layer takes a full layer height but counts
+  for units / units per layer in the fill (`layerRatio`). A non-stackable product closes the
+  stack (at most one of its layers per container, on top). Own-pallet lines stay alone.
+- Full: payload or stack reached, or no further layer of the allowed lines fits, and no
+  partial layer can be completed (decision: full pallets are made of full layers, so
+  "full only" rules require complete layers).
+- Binding constraint `layers` ("stack height"). Suggestions estimate with the layer share of a
+  unit, then re-plan. "Round up to the layer" completes partial layers.
+- Gauge: server-side SVG side view per pallet (decorative, `aria-hidden`) with a text legend
+  (layers from the top, partial layers, "room for N more layers"); report/snapshot/API
+  containers carry `layers`, `layerGroups`, `remainingHeight`.
+- Preview: "%quantity% = %layers% layers ≈ %percent% % of a %type%" (stack height or layer count,
+  payload).
+- Migration `Version20261020100000`: `layer_mode` (default false), `max_layers`, `layer_height`
+  (nullable). CSV: optional `layer_height_mm` column.
 
 ## 5. Rules
 
@@ -190,7 +216,7 @@ container; carriers' rules apply.
 5. A line outside every rule scope is not planned (no gauge without applicable rule).
 6. Per-container shipping without applicable rule charges one container.
 7. CSV import all or nothing; the variant form saves logistics only when the whole form is valid.
-8. `stackable` stored but not used before the v1.1 layer mode.
+8. `stackable` is only used in layer mode (1.1).
 9. Group rules replace the general rule of the same scope instead of adding to it.
 10. Translations in en, fr, de, es, it, nl, pl (instead of the memo's en + fr).
 
@@ -199,5 +225,5 @@ container; carriers' rules apply.
 3D bin packing, rotations, heavy-at-the-bottom stacking; double deck in mega trailers; several
 container types in one order; one shipment per pallet; ADR, axle loads, securing (carrier's
 responsibility); 3D viewer; automatic filler product suggestions; rules per organisation;
-loading metres (LDM). Next: v1.1 layer mode, v2 optional BoxPacker bridge (cartons), RFQ
+loading metres (LDM). Next: v2 optional BoxPacker bridge (cartons), RFQ
 fallback "quote this truck" (with tmonier/sylius-quote-request-plugin).

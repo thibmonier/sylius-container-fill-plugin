@@ -114,10 +114,23 @@ final class SuggestionFinder
     /** Units of the line that bring the target container to the required fill in its first saturated dimension. */
     private function estimate(FillResult $result, ContainerFill $target, PlanLine $line, float $required): int
     {
-        $perUnit = [
-            [$target->slotRatio, $line->slotShare()],
-            [$target->weightRatio, (float) $line->unitWeight / $result->container->maxPayload],
-        ];
+        $perUnit = [[$target->weightRatio, (float) $line->unitWeight / $result->container->maxPayload]];
+        if (!$result->layerMode) {
+            $perUnit[] = [$target->slotRatio, $line->slotShare()];
+        }
+        // Layer mode: share of the stack taken by one unit (a layer of upl units).
+        $spec = $result->container;
+        if ($result->layerMode && null !== $target->layerRatio && $line->hasLayerData()) {
+            $perLayer = (float) $line->unitsPerLayer;
+            $share = 0.0;
+            if (null !== $spec->maxStackHeight && $spec->maxStackHeight > 0) {
+                $share = (float) $line->layerHeight / $spec->maxStackHeight / $perLayer;
+            }
+            if (null !== $spec->maxLayers && $spec->maxLayers > 0) {
+                $share = max($share, 1 / $spec->maxLayers / $perLayer);
+            }
+            $perUnit[] = [$target->layerRatio, $share];
+        }
 
         $estimate = \PHP_INT_MAX;
         foreach ($perUnit as [$used, $share]) {

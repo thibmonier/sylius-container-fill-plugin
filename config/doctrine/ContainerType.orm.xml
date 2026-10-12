@@ -17,6 +17,12 @@
         <field name="maxPayload" column="max_payload" type="integer" />
         <field name="slots" column="slots" type="integer" />
         <field name="volumeEfficiency" column="volume_efficiency" type="integer" />
+        <field name="layerMode" column="layer_mode" type="boolean">
+            <options>
+                <option name="default">0</option>
+            </options>
+        </field>
+        <field name="maxLayers" column="max_layers" type="integer" nullable="true" />
         <field name="indicative" column="indicative" type="boolean" />
         <field name="position" column="position" type="integer" />
         <field name="enabled" column="enabled" type="boolean" />

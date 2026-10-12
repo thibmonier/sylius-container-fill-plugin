@@ -19,6 +19,9 @@ tmonier_container_fill:
         nested_type:
             invalid: 'Die Stellplätze müssen einen anderen Typ mit nur einem Stellplatz aufnehmen.'
             slots: 'Ein Typ mit Stellplätzen eines anderen Typs braucht mindestens 2 Stellplätze.'
+        layer_mode:
+            slots: 'Der Lagenmodus erfordert einen einzigen Platz (eine Palette oder einen Karton).'
+            limit: 'Der Lagenmodus erfordert eine Ladehöhe (oder Innenhöhe) oder eine maximale Lagenzahl.'
     container_rule:
         name:
             not_blank: 'Geben Sie einen Namen ein.'

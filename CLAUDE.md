@@ -51,6 +51,9 @@ derives from them; rule "full pallets or a full truck" on that taxon in every ch
   places), unit weight (case weight, else core weight), unit volume (raw core dimensions).
 - `Planner/SlotWeightPlanner` (pure): `ContainerSpec` + `PlanLine`s -> `FillResult`
   (`ContainerFill`s, `BindingConstraint`). Unit tested with `tests/Unit/Planner/PlannerFixtures`.
+  Layer mode (1.1): `Planner/LayerPlanner` when the type has `layerMode` (single place, stack
+  height and/or `maxLayers`) and every line has units per layer + layer height
+  (`LayerPlannerTest`); side view `templates/shop/_stack.html.twig`.
 - `Rule/`: `RuleEvaluator` and `SuggestionFinder` (pure), `ScopeMatcher`, `CartFillChecker`
   (service `tmonier_container_fill.cart_fill_checker`: applicable rules, type selection,
   `CartFillReport`: `outcomes` = every rule on its whole scope (blocking), `plan` = each line

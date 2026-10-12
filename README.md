@@ -23,9 +23,10 @@ admin.
 | Need | What the plugin does |
 |---|---|
 | Describe the containers | **Container types**: pallet, truck, sea container, carton; inner dimensions, load height, **payload (mandatory)**, places (33 EUR pallets in a semi), nested type. Indicative presets: EUR / half / UK / US pallets, standard and mega semi-trailers, US 53 ft, 20 ft / 40 ft / 40 ft HC containers, cartons. |
-| Describe the products | **Logistics tab** on the variant form and on the product form of simple products: units per case, case weight, own pallet, "sold by whole cases"; units filling each container type and units per layer. Falls back on the Sylius weight and dimensions (units set in the configuration). |
+| Describe the products | **Logistics tab** on the variant form and on the product form of simple products: units per case, case weight, own pallet, "sold by whole cases", layer height and stackable; units filling each container type and units per layer. Falls back on the Sylius weight and dimensions (units set in the configuration). |
 | Know how full the order is | **Load planner**: fill = max(places, payload), the **binding constraint** is shown ("limited by the weight"), the volume is an indicator when every dimension is known (never blocking); lines split into N containers (first-fit decreasing), products on their own pallet kept apart. |
 | Commercial rules | **Rules** per channel, scope (all, taxon with its children, product) and optional customer group: **full containers only**, **minimum fill %**, **multiple of N** (or of the case), **maximum containers**, on a list of allowed container types. |
+| Build pallets by layers | **Layer mode** (1.1, opt-in per container type): a pallet is a stack of layers, one product per layer, limited by its load height and/or a maximum number of layers and by its payload; non-stackable products end a stack; side view of each pallet in the gauge, "room for 3 more layers", product page preview in layers ("90 = 1.5 layers ≈ 18 % of a EUR pallet"). |
 | Help the buyer | **Gauge in the cart** (server-side SVG truck places and pallet stack, accessible meter, text next to every colour, reduced motion), "add 30 cases to complete pallet 2" and "round up to the layer" buttons, checkout button disabled with the reason. Indicative **preview on product pages** (share of a container taken by the typed quantity, current fill of the cart). |
 | Enforce the rules | Checkout entry redirected to the cart, **checkout completion refused in the shop and the shop API (422)**, workflow guard as defence in depth. Partial carts always save; placed orders stay valid when rules change. |
 | Exceptions | Administrators with a dedicated role may complete an order that does not meet the rules: logged and recorded on the order. |
@@ -150,6 +151,26 @@ The presets are indicative figures from public sources (see `SPEC.md`): check th
 carriers and pallet networks (load heights from 1.8 to 2.2 m, payloads from 1000 to 1500 kg per
 EUR pallet).
 
+### Layer mode (1.1)
+
+Tick **Plan by layers** on a single-place container type (a pallet, a carton) that has a load
+height (or inner height) and/or a **maximum number of layers**. Give each product a **layer
+height** (Logistics tab) and its **units per layer** for that type (capacity row). Then:
+
+- a pallet is a stack of layers, one product per layer, heavy layers at the bottom; a partial
+  layer takes the height of a full one but counts for its share in the fill, and a pallet with a
+  partial layer that can be completed is not "full" (full pallets are made of full layers);
+- a pallet is limited by its load height, its maximum number of layers and its payload
+  (whichever binds is shown: "limited by stack height");
+- a non-stackable product bears nothing: at most one of its layers per pallet, on top;
+- the gauge draws a side view of each pallet with its layers, says how many layers still fit,
+  and "round up to the layer" completes partial layers;
+- the product page speaks in layers: "90 = 1.5 layers ≈ 18 % of a EUR pallet".
+
+Without layer data for every product of a plan, or on a type without layer mode, the plan uses
+the capacities, as in 1.0. Upgrading from 1.0 needs the migration (nullable columns, layer mode
+off): nothing changes until you opt in.
+
 ### Logistics data (Logistics tab of the variant form, or of the product form for simple products)
 
 | Field | Notes |
@@ -157,7 +178,8 @@ EUR pallet).
 | Units per case, case weight | the case weight wins over the Sylius weight |
 | Sold by whole cases | the quantity field starts at one case and steps by the case; a quantity that is not a multiple of the case is refused when adding to the cart (shop and shop API), when changing it in the cart (shop and API), and the checkout stays blocked |
 | Own pallet | never mixed with other products in a container |
-| Capacity per container type | units filling one container, units per layer (for "round up to the layer") |
+| Layer height (mm), stackable | layer mode: height of one layer of the product; a non-stackable product bears nothing (at most one of its layers per pallet, on top) |
+| Capacity per container type | units filling one container (capacity mode, trucks), units per layer (layer mode, "round up to the layer") |
 
 A product in the scope of a rule without capacity or weight makes the plan **incomplete**: the
 rule is not met and the gauge names the product. The plugin never assumes missing data is fine.
@@ -202,7 +224,8 @@ bin/console tmonier:container-fill:import-capacities capacities.csv --dry-run
 bin/console tmonier:container-fill:import-capacities capacities.csv
 ```
 
-Columns: `variant_code;container_type;capacity;units_per_layer;units_per_case;case_weight_kg`
+Columns: `variant_code;container_type;capacity;units_per_layer;units_per_case;case_weight_kg;layer_height_mm`
+(`layer_height_mm` since 1.1, optional: 1.0 files import unchanged)
 (`;` or `,`, UTF-8 with or without BOM). The first three are required; an empty `capacity`
 removes the capacity; empty optional columns keep the stored values. Every line is checked
 first: **one rejected line and nothing is written** (errors by line number).
@@ -252,8 +275,8 @@ The gauge is the Live component `tmonier_container_fill:gauge`: it listens to
   stacking order, axle loads, securing or ADR (the carrier's responsibility).
 - One container type per order (per rule), one Sylius shipment; no double deck in mega
   trailers; no loading metres (LDM).
-- The layer mode (stack height, side view, `stackable`) comes in v1.1; units per layer only
-  drive "round up to the layer" in v1.
+- Layer mode: one product per layer (no mixed layers), single-place container types (pallets,
+  cartons); trucks count pallet places by capacity. `stackable` is only used in layer mode.
 - The product page preview is indicative: the cart is the reference for mixed carts.
 - Rules per customer group, not per organisation.
 

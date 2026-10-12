@@ -125,7 +125,7 @@ final class CapacityCsvImporter
         if ('' === $line['container_type'] || null === $this->containerTypeRepository->findOneByCode($line['container_type'])) {
             return sprintf('Unknown container type "%s".', $line['container_type']);
         }
-        foreach (['capacity', 'units_per_layer', 'units_per_case'] as $column) {
+        foreach (['capacity', 'units_per_layer', 'units_per_case', 'layer_height_mm'] as $column) {
             $value = $line[$column] ?? '';
             if ('' !== $value && (1 !== preg_match('/^\d+$/', $value) || (int) $value < 1 || (int) $value > self::MAX_INT)) {
                 return sprintf('"%s" must be a whole number from 1 to %d.', $column, self::MAX_INT);
@@ -168,7 +168,8 @@ final class CapacityCsvImporter
 
         $unitsPerCase = $line['units_per_case'] ?? '';
         $weight = $line['case_weight_kg'] ?? '';
-        if ('' === $unitsPerCase && '' === $weight) {
+        $layerHeight = $line['layer_height_mm'] ?? '';
+        if ('' === $unitsPerCase && '' === $weight && '' === $layerHeight) {
             return;
         }
         // Several lines of one variant (one per container type, the export format) share the
@@ -185,6 +186,9 @@ final class CapacityCsvImporter
         }
         if ('' !== $weight) {
             $logistics->setCaseWeight((int) round((float) str_replace(',', '.', $weight) * 1000));
+        }
+        if ('' !== $layerHeight) {
+            $logistics->setLayerHeight((int) $layerHeight);
         }
     }
 

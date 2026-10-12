@@ -19,6 +19,9 @@ tmonier_container_fill:
         nested_type:
             invalid: 'The places must hold another type with a single place.'
             slots: 'A type with places of another type needs at least 2 places.'
+        layer_mode:
+            slots: 'Layer mode needs a single place (a pallet or a carton).'
+            limit: 'Layer mode needs a load height (or inner height) or a maximum number of layers.'
     container_rule:
         name:
             not_blank: 'Enter a name.'

@@ -186,4 +186,49 @@ final class ShopCheckoutTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertStringContainsString('1 = 3 % of a ' . $pallet->getName() . ' (33 fill one)', $crawler->filter('[data-test-tmonier-container-fill-preview]')->text());
     }
+
+    public function testTheGaugeShowsTheStackOfLayers(): void
+    {
+        $pallet = $this->catalog->layerPallet();
+        $this->catalog->rule([$pallet]);
+        $water = $this->catalog->variant('WATER', [[$pallet, 480, 60]], 1550);
+        $this->catalog->layers($water, 200);
+        $customer = $this->catalog->customer();
+        $this->catalog->cart([[$water, 300]], $customer);
+        $this->loginShopUser($customer);
+
+        $crawler = $this->client->request('GET', $this->url('/cart/'));
+
+        self::assertResponseIsSuccessful();
+        $stack = $crawler->filter('[data-test-tmonier-container-fill-stack="1"]');
+        self::assertCount(1, $stack);
+        self::assertStringContainsString('5 layers', $stack->text());
+        self::assertStringContainsString('5 x layer of Product WATER (60/60)', $stack->text());
+        self::assertStringContainsString('Room for 3 more layers of Product WATER', $stack->filter('[data-test-tmonier-container-fill-remaining-layers]')->text());
+        self::assertCount(5, $stack->filter('svg rect[fill="#206bc4"]'));
+        // Stacked from the bottom: one layer per height.
+        self::assertSame(['81', '69', '58', '46', '35'], array_map(static fn (string $y): string => (string) round((float) $y), $stack->filter('svg rect[fill="#206bc4"]')->each(static fn ($rect): string => (string) $rect->attr('y'))));
+        self::assertStringContainsString('limited by stack height', $crawler->filter('[data-test-tmonier-container-fill-container="1"]')->text());
+        // Rounding up to the layer: 300 is 5 full layers, nothing to round.
+        self::assertCount(0, $crawler->filter('[data-test-tmonier-container-fill-round-layer]'));
+    }
+
+    public function testThePreviewSpeaksInLayers(): void
+    {
+        $pallet = $this->catalog->layerPallet();
+        $water = $this->catalog->variant('WATER', [[$pallet, 480, 60]], 1550);
+        $this->catalog->layers($water, 200);
+        $extension = self::getContainer()->get('tmonier_container_fill.twig.extension');
+        self::assertInstanceOf(\Tmonier\SyliusContainerFillPlugin\Twig\ContainerFillExtension::class, $extension);
+
+        $rows = array_values(array_filter($extension->preview($water, 90), static fn (array $row): bool => $row['name'] === $pallet->getName()));
+
+        self::assertCount(1, $rows);
+        self::assertSame(1.5, $rows[0]['layers']);
+        self::assertSame(18.8, $rows[0]['percent']);
+
+        $crawler = $this->client->request('GET', $this->url('/products/' . $water->getProduct()?->getSlug()));
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('1 = 0.02 layers', $crawler->filter('[data-test-tmonier-container-fill-preview]')->text());
+    }
 }

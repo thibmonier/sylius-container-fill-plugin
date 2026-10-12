@@ -71,6 +71,8 @@ final class AdminTest extends WebTestCase
         $fields['maxLoadHeight'] = '1200';
         $fields['volumeEfficiency'] = '85';
         $fields['enabled'] = '1';
+        $fields['layerMode'] = '1';
+        $fields['maxLayers'] = '6';
         self::assertIsArray($fields['translations']);
         foreach (array_keys($fields['translations']) as $locale) {
             $fields['translations'][$locale] = ['name' => 'Half pallet ' . $this->catalog->suffix];
@@ -83,6 +85,8 @@ final class AdminTest extends WebTestCase
         self::assertInstanceOf(ContainerTypeInterface::class, $type);
         self::assertSame(500500, $type->getMaxPayload());
         self::assertSame(800, $type->getInnerLength());
+        self::assertTrue($type->isLayerMode());
+        self::assertSame(6, $type->getMaxLayers());
 
         // Edit: the payload is shown back in kilograms; a type cannot be nested in itself.
         $crawler = $this->client->request('GET', sprintf('/admin/container-types/%d/edit', (int) $type->getId()));
@@ -93,9 +97,11 @@ final class AdminTest extends WebTestCase
         self::assertIsNumeric($fields['maxPayload']);
         self::assertEqualsWithDelta(500.5, (float) $fields['maxPayload'], 0.0001);
         $fields['maxPayload'] = '';
+        $fields['slots'] = '2';
         $values['tmonier_container_fill_container_type'] = $fields;
         $this->client->request('POST', sprintf('/admin/container-types/%d/edit', (int) $type->getId()), $values);
         self::assertResponseStatusCodeSame(422, 'The payload is mandatory.');
+        self::assertStringContainsString('Layer mode needs a single place', (string) $this->client->getResponse()->getContent());
     }
 
     public function testTheMerchantCreatesARuleAndInvalidRulesAreRefused(): void
@@ -169,6 +175,7 @@ final class AdminTest extends WebTestCase
         $values[$formName]['tmonierContainerFill'] = [
             'unitsPerCase' => '6',
             'caseWeight' => '12.5',
+            'layerHeight' => '180',
             'caseMultipleRequired' => '1',
             'ownPallet' => '1',
             'capacities' => [$row => ['quantity' => '48', 'unitsPerLayer' => '12']],
@@ -181,6 +188,7 @@ final class AdminTest extends WebTestCase
         self::assertInstanceOf(ProductVariantLogisticsInterface::class, $logistics);
         self::assertSame(6, $logistics->getUnitsPerCase());
         self::assertSame(12500, $logistics->getCaseWeight());
+        self::assertSame(180, $logistics->getLayerHeight());
         self::assertTrue($logistics->isCaseMultipleRequired());
         self::assertTrue($logistics->isOwnPallet());
         $capacity = $this->entityManager()->getRepository(VariantContainerCapacityInterface::class)->findOneBy(['variant' => $variant->getId(), 'containerType' => $pallet->getId()]);

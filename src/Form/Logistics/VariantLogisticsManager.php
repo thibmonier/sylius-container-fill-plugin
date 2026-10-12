@@ -50,6 +50,7 @@ final class VariantLogisticsManager
             $data->unitsPerCase = $logistics->getUnitsPerCase();
             $data->caseWeight = $logistics->getCaseWeight();
             $data->stackable = $logistics->isStackable();
+            $data->layerHeight = $logistics->getLayerHeight();
             $data->ownPallet = $logistics->isOwnPallet();
             $data->caseMultipleRequired = $logistics->isCaseMultipleRequired();
         }
@@ -97,6 +98,7 @@ final class VariantLogisticsManager
             $logistics->setUnitsPerCase(max(1, $data->unitsPerCase ?? 1));
             $logistics->setCaseWeight($data->caseWeight);
             $logistics->setStackable($data->stackable);
+            $logistics->setLayerHeight($data->layerHeight);
             $logistics->setOwnPallet($data->ownPallet);
             $logistics->setCaseMultipleRequired($data->caseMultipleRequired);
         }

@@ -9,6 +9,9 @@ namespace Tmonier\SyliusContainerFillPlugin\Planner;
  * The volume is computed as an indicator when every line and the container have dimensions; it
  * never splits, fills or blocks a container (memo section 2: core dimensions are often rough).
  *
+ * Container types in layer mode (1.1) are planned by LayerPlanner when every line has layer
+ * data (units per layer, layer height); otherwise by capacities as below.
+ *
  * Lines are split into containers by first-fit decreasing on whole cases (a partial last case
  * is one smaller item). "Own pallet" lines never share a container (single-place containers)
  * or take whole places (multi-place containers such as a truck of 33 pallet places).
@@ -17,13 +20,25 @@ final class SlotWeightPlanner implements LoadPlannerInterface
 {
     private const EPSILON = 1e-9;
 
+    private readonly LayerPlanner $layerPlanner;
+
+    public function __construct(?LayerPlanner $layerPlanner = null)
+    {
+        $this->layerPlanner = $layerPlanner ?? new LayerPlanner();
+    }
+
     public function plan(ContainerSpec $container, array $lines): FillResult
     {
         $lines = array_values(array_filter($lines, static fn (PlanLine $line): bool => $line->quantity > 0));
+        // Layer mode (opt-in per container type) when every line has layer data; else capacities (1.0).
+        $layerMode = $this->layerPlanner->applies($container, $lines);
 
         $incomplete = [];
         foreach ($lines as $line) {
             $missing = $line->missingData();
+            if ($layerMode) {
+                $missing = array_values(array_diff($missing, [PlanLine::MISSING_CAPACITY]));
+            }
             if ([] !== $missing) {
                 $incomplete[$line->key] = $missing;
             }
@@ -37,6 +52,9 @@ final class SlotWeightPlanner implements LoadPlannerInterface
             if (null === $line->unitVolume || $line->unitVolume <= 0.0) {
                 $volumeAvailable = false;
             }
+        }
+        if ($layerMode) {
+            return $this->layerPlanner->plan($container, $lines, $volumeAvailable);
         }
 
         $bins = [];

@@ -122,6 +122,22 @@ final class VariantLogistics
             $this->unitsPerCase(),
             $this->logistics?->isOwnPallet() ?? false,
             $this->unitsPerLayer($type),
+            $this->layerHeight(),
+            $this->isStackable(),
         );
+    }
+
+    /** Height of one layer in mm (layer mode), null when unknown. */
+    public function layerHeight(): ?int
+    {
+        $height = $this->logistics?->getLayerHeight();
+
+        return null !== $height && $height > 0 ? $height : null;
+    }
+
+    /** Other layers may be put on top (true without logistics data, as in 1.0). */
+    public function isStackable(): bool
+    {
+        return $this->logistics?->isStackable() ?? true;
     }
 }

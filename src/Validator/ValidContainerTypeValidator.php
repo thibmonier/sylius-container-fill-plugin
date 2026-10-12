@@ -17,7 +17,19 @@ final class ValidContainerTypeValidator extends ConstraintValidator
         if (!$constraint instanceof ValidContainerType) {
             throw new UnexpectedTypeException($constraint, ValidContainerType::class);
         }
-        if (!$value instanceof ContainerTypeInterface || null === $value->getNestedType()) {
+        if (!$value instanceof ContainerTypeInterface) {
+            return;
+        }
+        // Layer mode: one stack (a single place) limited by a height or a number of layers.
+        if ($value->isLayerMode()) {
+            if (1 !== $value->getSlots()) {
+                $this->context->buildViolation('tmonier_container_fill.container_type.layer_mode.slots')->atPath('layerMode')->addViolation();
+            }
+            if (null === $value->getMaxLayers() && null === ($value->getMaxLoadHeight() ?? $value->getInnerHeight())) {
+                $this->context->buildViolation('tmonier_container_fill.container_type.layer_mode.limit')->atPath('maxLayers')->addViolation();
+            }
+        }
+        if (null === $value->getNestedType()) {
             return;
         }
 

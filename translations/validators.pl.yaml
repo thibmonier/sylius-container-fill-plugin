@@ -19,6 +19,9 @@ tmonier_container_fill:
         nested_type:
             invalid: 'Miejsca muszą zawierać inny typ z jednym miejscem.'
             slots: 'Typ z miejscami innego typu wymaga co najmniej 2 miejsc.'
+        layer_mode:
+            slots: 'Tryb warstw wymaga jednego miejsca (paleta lub karton).'
+            limit: 'Tryb warstw wymaga wysokości ładunku (lub wewnętrznej) albo maksymalnej liczby warstw.'
     container_rule:
         name:
             not_blank: 'Podaj nazwę.'

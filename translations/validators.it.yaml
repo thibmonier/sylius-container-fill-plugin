@@ -19,6 +19,9 @@ tmonier_container_fill:
         nested_type:
             invalid: 'I posti devono contenere un altro tipo con un solo posto.'
             slots: 'Un tipo con posti di un altro tipo richiede almeno 2 posti.'
+        layer_mode:
+            slots: 'La modalità a strati richiede un solo posto (un pallet o un cartone).'
+            limit: 'La modalità a strati richiede un’altezza di carico (o interna) o un numero massimo di strati.'
     container_rule:
         name:
             not_blank: 'Inserite un nome.'

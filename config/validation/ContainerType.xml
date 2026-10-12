@@ -58,6 +58,13 @@
                 <option name="groups">sylius</option>
             </constraint>
         </property>
+        <property name="maxLayers">
+            <constraint name="Range">
+                <option name="min">1</option>
+                <option name="max">1000</option>
+                <option name="groups">sylius</option>
+            </constraint>
+        </property>
         <property name="innerLength">
             <constraint name="Positive"><option name="groups">sylius</option></constraint>
         </property>

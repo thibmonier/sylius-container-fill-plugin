@@ -6,7 +6,10 @@ namespace Tmonier\SyliusContainerFillPlugin\Planner;
 
 use Tmonier\SyliusContainerFillPlugin\Entity\ContainerTypeInterface;
 
-/** Planner view of a container type: places, payload (grams), usable volume (mm³). */
+/**
+ * Planner view of a container type: places, payload (grams), usable volume (mm³); layer mode
+ * (1.1, opt-in): stack height available for goods (mm) and/or maximum number of layers.
+ */
 final class ContainerSpec
 {
     public function __construct(
@@ -17,6 +20,9 @@ final class ContainerSpec
         public readonly int $maxPayload,
         public readonly ?float $usableVolume = null,
         public readonly bool $indicative = false,
+        public readonly bool $layerMode = false,
+        public readonly ?int $maxStackHeight = null,
+        public readonly ?int $maxLayers = null,
     ) {
         if ($slots < 1 || $maxPayload < 1) {
             throw new \InvalidArgumentException('A container needs at least one place and a payload.');
@@ -33,6 +39,15 @@ final class ContainerSpec
             max(1, $type->getMaxPayload()),
             $type->getUsableVolume(),
             $type->isIndicative(),
+            $type->isLayerMode(),
+            $type->getMaxLoadHeight() ?? $type->getInnerHeight(),
+            $type->getMaxLayers(),
         );
+    }
+
+    /** Layer mode can be used: opted in, single place (a pallet, a carton), a height or a layer limit. */
+    public function supportsLayers(): bool
+    {
+        return $this->layerMode && 1 === $this->slots && ((null !== $this->maxStackHeight && $this->maxStackHeight > 0) || (null !== $this->maxLayers && $this->maxLayers > 0));
     }
 }
