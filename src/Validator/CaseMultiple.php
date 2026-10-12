@@ -6,7 +6,7 @@ namespace Tmonier\SyliusContainerFillPlugin\Validator;
 
 use Symfony\Component\Validator\Constraint;
 
-/** On OrderItem, group "sylius": the quantity is a multiple of the case when the variant requires it. */
+/** Group "sylius": the quantity is a multiple of the case when the variant requires it (order item, add to cart and API cart commands). */
 #[\Attribute(\Attribute::TARGET_CLASS)]
 final class CaseMultiple extends Constraint
 {

@@ -155,7 +155,7 @@ EUR pallet).
 | Field | Notes |
 |---|---|
 | Units per case, case weight | the case weight wins over the Sylius weight |
-| Sold by whole cases | the cart refuses a quantity that is not a multiple of the case (checked when the cart is saved) |
+| Sold by whole cases | the quantity field starts at one case and steps by the case; a quantity that is not a multiple of the case is refused when adding to the cart (shop and shop API), when changing it in the cart (shop and API), and the checkout stays blocked |
 | Own pallet | never mixed with other products in a container |
 | Capacity per container type | units filling one container, units per layer (for "round up to the layer") |
 

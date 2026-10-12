@@ -22,6 +22,30 @@
         </constraint>
     </class>
 
+    <!-- Add to cart (shop form and shop API) and quantity changes in the API: Sylius validates
+         these commands without cascading to the order item. -->
+    <class name="Sylius\Bundle\OrderBundle\Controller\AddToCartCommand">
+        <constraint name="Tmonier\SyliusContainerFillPlugin\Validator\CaseMultiple">
+            <option name="groups">
+                <value>sylius</value>
+            </option>
+        </constraint>
+    </class>
+    <class name="Sylius\Bundle\ApiBundle\Command\Cart\AddItemToCart">
+        <constraint name="Tmonier\SyliusContainerFillPlugin\Validator\CaseMultiple">
+            <option name="groups">
+                <value>sylius</value>
+            </option>
+        </constraint>
+    </class>
+    <class name="Sylius\Bundle\ApiBundle\Command\Cart\ChangeItemQuantityInCart">
+        <constraint name="Tmonier\SyliusContainerFillPlugin\Validator\CaseMultiple">
+            <option name="groups">
+                <value>sylius</value>
+            </option>
+        </constraint>
+    </class>
+
     <!-- The shop API validates the command, not the order: without this the API bypasses the rules. -->
     <class name="Sylius\Bundle\ApiBundle\Command\Checkout\CompleteOrder">
         <constraint name="Tmonier\SyliusContainerFillPlugin\Validator\OrderContainerFillSatisfied">

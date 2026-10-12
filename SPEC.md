@@ -118,7 +118,7 @@ on any flush of a container type, rule, logistics, capacity or variant). No orde
 | Checkout complete (web) | class constraint `OrderContainerFillSatisfied` on `Order`, group `sylius_checkout_complete` |
 | Checkout complete (API) | the same constraint mapped on `Sylius\Bundle\ApiBundle\Command\Checkout\CompleteOrder` (the API validates the command, not the order): 422 |
 | Defence in depth | `Checkout\CheckoutCompleteGuardListener` on `workflow.sylius_order_checkout.guard.complete` (Symfony Workflow adapter, the Sylius 2 default; `workflow_guard: false` disables it) |
-| Cart | **never** a fill constraint in group `sylius` (a partial cart must save); only the opt-in per-line `CaseMultiple` constraint is in `sylius` |
+| Cart | **never** a fill constraint in group `sylius` (a partial cart must save); only the opt-in per-line `CaseMultiple` constraint is in `sylius`, mapped on `OrderItem` (cart page), on the shop `AddToCartCommand` (the added quantity) and on the API `AddItemToCart` / `ChangeItemQuantityInCart` commands (Sylius validates these without cascading to the item); `Form/Type/Extension/CartItemTypeExtension` sets min / step to the case and starts a new add to cart line at one case |
 | Admin | override by permission (`override_role`, nobody by default), logged on the `tmonier_container_fill` channel and recorded on the snapshot |
 | Grandfathering | constraints and guard only check orders in state `cart`: placed orders stay valid when rules change |
 

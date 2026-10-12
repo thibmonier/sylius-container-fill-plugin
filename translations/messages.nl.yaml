@@ -35,6 +35,8 @@ tmonier_container_fill:
         case_multiple_required: 'alleen volle dozen'
         preview_row: '%quantity% = %percent% % van een %type% (%capacity% vullen er een)'
         preview_help: 'Uw winkelwagen combineert alle producten: daar ziet u het exacte plan.'
+        cart_fill_now: 'Uw winkelwagen nu: %count% x %type%, de laatste voor %percent% % gevuld.'
+        whole_cases_help: 'Alleen per volle doos van %units%.'
         disabled: 'uitgeschakeld'
         rule_without_type: 'Geen actief containertype: deze regel blokkeert de bestelling van de betrokken producten.'
         volume_warning: 'Volgens de productafmetingen kan de lading het volume van deze container overschrijden (%volume% %): wij controleren dit.'

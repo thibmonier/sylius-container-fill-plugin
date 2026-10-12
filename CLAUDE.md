@@ -59,7 +59,8 @@ derives from them; rule "full pallets or a full truck" on that taxon in every ch
   `sylius_shop_checkout_*`), `Validator/OrderContainerFillSatisfied` (groups
   `sylius_checkout_complete` on `Order` and on the API `CompleteOrder` command, see
   `config/validation/Order.xml`), `Validator/CaseMultiple` (group `sylius` on `OrderItem`,
-  opt-in per variant), `Checkout/CheckoutCompleteGuardListener` (workflow guard),
+  the shop `AddToCartCommand` and the API `AddItemToCart` / `ChangeItemQuantityInCart`;
+  opt-in per variant; quantity field min/step by `Form/Type/Extension/CartItemTypeExtension`), `Checkout/CheckoutCompleteGuardListener` (workflow guard),
   `Checkout/FillOverrideChecker` (admin + `override_role`), `Checkout/LoadPlanSnapshotListener`
   (`workflow.sylius_order_checkout.completed.complete`). Only orders in state `cart` are
   checked (grandfathering).

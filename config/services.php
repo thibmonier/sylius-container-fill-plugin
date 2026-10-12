@@ -21,6 +21,7 @@ use Tmonier\SyliusContainerFillPlugin\Form\Logistics\VariantLogisticsType;
 use Tmonier\SyliusContainerFillPlugin\Form\Type\ContainerRuleType;
 use Tmonier\SyliusContainerFillPlugin\Form\Type\ContainerTypeTranslationType;
 use Tmonier\SyliusContainerFillPlugin\Form\Type\ContainerTypeType;
+use Tmonier\SyliusContainerFillPlugin\Form\Type\Extension\CartItemTypeExtension;
 use Tmonier\SyliusContainerFillPlugin\Form\Type\Extension\ProductVariantTypeExtension;
 use Tmonier\SyliusContainerFillPlugin\Form\Type\Shipping\ContainerTypeRuleConfigurationType;
 use Tmonier\SyliusContainerFillPlugin\Logistics\Units;
@@ -118,7 +119,7 @@ return static function (ContainerConfigurator $container): void {
         ->tag('monolog.logger', ['channel' => 'tmonier_container_fill']);
 
     $services->set('tmonier_container_fill.validator.case_multiple', CaseMultipleValidator::class)
-        ->args([service('tmonier_container_fill.logistics_provider')])
+        ->args([service('tmonier_container_fill.logistics_provider'), service('sylius.repository.product_variant'), service('sylius.repository.order_item')])
         ->tag('validator.constraint_validator', ['alias' => 'tmonier_container_fill_case_multiple']);
 
     $services->set('tmonier_container_fill.validator.container_type', ValidContainerTypeValidator::class)
@@ -209,6 +210,10 @@ return static function (ContainerConfigurator $container): void {
         ->tag('kernel.event_listener', ['event' => 'sylius.product_variant.pre_update', 'method' => 'onPreSave'])
         ->tag('kernel.reset', ['method' => 'reset'])
         ->public();
+
+    $services->set('tmonier_container_fill.form.extension.cart_item', CartItemTypeExtension::class)
+        ->args([service('tmonier_container_fill.logistics_provider'), service('sylius.modifier.order_item_quantity')])
+        ->tag('form.type_extension');
 
     $services->set('tmonier_container_fill.form.extension.product_variant', ProductVariantTypeExtension::class)
         ->args([service('tmonier_container_fill.variant_logistics_manager')])

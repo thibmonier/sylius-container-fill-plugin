@@ -35,6 +35,8 @@ tmonier_container_fill:
         case_multiple_required: 'solo cartoni interi'
         preview_row: '%quantity% = %percent% % di un %type% (%capacity% lo riempiono)'
         preview_help: 'Il carrello combina tutti i prodotti: mostra il piano esatto.'
+        cart_fill_now: 'Il tuo carrello ora: %count% x %type%, l’ultimo riempito al %percent% %.'
+        whole_cases_help: 'Venduto per cartoni completi da %units%.'
         disabled: 'disattivato'
         rule_without_type: 'Nessun tipo di contenitore attivo: questa regola blocca l’ordine dei prodotti interessati.'
         volume_warning: 'In base alle dimensioni dei prodotti, la merce potrebbe superare il volume di questo contenitore (%volume% %): lo verificheremo.'

@@ -91,6 +91,32 @@ final class ApiLoadPlanTest extends WebTestCase
         self::assertResponseStatusCodeSame(422);
     }
 
+    public function testTheApiCartRefusesPartialCases(): void
+    {
+        $pallet = $this->catalog->pallet();
+        $variant = $this->catalog->variant('WATER', [[$pallet, 480, null]], 9300, 6, caseMultiple: true);
+        $cart = $this->catalog->cart([]);
+        $items = sprintf('/api/v2/shop/orders/%s/items', $cart->getTokenValue());
+        $iri = '/api/v2/shop/product-variants/' . $variant->getCode();
+
+        $this->client->request('POST', $items, server: $this->headers(), content: json_encode(['productVariant' => $iri, 'quantity' => 4], \JSON_THROW_ON_ERROR));
+        self::assertResponseStatusCodeSame(422);
+        self::assertStringContainsString('multiple of 6', (string) $this->client->getResponse()->getContent());
+
+        $this->client->request('POST', $items, server: $this->headers(), content: json_encode(['productVariant' => $iri, 'quantity' => 12], \JSON_THROW_ON_ERROR));
+        self::assertResponseStatusCodeSame(201);
+        $data = $this->json();
+        self::assertIsArray($data['items']);
+        self::assertIsArray($data['items'][0]);
+        $itemId = $data['items'][0]['id'];
+        self::assertIsScalar($itemId);
+
+        $this->client->request('PATCH', sprintf('%s/%s', $items, (string) $itemId), server: ['CONTENT_TYPE' => 'application/merge-patch+json'] + $this->headers(), content: json_encode(['quantity' => 7], \JSON_THROW_ON_ERROR));
+        self::assertResponseStatusCodeSame(422);
+        $this->client->request('PATCH', sprintf('%s/%s', $items, (string) $itemId), server: ['CONTENT_TYPE' => 'application/merge-patch+json'] + $this->headers(), content: json_encode(['quantity' => 18], \JSON_THROW_ON_ERROR));
+        self::assertResponseIsSuccessful();
+    }
+
     public function testACompletedOrderExposesItsSnapshot(): void
     {
         $pallet = $this->catalog->pallet();
