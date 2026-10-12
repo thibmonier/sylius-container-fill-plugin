@@ -30,7 +30,24 @@
                             {% if result.container.indicative %}<span class="badge text-bg-light border">{{ 'tmonier_container_fill.ui.indicative'|trans }}</span>{% endif %}
                         </div>
 
-                        {% for container in result.containers %}
+                        {# Identical full containers are summarised in one line, the others listed. #}
+                        {% set fulls = result.containers|filter(container => container.full and container.percent >= 100 and not container.overloaded) %}
+                        {% set grouped = fulls|length > 1 %}
+                        {% if grouped %}
+                            {% set label = 'tmonier_container_fill.ui.full_containers'|trans({'%count%': fulls|length, '%total%': result.containerCount, '%type%': result.container.name}) %}
+                            <div class="mb-2" {{ sylius_test_html_attribute('tmonier-container-fill-full-group', fulls|length) }}>
+                                <div class="d-flex justify-content-between small">
+                                    <span>{{ label }}</span>
+                                    <span class="fw-semibold">{{ 'tmonier_container_fill.ui.status_ok'|trans }}</span>
+                                </div>
+                                <div role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-valuetext="{{ label }}" aria-label="{{ label }}">
+                                    <svg viewBox="0 0 100 6" width="100%" height="12" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                                        <rect x="0" y="0" width="100" height="6" rx="1" fill="#2fb344"></rect>
+                                    </svg>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% for container in result.containers|filter(container => not grouped or container not in fulls) %}
                             {% set percent = container.percent %}
                             {% set shown = min(100, percent) %}
                             {% set ok = container.full or (required is not null and container.ratio >= required - 0.000001) or required is null %}
@@ -83,15 +100,18 @@
                             {% if not report.isPlanned(outcome) %}
                                 {# The rule also covers lines planned by a more specific rule: its violations number its own containers. #}
                                 <div class="small text-body-secondary" {{ sylius_test_html_attribute('tmonier-container-fill-rule-containers', loop.index0) }}>
+                                    {% set required = outcome.rule.requiredFill %}
+                                    {% set short = result.containers|filter(container => container.overloaded or (not container.full and required is not null and container.ratio < required - 0.000001)) %}
                                     {{ 'tmonier_container_fill.ui.rule_containers'|trans({'%count%': result.containerCount, '%type%': result.container.name}) }}
-                                    {% for container in result.containers %}{{ 'tmonier_container_fill.ui.container_fill'|trans({'%index%': container.index, '%count%': result.containerCount, '%percent%': container.percent, '%binding%': ('tmonier_container_fill.binding.' ~ container.binding.value)|trans}) }}{% if not loop.last %} · {% endif %}{% endfor %}
+                                    {% for container in short|slice(0, 5) %}{{ 'tmonier_container_fill.ui.container_fill'|trans({'%index%': container.index, '%count%': result.containerCount, '%percent%': container.percent, '%binding%': ('tmonier_container_fill.binding.' ~ container.binding.value)|trans}) }}{% if not loop.last %} · {% endif %}{% endfor %}{% if short|length > 5 %} · {{ 'tmonier_container_fill.ui.and_more'|trans({'%count%': short|length - 5}) }}{% endif %}
                                 </div>
                             {% endif %}
                         {% if not outcome.satisfied %}
                             <ul class="small text-danger ps-3 mb-2" {{ sylius_test_html_attribute('tmonier-container-fill-violations') }}>
-                                {% for violation in outcome.violations %}
+                                {% for violation in outcome.violations|slice(0, 5) %}
                                     <li>{{ ('tmonier_container_fill.violation.' ~ violation.code)|trans(violation.translationParameters, 'validators') }}</li>
                                 {% endfor %}
+                                {% if outcome.violations|length > 5 %}<li>{{ 'tmonier_container_fill.ui.and_more'|trans({'%count%': outcome.violations|length - 5}) }}</li>{% endif %}
                             </ul>
                         {% endif %}
 

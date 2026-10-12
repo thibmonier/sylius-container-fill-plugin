@@ -71,6 +71,14 @@ sylius_twig_hooks:
                 template: '@TmonierSyliusContainerFillPlugin/admin/product/section.html.twig'
                 priority: 550
 
+        # Breadcrumb of the edit pages: the name, not the id.
+        'tmonier_container_fill_admin.container_rule.update.content.header':
+            breadcrumbs:
+                template: '@SyliusAdmin/shared/crud/update/content/header/breadcrumbs.html.twig'
+                configuration:
+                    rendered_field: name
+                priority: 100
+
         # Load plan recorded at checkout, on the order page.
         'sylius_admin.order.show.content.sections#left':
             tmonier_container_fill:

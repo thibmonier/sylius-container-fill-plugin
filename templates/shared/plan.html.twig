@@ -11,7 +11,7 @@
             {% for container in entry.containers %}
                 <li>
                     {{ 'tmonier_container_fill.ui.container_fill'|trans({'%index%': container.index, '%count%': entry.containerCount, '%percent%': container.percent, '%binding%': ('tmonier_container_fill.binding.' ~ container.binding)|trans}) }}
-                    <span class="text-secondary">({{ 'tmonier_container_fill.ui.dimensions_detail'|trans({'%slots%': container.slots, '%weight%': container.weight, '%volume%': container.volume is null ? '-' : container.volume}) }})</span>
+                    <span class="text-secondary">({{ container.volume is null ? 'tmonier_container_fill.ui.dimensions_detail_no_volume'|trans({'%slots%': container.slots, '%weight%': container.weight}) : 'tmonier_container_fill.ui.dimensions_detail'|trans({'%slots%': container.slots, '%weight%': container.weight, '%volume%': container.volume}) }})</span>
                 </li>
             {% endfor %}
         </ul>
@@ -26,7 +26,9 @@
             {% if not rule.planned|default(true) %}
                 <div class="text-secondary" {{ sylius_test_html_attribute('tmonier-container-fill-plan-rule-containers', loop.index0) }}>
                     {{ 'tmonier_container_fill.ui.rule_containers'|trans({'%count%': rule.containerCount, '%type%': rule.containerType.name}) }}
-                    {% for container in rule.containers %}{{ 'tmonier_container_fill.ui.container_fill'|trans({'%index%': container.index, '%count%': rule.containerCount, '%percent%': container.percent, '%binding%': ('tmonier_container_fill.binding.' ~ container.binding)|trans}) }}{% if not loop.last %} · {% endif %}{% endfor %}
+                    {% set required = rule.rule.mode == 'full_only' ? 100 : (rule.rule.mode == 'min_fill_percent' ? rule.rule.threshold : null) %}
+                    {% set short = rule.containers|filter(container => container.percent > 100 or (not container.full and required is not null and container.percent < required)) %}
+                    {% for container in short|slice(0, 5) %}{{ 'tmonier_container_fill.ui.container_fill'|trans({'%index%': container.index, '%count%': rule.containerCount, '%percent%': container.percent, '%binding%': ('tmonier_container_fill.binding.' ~ container.binding)|trans}) }}{% if not loop.last %} · {% endif %}{% endfor %}{% if short|length > 5 %} · {{ 'tmonier_container_fill.ui.and_more'|trans({'%count%': short|length - 5}) }}{% endif %}
                 </div>
             {% endif %}
             <ul class="text-danger mb-0">

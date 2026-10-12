@@ -146,4 +146,44 @@ final class ShopCheckoutTest extends WebTestCase
         self::assertStringContainsString('2 of 2: 25 %', $containers->text());
         self::assertCount(0, $crawler->filter('[data-test-tmonier-container-fill-rule="0"] [data-test-tmonier-container-fill-rule-containers]'));
     }
+
+    public function testIdenticalFullContainersAreGrouped(): void
+    {
+        $pallet = $this->catalog->pallet();
+        $this->catalog->rule([$pallet]);
+        $customer = $this->catalog->customer();
+        $this->catalog->cart([[$this->catalog->variant('A', [[$pallet, 40, null]], 1000), 130]], $customer);
+        $this->loginShopUser($customer);
+
+        $crawler = $this->client->request('GET', $this->url('/cart/'));
+
+        self::assertResponseIsSuccessful();
+        $group = $crawler->filter('[data-test-tmonier-container-fill-full-group="3"]');
+        self::assertCount(1, $group);
+        self::assertStringContainsString('3 of 4', $group->text());
+        self::assertCount(1, $crawler->filter('[data-test-tmonier-container-fill-container]'));
+        self::assertStringContainsString('4 of 4: 25 %', $crawler->filter('[data-test-tmonier-container-fill-container]')->text());
+    }
+
+    public function testThePreviewCountsWhatFitsByPlacesAndPayload(): void
+    {
+        // 40 per pallet by places, but 30 kg units on a 1000 kg pallet: 33 fit.
+        $pallet = $this->catalog->pallet();
+        $variant = $this->catalog->variant('HEAVY', [[$pallet, 40, null]], 30000);
+        $product = $variant->getProduct();
+        self::assertNotNull($product);
+        $extension = self::getContainer()->get('tmonier_container_fill.twig.extension');
+        self::assertInstanceOf(\Tmonier\SyliusContainerFillPlugin\Twig\ContainerFillExtension::class, $extension);
+
+        $rows = array_values(array_filter($extension->preview($variant, 66), static fn (array $row): bool => $row['name'] === $pallet->getName()));
+
+        self::assertCount(1, $rows);
+        self::assertSame(33, $rows[0]['capacity']);
+        self::assertSame(200.0, $rows[0]['percent']);
+        self::assertSame(2.0, $rows[0]['count']);
+
+        $crawler = $this->client->request('GET', $this->url('/products/' . $product->getSlug()));
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('1 = 3 % of a ' . $pallet->getName() . ' (33 fill one)', $crawler->filter('[data-test-tmonier-container-fill-preview]')->text());
+    }
 }

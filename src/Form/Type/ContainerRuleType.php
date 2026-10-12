@@ -49,6 +49,10 @@ final class ContainerRuleType extends AbstractResourceType
             ])
             ->add('scope', ChoiceType::class, [
                 'label' => 'tmonier_container_fill.form.scope',
+                // Required marker on the field label only, not on every radio (validated server side).
+                'required' => false,
+                'label_attr' => ['class' => 'required'],
+                'placeholder' => false,
                 'choices' => array_combine(
                     array_map(static fn (string $scope): string => 'tmonier_container_fill.scope.' . $scope, ContainerRuleInterface::SCOPES),
                     ContainerRuleInterface::SCOPES,
@@ -75,6 +79,9 @@ final class ContainerRuleType extends AbstractResourceType
             ])
             ->add('mode', ChoiceType::class, [
                 'label' => 'tmonier_container_fill.form.mode',
+                'required' => false,
+                'label_attr' => ['class' => 'required'],
+                'placeholder' => false,
                 'choices' => array_combine(
                     array_map(static fn (string $mode): string => 'tmonier_container_fill.mode.' . $mode, ContainerRuleInterface::MODES),
                     ContainerRuleInterface::MODES,

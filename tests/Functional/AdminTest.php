@@ -122,6 +122,10 @@ final class AdminTest extends WebTestCase
 
         $this->client->request('POST', '/admin/container-rules/new', $values);
         self::assertResponseStatusCodeSame(422, 'A minimum fill needs a percentage.');
+        // Required marker on the field labels, not on every radio.
+        $form = $this->client->getCrawler();
+        self::assertCount(0, $form->filter('input[type="radio"][required]'));
+        self::assertGreaterThanOrEqual(2, $form->filter('legend.required, label.required')->count());
 
         $incomplete = $values;
         unset($incomplete['tmonier_container_fill_container_rule']['scope'], $incomplete['tmonier_container_fill_container_rule']['mode']);
@@ -136,6 +140,10 @@ final class AdminTest extends WebTestCase
         self::assertInstanceOf(ContainerRuleInterface::class, $rule);
         self::assertSame($taxon->getId(), $rule->getTaxon()?->getId());
         self::assertSame(90, $rule->getThreshold());
+
+        $crawler = $this->client->request('GET', sprintf('/admin/container-rules/%d/edit', EntityId::int($rule->getId())));
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('Full pallets ' . $this->catalog->suffix, $crawler->filter('.breadcrumb')->text());
         self::assertCount(1, $rule->getContainerTypes());
     }
 
@@ -247,6 +255,8 @@ final class AdminTest extends WebTestCase
         self::assertStringContainsString('75 %', $card->text());
         self::assertStringContainsString((string) $pallet->getName(), $card->text());
         self::assertCount(0, $card->filter('[data-test-tmonier-container-fill-override]'));
+        // No dimensions on the test products: no "volume -" in the detail.
+        self::assertStringNotContainsString('volume', $card->text());
     }
 
     public function testAnOrderWithoutPlan(): void
