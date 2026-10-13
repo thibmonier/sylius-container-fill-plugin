@@ -257,13 +257,15 @@ The gauge is the Live component `tmonier_container_fill:gauge`: it listens to
 
 ## Screenshots
 
+![Cart gauge in layer mode: side view of the pallet, "add 414" to complete it and room left for more layers](docs/images/shop-cart-layers.jpg)
+
 ![Cart gauge: a semi-trailer filled to 95 % by weight, 23 of 33 places used](docs/images/shop-cart-truck.jpg)
 
-![Mixed pallet filled to 87 %: checkout blocked, with the "complete the pallet" and "round up to the layer" suggestions](docs/images/shop-cart-mixed-pallet.jpg)
+![Indicative preview on the product page: 90 = 1.5 layers of a EUR pallet](docs/images/shop-product-preview.jpg)
 
-![Indicative preview on the product page](docs/images/shop-product-preview.jpg)
+![Logistics tab of a product: case, weight, layer height and capacity per container](docs/images/admin-product-logistics.jpg)
 
-![Logistics tab of a product: case, weight and capacity per container](docs/images/admin-product-logistics.jpg)
+![Container type form: plan by layers, load height and maximum layers](docs/images/admin-container-type-layers.jpg)
 
 ![Fill rule form](docs/images/admin-container-rule-form.jpg)
 
