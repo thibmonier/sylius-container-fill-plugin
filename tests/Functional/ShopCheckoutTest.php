@@ -211,7 +211,13 @@ final class ShopCheckoutTest extends WebTestCase
         foreach ($stack->filter('svg rect[fill="#206bc4"]') as $node) {
             $ys[] = $node instanceof \DOMElement ? (string) round((float) $node->getAttribute('y')) : '';
         }
-        self::assertSame(['81', '69', '58', '46', '35'], $ys);
+        // 20 px per 200 mm layer, the empty room above cropped to 48 px, 10 px of pallet.
+        self::assertSame(['128', '108', '88', '68', '48'], $ys);
+        $svg = $stack->filter('svg');
+        self::assertSame('true', $svg->attr('aria-hidden'));
+        self::assertSame('0 0 160 158', $svg->attr('viewBox'));
+        self::assertSame(['160', '158'], [$svg->attr('width'), $svg->attr('height')]);
+        self::assertCount(1, $svg->filter('path'), 'Cropped room: break mark.');
         self::assertStringContainsString('limited by stack height', $crawler->filter('[data-test-tmonier-container-fill-container="1"]')->text());
         // Rounding up to the layer: 300 is 5 full layers, nothing to round.
         self::assertCount(0, $crawler->filter('[data-test-tmonier-container-fill-round-layer]'));

@@ -4,18 +4,36 @@
 {% for layer in container.layers %}{% if colours['k' ~ layer.key] is not defined %}{% set colours = colours|merge({('k' ~ layer.key): palette[colours|length % palette|length]}) %}{% endif %}{% endfor %}
 {% set total = spec.maxStackHeight ?: 0 %}
 {% set byCount = spec.maxLayers ?: 0 %}
-{% set y = 92 %}
-<div class="d-flex align-items-end gap-3 mt-1" {{ sylius_test_html_attribute('tmonier-container-fill-stack', container.index) }}>
-    <svg viewBox="0 0 60 100" width="60" height="100" aria-hidden="true" focusable="false" class="flex-shrink-0">
-        <rect x="0" y="0" width="60" height="92" fill="#f8f9fa" stroke="#adb5bd" stroke-width="0.4" stroke-dasharray="2 1"></rect>
+{# Layer heights in mm (by count: one unit per layer); 160 px for the whole stack, at least 14 px per layer. #}
+{% set filled = 0 %}
+{% set thinnest = null %}
+{% for layer in container.layers %}
+    {% set lh = total > 0 ? layer.height : 1 %}
+    {% set filled = filled + lh %}
+    {% set thinnest = thinnest is null ? lh : min(thinnest, lh) %}
+{% endfor %}
+{% set capacity = total > 0 ? total : (byCount > 0 ? byCount : filled) %}
+{% set scale = capacity > 0 ? 160 / capacity : 14 %}
+{% if thinnest is not null and thinnest > 0 and thinnest * scale < 14 %}{% set scale = 14 / thinnest %}{% endif %}
+{# The empty room above the stack is cropped to 48 px (the legend says how many layers still fit). #}
+{% set room = max(capacity - filled, 0) * scale %}
+{% set cropped = room > 48 %}
+{% set room = min(room, 48) %}
+{% set ground = room + filled * scale %}
+{% set width = 160 %}
+<div class="d-flex flex-wrap align-items-end gap-3 mt-1" {{ sylius_test_html_attribute('tmonier-container-fill-stack', container.index) }}>
+    <svg viewBox="0 0 {{ width }} {{ ground + 10 }}" width="{{ width }}" height="{{ ground + 10 }}" aria-hidden="true" focusable="false" class="flex-shrink-0" style="max-width: 100%; height: auto">
+        <rect x="0.5" y="0.5" width="{{ width - 1 }}" height="{{ ground - 0.5 }}" fill="#f8f9fa" stroke="#adb5bd" stroke-dasharray="4 2"></rect>
+        {% if cropped %}<path d="M0 10 l20 -6 l20 6 l20 -6 l20 6 l20 -6 l20 6 l20 -6 l20 6" fill="none" stroke="#adb5bd"></path>{% endif %}
+        {% set y = ground %}
         {% for layer in container.layers %}
-            {% set h = total > 0 ? layer.height / total * 92 : (byCount > 0 ? 92 / byCount : 8) %}
+            {% set h = (total > 0 ? layer.height : 1) * scale %}
             {% set y = y - h %}
-            {% set w = 56 * layer.units / layer.unitsPerLayer %}
-            <rect x="2" y="{{ y }}" width="{{ w }}" height="{{ max(h - 0.6, 0.4) }}" fill="{{ colours['k' ~ layer.key] }}"></rect>
-            {% if layer.units < layer.unitsPerLayer %}<rect x="{{ 2 + w }}" y="{{ y }}" width="{{ 56 - w }}" height="{{ max(h - 0.6, 0.4) }}" fill="none" stroke="#adb5bd" stroke-width="0.3" stroke-dasharray="1 1"></rect>{% endif %}
+            {% set w = (width - 8) * layer.units / layer.unitsPerLayer %}
+            <rect x="4" y="{{ y }}" width="{{ w }}" height="{{ max(h - 1, 1) }}" rx="1" fill="{{ colours['k' ~ layer.key] }}"></rect>
+            {% if layer.units < layer.unitsPerLayer %}<rect x="{{ 4 + w }}" y="{{ y }}" width="{{ width - 8 - w }}" height="{{ max(h - 1, 1) }}" fill="none" stroke="#adb5bd" stroke-dasharray="2 2"></rect>{% endif %}
         {% endfor %}
-        <rect x="0" y="92" width="60" height="8" fill="#a0785a"></rect>
+        <rect x="0" y="{{ ground }}" width="{{ width }}" height="10" fill="#a0785a"></rect>
     </svg>
     <div class="small">
         <div class="fw-semibold">{{ 'tmonier_container_fill.ui.layers_title'|trans({'%count%': container.layers|length}) }}</div>
