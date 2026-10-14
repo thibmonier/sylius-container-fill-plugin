@@ -7,13 +7,13 @@ namespace Tmonier\SyliusContainerFillPlugin\Rule;
 use Tmonier\SyliusContainerFillPlugin\Entity\ContainerRuleInterface;
 
 /** What a rule requires (mode + threshold), without its scope. */
-final class RuleSpec
+final readonly class RuleSpec
 {
     public function __construct(
-        public readonly string $mode,
-        public readonly ?int $threshold = null,
-        public readonly ?int $id = null,
-        public readonly string $name = '',
+        public string $mode,
+        public ?int $threshold = null,
+        public ?int $id = null,
+        public string $name = '',
     ) {
         if (!\in_array($mode, ContainerRuleInterface::MODES, true)) {
             throw new \InvalidArgumentException(sprintf('Unknown rule mode "%s".', $mode));

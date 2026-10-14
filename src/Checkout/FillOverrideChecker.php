@@ -13,12 +13,12 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  * order that does not meet the fill rules (admin order creation, admin API). Shop customers
  * never can.
  */
-final class FillOverrideChecker
+final readonly class FillOverrideChecker
 {
     public function __construct(
-        private readonly TokenStorageInterface $tokenStorage,
-        private readonly AuthorizationCheckerInterface $authorizationChecker,
-        private readonly ?string $overrideRole,
+        private TokenStorageInterface $tokenStorage,
+        private AuthorizationCheckerInterface $authorizationChecker,
+        private ?string $overrideRole,
     ) {
     }
 

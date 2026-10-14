@@ -33,7 +33,7 @@ final class CartItemTypeExtension extends AbstractTypeExtension
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
             $item = $event->getData();
             $form = $event->getForm();
-            if (!$item instanceof OrderItemInterface || null === $item->getVariant() || !$form->has('quantity')) {
+            if (!$item instanceof OrderItemInterface || !$item->getVariant() instanceof \Sylius\Component\Core\Model\ProductVariantInterface || !$form->has('quantity')) {
                 return;
             }
             $logistics = $this->logisticsProvider->getForVariant($item->getVariant());

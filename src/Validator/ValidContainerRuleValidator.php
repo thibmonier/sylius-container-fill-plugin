@@ -24,10 +24,10 @@ final class ValidContainerRuleValidator extends ConstraintValidator
         if (!\in_array($value->getScope(), ContainerRuleInterface::SCOPES, true)) {
             $this->violation('scope.invalid', 'scope');
         }
-        if (ContainerRuleInterface::SCOPE_TAXON === $value->getScope() && null === $value->getTaxon()) {
+        if (ContainerRuleInterface::SCOPE_TAXON === $value->getScope() && !$value->getTaxon() instanceof \Sylius\Component\Core\Model\TaxonInterface) {
             $this->violation('taxon.not_null', 'taxon');
         }
-        if (ContainerRuleInterface::SCOPE_PRODUCT === $value->getScope() && null === $value->getProduct()) {
+        if (ContainerRuleInterface::SCOPE_PRODUCT === $value->getScope() && !$value->getProduct() instanceof \Sylius\Component\Core\Model\ProductInterface) {
             $this->violation('product.not_null', 'product');
         }
 

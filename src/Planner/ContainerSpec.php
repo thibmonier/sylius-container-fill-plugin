@@ -10,19 +10,19 @@ use Tmonier\SyliusContainerFillPlugin\Entity\ContainerTypeInterface;
  * Planner view of a container type: places, payload (grams), usable volume (mm³); layer mode
  * (1.1, opt-in): stack height available for goods (mm) and/or maximum number of layers.
  */
-final class ContainerSpec
+final readonly class ContainerSpec
 {
     public function __construct(
-        public readonly string $code,
-        public readonly string $name,
-        public readonly string $kind,
-        public readonly int $slots,
-        public readonly int $maxPayload,
-        public readonly ?float $usableVolume = null,
-        public readonly bool $indicative = false,
-        public readonly bool $layerMode = false,
-        public readonly ?int $maxStackHeight = null,
-        public readonly ?int $maxLayers = null,
+        public string $code,
+        public string $name,
+        public string $kind,
+        public int $slots,
+        public int $maxPayload,
+        public ?float $usableVolume = null,
+        public bool $indicative = false,
+        public bool $layerMode = false,
+        public ?int $maxStackHeight = null,
+        public ?int $maxLayers = null,
     ) {
         if ($slots < 1 || $maxPayload < 1) {
             throw new \InvalidArgumentException('A container needs at least one place and a payload.');

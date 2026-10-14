@@ -47,7 +47,7 @@ final class SlotWeightPlannerTest extends TestCase
         $result = $this->planner->plan(PlannerFixtures::pallet(), [PlannerFixtures::light(90)]);
 
         self::assertSame(3, $result->containerCount());
-        self::assertSame([40, 40, 10], array_map(static fn ($container): int => $container->unitCount(), $result->containers));
+        self::assertSame([40, 40, 10], array_map(static fn (\Tmonier\SyliusContainerFillPlugin\Planner\ContainerFill $container): int => $container->unitCount(), $result->containers));
         self::assertSame(25, $result->leastFilled()?->percent());
         self::assertSame(3, $result->leastFilled()->index);
         self::assertFalse($result->containers[2]->full);
@@ -107,7 +107,7 @@ final class SlotWeightPlannerTest extends TestCase
         $result = $this->planner->plan(PlannerFixtures::pallet(), [PlannerFixtures::ownPallet(30), PlannerFixtures::light(10)]);
 
         self::assertSame(2, $result->containerCount());
-        $own = array_values(array_filter($result->containers, static fn ($container): bool => 'OWN' === $container->dedicatedTo));
+        $own = array_values(array_filter($result->containers, static fn (\Tmonier\SyliusContainerFillPlugin\Planner\ContainerFill $container): bool => 'OWN' === $container->dedicatedTo));
         self::assertCount(1, $own);
         self::assertSame(['OWN' => 30], $own[0]->units);
         self::assertSame(75, $own[0]->percent());

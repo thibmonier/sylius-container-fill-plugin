@@ -66,9 +66,9 @@ final class ContainerGaugeComponent
 
     public function getReport(): CartFillReport
     {
-        if (null === $this->report) {
+        if (!$this->report instanceof \Tmonier\SyliusContainerFillPlugin\Rule\CartFillReport) {
             $cart = $this->getCart();
-            $this->report = null === $cart ? new CartFillReport() : $this->checker->check($cart);
+            $this->report = $cart instanceof \Sylius\Component\Core\Model\OrderInterface ? $this->checker->check($cart) : new CartFillReport();
         }
 
         return $this->report;
@@ -102,7 +102,7 @@ final class ContainerGaugeComponent
     {
         $cart = $this->getCart();
         $suggestion = $this->getReport()->outcomes[$rule]->suggestion ?? null;
-        if (null === $cart || null === $suggestion) {
+        if (!$cart instanceof \Sylius\Component\Core\Model\OrderInterface || null === $suggestion) {
             return null;
         }
 
@@ -115,7 +115,7 @@ final class ContainerGaugeComponent
     public function roundToLayer(#[LiveArg] string $variant): ?RedirectResponse
     {
         $cart = $this->getCart();
-        if (null === $cart) {
+        if (!$cart instanceof \Sylius\Component\Core\Model\OrderInterface) {
             return null;
         }
         foreach ($this->getLayerRoundings() as $rounding) {

@@ -14,28 +14,28 @@ use Tmonier\SyliusContainerFillPlugin\Planner\PlanLine;
  * Logistics data of one variant: plugin data first, Sylius weight and dimensions (raw fields:
  * getShippingVolume() returns 0 when one is missing) as fallback.
  */
-final class VariantLogistics
+final readonly class VariantLogistics
 {
     /** @param array<string, VariantContainerCapacityInterface> $capacities by container type code */
     public function __construct(
-        public readonly ProductVariantInterface $variant,
-        public readonly ?ProductVariantLogisticsInterface $logistics,
-        private readonly array $capacities,
-        private readonly Units $units,
+        public ProductVariantInterface $variant,
+        public ?ProductVariantLogisticsInterface $logistics,
+        private array $capacities,
+        private Units $units,
     ) {
     }
 
     public function key(): string
     {
-        return (string) ($this->variant->getCode() ?? ('#' . EntityId::string($this->variant->getId())));
+        return $this->variant->getCode() ?? ('#' . EntityId::string($this->variant->getId()));
     }
 
     public function label(): string
     {
         $product = $this->variant->getProduct();
-        $productName = (string) ($product?->getName() ?? $this->key());
+        $productName = $product?->getName() ?? $this->key();
         $variantName = $this->variant->getName();
-        if (null !== $product && $product->hasOptions() && null !== $variantName && '' !== $variantName && $variantName !== $productName) {
+        if ($product instanceof \Sylius\Component\Product\Model\ProductInterface && $product->hasOptions() && null !== $variantName && '' !== $variantName && $variantName !== $productName) {
             return $productName . ' – ' . $variantName;
         }
 
@@ -49,7 +49,7 @@ final class VariantLogistics
 
     public function isCaseMultipleRequired(): bool
     {
-        return null !== $this->logistics && $this->logistics->isCaseMultipleRequired() && $this->unitsPerCase() > 1;
+        return $this->logistics instanceof \Tmonier\SyliusContainerFillPlugin\Entity\ProductVariantLogisticsInterface && $this->logistics->isCaseMultipleRequired() && $this->unitsPerCase() > 1;
     }
 
     public function capacityFor(ContainerTypeInterface $type): ?VariantContainerCapacityInterface
@@ -61,13 +61,13 @@ final class VariantLogistics
     public function unitsPerContainer(ContainerTypeInterface $type): ?int
     {
         $capacity = $this->capacityFor($type);
-        if (null !== $capacity && $capacity->getQuantity() > 0) {
+        if ($capacity instanceof \Tmonier\SyliusContainerFillPlugin\Entity\VariantContainerCapacityInterface && $capacity->getQuantity() > 0) {
             return $capacity->getQuantity();
         }
         $nested = $type->getNestedType();
-        if (null !== $nested && $nested->getCode() !== $type->getCode()) {
+        if ($nested instanceof \Tmonier\SyliusContainerFillPlugin\Entity\ContainerTypeInterface && $nested->getCode() !== $type->getCode()) {
             $nestedCapacity = $this->capacityFor($nested);
-            if (null !== $nestedCapacity && $nestedCapacity->getQuantity() > 0) {
+            if ($nestedCapacity instanceof \Tmonier\SyliusContainerFillPlugin\Entity\VariantContainerCapacityInterface && $nestedCapacity->getQuantity() > 0) {
                 return $nestedCapacity->getQuantity() * max(1, $type->getSlots());
             }
         }
@@ -103,7 +103,7 @@ final class VariantLogistics
         $width = $this->variant->getWidth();
         $height = $this->variant->getHeight();
         $depth = $this->variant->getDepth();
-        if (null === $width || null === $height || null === $depth || $width <= 0 || $height <= 0 || $depth <= 0) {
+        if (in_array(null, [$width, $height, $depth], true) || $width <= 0 || $height <= 0 || $depth <= 0) {
             return null;
         }
 

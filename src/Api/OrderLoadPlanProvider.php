@@ -18,14 +18,14 @@ use Tmonier\SyliusContainerFillPlugin\Repository\OrderLoadPlanSnapshotRepository
 use Tmonier\SyliusContainerFillPlugin\Rule\CartFillCheckerInterface;
 
 /** @implements ProviderInterface<OrderLoadPlan> */
-final class OrderLoadPlanProvider implements ProviderInterface
+final readonly class OrderLoadPlanProvider implements ProviderInterface
 {
     /** @param OrderRepositoryInterface<OrderInterface> $orderRepository */
     public function __construct(
-        private readonly OrderRepositoryInterface $orderRepository,
-        private readonly CartFillCheckerInterface $checker,
-        private readonly OrderLoadPlanSnapshotRepositoryInterface $snapshotRepository,
-        private readonly UserContextInterface $userContext,
+        private OrderRepositoryInterface $orderRepository,
+        private CartFillCheckerInterface $checker,
+        private OrderLoadPlanSnapshotRepositoryInterface $snapshotRepository,
+        private UserContextInterface $userContext,
     ) {
     }
 
@@ -45,7 +45,7 @@ final class OrderLoadPlanProvider implements ProviderInterface
         }
 
         $snapshot = $this->snapshotRepository->findOneByOrder($order);
-        if (null === $snapshot) {
+        if (!$snapshot instanceof \Tmonier\SyliusContainerFillPlugin\Entity\OrderLoadPlanSnapshotInterface) {
             return new OrderLoadPlan($tokenValue, 'none', true);
         }
         $plan = $snapshot->getPlan();
@@ -63,7 +63,7 @@ final class OrderLoadPlanProvider implements ProviderInterface
             return true;
         }
         $customer = $order->getCustomer();
-        if (!$customer instanceof CustomerInterface || null === $customer->getUser()) {
+        if (!$customer instanceof CustomerInterface || !$customer->getUser() instanceof \Sylius\Component\User\Model\UserInterface) {
             return true;
         }
         $user = $this->userContext->getUser();

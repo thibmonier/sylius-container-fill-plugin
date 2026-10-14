@@ -18,7 +18,7 @@ final class QuickOrderBridgePass implements CompilerPassInterface
 {
     public const QUICK_ORDER_PROVIDER = 'tmonier_quick_order.quantity_constraint_provider';
 
-    public const QUICK_ORDER_INTERFACE = 'Tmonier\SyliusQuickOrderPlugin\Quantity\QuantityConstraintProviderInterface';
+    public const QUICK_ORDER_INTERFACE = \Tmonier\SyliusQuickOrderPlugin\Quantity\QuantityConstraintProviderInterface::class;
 
     public const SERVICE_ID = 'tmonier_container_fill.quick_order.quantity_constraint_provider';
 

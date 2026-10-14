@@ -9,7 +9,7 @@ namespace Tmonier\SyliusContainerFillPlugin\Rule;
  * combine: any unmet rule blocks). $plan: the load plan, each line planned once by its most
  * specific rule (container counts for shipping, display); the plan never blocks by itself.
  */
-final class CartFillReport
+final readonly class CartFillReport
 {
     /**
      * @param list<RuleOutcome> $outcomes
@@ -17,9 +17,9 @@ final class CartFillReport
      * @param list<RuleOutcome> $plan
      */
     public function __construct(
-        public readonly array $outcomes = [],
-        public readonly array $lineViolations = [],
-        public readonly array $plan = [],
+        public array $outcomes = [],
+        public array $lineViolations = [],
+        public array $plan = [],
     ) {
     }
 
@@ -83,14 +83,14 @@ final class CartFillReport
                 'rule' => ['id' => $outcome->rule->id, 'name' => $outcome->rule->name],
                 'containerType' => ['code' => $outcome->result->container->code, 'name' => $outcome->result->container->name, 'kind' => $outcome->result->container->kind, 'indicative' => $outcome->result->container->indicative],
                 'containerCount' => $outcome->result->containerCount(),
-                'containers' => self::containers($outcome),
+                'containers' => $this->containers($outcome),
             ];
         }
 
         $outcomes = [];
         foreach ($this->outcomes as $outcome) {
             $result = $outcome->result;
-            $containers = self::containers($outcome);
+            $containers = $this->containers($outcome);
             $outcomes[] = [
                 'rule' => ['id' => $outcome->rule->id, 'name' => $outcome->rule->name, 'mode' => $outcome->rule->mode, 'threshold' => $outcome->rule->threshold],
                 'containerType' => ['code' => $result->container->code, 'name' => $result->container->name, 'kind' => $result->container->kind, 'indicative' => $result->container->indicative],
@@ -120,7 +120,7 @@ final class CartFillReport
     }
 
     /** @return list<array<string, mixed>> */
-    private static function containers(RuleOutcome $outcome): array
+    private function containers(RuleOutcome $outcome): array
     {
         $containers = [];
         foreach ($outcome->result->containers as $container) {

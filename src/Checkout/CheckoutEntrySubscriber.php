@@ -21,15 +21,15 @@ use Tmonier\SyliusContainerFillPlugin\Rule\CartFillCheckerInterface;
  * cart is known), before the Sylius CheckoutResolver (0); works with the resolver disabled.
  * No guard on the "address" transition: the cart state redirects to the address step (loop).
  */
-final class CheckoutEntrySubscriber implements EventSubscriberInterface
+final readonly class CheckoutEntrySubscriber implements EventSubscriberInterface
 {
     public const PRIORITY = 4;
 
     public function __construct(
-        private readonly CartContextInterface $cartContext,
-        private readonly CartFillCheckerInterface $checker,
-        private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly string $routePrefix = 'sylius_shop_checkout_',
+        private CartContextInterface $cartContext,
+        private CartFillCheckerInterface $checker,
+        private UrlGeneratorInterface $urlGenerator,
+        private string $routePrefix = 'sylius_shop_checkout_',
     ) {
     }
 

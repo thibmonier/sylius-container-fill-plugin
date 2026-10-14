@@ -7,14 +7,14 @@ namespace Tmonier\SyliusContainerFillPlugin\Rule;
 use Tmonier\SyliusContainerFillPlugin\Planner\FillResult;
 
 /** One applicable rule: the plan of the container type retained, violations, suggestion. */
-final class RuleOutcome
+final readonly class RuleOutcome
 {
     /** @param list<Violation> $violations */
     public function __construct(
-        public readonly RuleSpec $rule,
-        public readonly FillResult $result,
-        public readonly array $violations,
-        public readonly ?Suggestion $suggestion = null,
+        public RuleSpec $rule,
+        public FillResult $result,
+        public array $violations,
+        public ?Suggestion $suggestion = null,
     ) {
     }
 

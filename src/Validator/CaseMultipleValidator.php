@@ -74,7 +74,7 @@ final class CaseMultipleValidator extends ConstraintValidator
     private function fromOrderItem(OrderItemInterface $item): array
     {
         $order = $item->getOrder();
-        if (null !== $order && OrderInterface::STATE_CART !== $order->getState()) {
+        if ($order instanceof \Sylius\Component\Order\Model\OrderInterface && OrderInterface::STATE_CART !== $order->getState()) {
             return [null, 0, ''];
         }
 

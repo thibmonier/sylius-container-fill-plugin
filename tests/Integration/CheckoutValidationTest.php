@@ -55,7 +55,7 @@ final class CheckoutValidationTest extends KernelTestCase
         $cart = $this->catalog->cart([[$this->catalog->variant('A', [[$pallet, 40, null]]), 30]]);
 
         $violations = $this->validator()->validate(new CompleteOrder((string) $cart->getTokenValue()), null, ['sylius_checkout_complete']);
-        $codes = array_map(static fn ($violation): ?string => $violation->getCode(), iterator_to_array($violations));
+        $codes = array_map(static fn (\Symfony\Component\Validator\ConstraintViolationInterface $violation): ?string => $violation->getCode(), iterator_to_array($violations));
         self::assertContains('not_full', $codes);
     }
 
@@ -137,7 +137,7 @@ final class CheckoutValidationTest extends KernelTestCase
         foreach ($dispatcher->getListeners(KernelEvents::REQUEST) as $listener) {
             $object = \is_array($listener) ? $listener[0] : $listener;
             if (\is_object($object)) {
-                $priorities[$object::class] = self::priority($dispatcher, $listener);
+                $priorities[$object::class] = $this->priority($dispatcher, $listener);
             }
         }
 
@@ -145,7 +145,7 @@ final class CheckoutValidationTest extends KernelTestCase
         self::assertSame(CheckoutEntrySubscriber::PRIORITY, $ours);
         self::assertGreaterThanOrEqual(1, $ours);
         self::assertLessThanOrEqual(7, $ours);
-        self::assertSame(0, $priorities['Sylius\Bundle\CoreBundle\Checkout\CheckoutResolver'] ?? null);
+        self::assertSame(0, $priorities[\Sylius\Bundle\CoreBundle\Checkout\CheckoutResolver::class] ?? null);
     }
 
     private function login(AdminUserInterface $admin): void
@@ -172,7 +172,7 @@ final class CheckoutValidationTest extends KernelTestCase
     }
 
     /** The listener type of getListeners() differs between Symfony 6.4/7.4 and 8. */
-    private static function priority(EventDispatcherInterface $dispatcher, mixed $listener): ?int
+    private function priority(EventDispatcherInterface $dispatcher, mixed $listener): ?int
     {
         return \is_callable($listener) ? $dispatcher->getListenerPriority(KernelEvents::REQUEST, $listener) : null;
     }

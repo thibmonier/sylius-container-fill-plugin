@@ -128,7 +128,7 @@ final class LayerPlanner
             $ratio = $filled / $container->maxStackHeight;
         }
         if (null !== $container->maxLayers && $container->maxLayers > 0) {
-            $ratio = max($ratio, $layers / $container->maxLayers);
+            return max($ratio, $layers / $container->maxLayers);
         }
 
         return $ratio;
@@ -149,7 +149,7 @@ final class LayerPlanner
         // A partial layer that can be completed (payload permitting): not full yet.
         foreach ($bin['layers'] as $layer) {
             $line = $this->line($lines, $layer['key']);
-            if ($layer['units'] < $layer['unitsPerLayer'] && null !== $line && $bin['weight'] + ($layer['unitsPerLayer'] - $layer['units']) * (float) $line->unitWeight / $container->maxPayload <= 1.0 + self::EPSILON) {
+            if ($layer['units'] < $layer['unitsPerLayer'] && $line instanceof \Tmonier\SyliusContainerFillPlugin\Planner\PlanLine && $bin['weight'] + ($layer['unitsPerLayer'] - $layer['units']) * (float) $line->unitWeight / $container->maxPayload <= 1.0 + self::EPSILON) {
                 return false;
             }
         }

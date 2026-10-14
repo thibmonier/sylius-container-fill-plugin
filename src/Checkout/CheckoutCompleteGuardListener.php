@@ -12,11 +12,11 @@ use Tmonier\SyliusContainerFillPlugin\Rule\CartFillCheckerInterface;
  * Defence in depth on the "complete" transition of the order checkout workflow (Symfony
  * Workflow adapter only, the Sylius 2 default). Disabled with "workflow_guard: false".
  */
-final class CheckoutCompleteGuardListener
+final readonly class CheckoutCompleteGuardListener
 {
     public function __construct(
-        private readonly CartFillCheckerInterface $checker,
-        private readonly FillOverrideChecker $overrideChecker,
+        private CartFillCheckerInterface $checker,
+        private FillOverrideChecker $overrideChecker,
     ) {
     }
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tmonier\SyliusContainerFillPlugin\Planner;
 
 /** One container of a plan: fill ratios (1.0 = 100 %) and units per line key. */
-final class ContainerFill
+final readonly class ContainerFill
 {
     private const EPSILON = 1e-9;
 
@@ -14,19 +14,19 @@ final class ContainerFill
      * @param list<array{key: string, label: string, units: int, unitsPerLayer: int, height: int}> $layers
      */
     public function __construct(
-        public readonly int $index,
-        public readonly float $slotRatio,
-        public readonly float $weightRatio,
-        public readonly ?float $volumeRatio,
-        public readonly array $units,
-        public readonly bool $full,
-        public readonly ?string $dedicatedTo = null,
+        public int $index,
+        public float $slotRatio,
+        public float $weightRatio,
+        public ?float $volumeRatio,
+        public array $units,
+        public bool $full,
+        public ?string $dedicatedTo = null,
         /** Layer mode: share of the stack height / layer count used. */
-        public readonly ?float $layerRatio = null,
+        public ?float $layerRatio = null,
         /** Layer mode: layers from the bottom (a partial layer has units < unitsPerLayer). */
-        public readonly array $layers = [],
+        public array $layers = [],
         /** Layer mode: stack height left in mm (null without height limit). */
-        public readonly ?int $remainingHeight = null,
+        public ?int $remainingHeight = null,
     ) {
     }
 

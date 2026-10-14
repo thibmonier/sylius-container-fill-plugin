@@ -34,7 +34,7 @@ final class TmonierSyliusContainerFillExtension extends AbstractResourceExtensio
             $container->getDefinition('tmonier_container_fill.checkout_complete_guard')
                 ->addTag('kernel.event_listener', ['event' => 'workflow.sylius_order_checkout.guard.complete']);
         }
-        if (self::hasApiPlatform($container)) {
+        if ($this->hasApiPlatform($container)) {
             $loader->load('services_api.php');
         }
     }
@@ -66,16 +66,16 @@ final class TmonierSyliusContainerFillExtension extends AbstractResourceExtensio
             ],
         ]);
 
-        if (self::hasApiPlatform($container)) {
+        if ($this->hasApiPlatform($container)) {
             $container->prependExtensionConfig('api_platform', [
-                'mapping' => ['paths' => [\dirname(__DIR__) . '/Api/Resource']],
+                'mapping' => ['paths' => [__DIR__ . '/../Api/Resource']],
             ]);
         }
 
         $this->prependDoctrineMigrations($container);
     }
 
-    private static function hasApiPlatform(ContainerBuilder $container): bool
+    private function hasApiPlatform(ContainerBuilder $container): bool
     {
         $bundles = $container->hasParameter('kernel.bundles') ? $container->getParameter('kernel.bundles') : null;
 

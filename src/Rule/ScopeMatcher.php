@@ -16,8 +16,8 @@ final class ScopeMatcher
     {
         return match ($rule->getScope()) {
             ContainerRuleInterface::SCOPE_ALL => true,
-            ContainerRuleInterface::SCOPE_PRODUCT => null !== $rule->getProduct() && $rule->getProduct()->getId() === $product->getId(),
-            ContainerRuleInterface::SCOPE_TAXON => null !== $rule->getTaxon() && $this->inTaxon($product, $rule->getTaxon()),
+            ContainerRuleInterface::SCOPE_PRODUCT => $rule->getProduct() instanceof \Sylius\Component\Core\Model\ProductInterface && $rule->getProduct()->getId() === $product->getId(),
+            ContainerRuleInterface::SCOPE_TAXON => $rule->getTaxon() instanceof \Sylius\Component\Core\Model\TaxonInterface && $this->inTaxon($product, $rule->getTaxon()),
             default => false,
         };
     }
@@ -35,7 +35,7 @@ final class ScopeMatcher
             default => 0,
         };
 
-        return $rank * 2 + (null !== $rule->getCustomerGroup() ? 1 : 0);
+        return $rank * 2 + ($rule->getCustomerGroup() instanceof \Sylius\Component\Customer\Model\CustomerGroupInterface ? 1 : 0);
     }
 
     /** Scope identity: a rule of the customer's group replaces the rules without group of the same key. */
@@ -51,7 +51,7 @@ final class ScopeMatcher
     private function inTaxon(ProductInterface $product, TaxonInterface $taxon): bool
     {
         $taxons = $product->getTaxons()->toArray();
-        if (null !== $product->getMainTaxon()) {
+        if ($product->getMainTaxon() instanceof \Sylius\Component\Core\Model\TaxonInterface) {
             $taxons[] = $product->getMainTaxon();
         }
         foreach ($taxons as $candidate) {

@@ -39,11 +39,11 @@ use Webmozart\Assert\Assert;
  * depends on the random Sylius fixtures: container types, logistics data, rules, products,
  * customers, carts, a zone with shipping and payment methods. Codes get a random suffix.
  */
-final class TestCatalog
+final readonly class TestCatalog
 {
-    public readonly string $suffix;
+    public string $suffix;
 
-    public function __construct(private readonly ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
         $this->suffix = strtoupper(bin2hex(random_bytes(3)));
     }
@@ -138,7 +138,7 @@ final class TestCatalog
         $product->setSlug(strtolower(str_replace('_', '-', 'p-' . $code . '-' . $this->suffix)));
         $product->setEnabled(true);
         $product->addChannel($channel);
-        if (null !== $taxon) {
+        if ($taxon instanceof \Sylius\Component\Core\Model\TaxonInterface) {
             /** @var FactoryInterface<ProductTaxonInterface> $productTaxonFactory */
             $productTaxonFactory = $this->container->get('sylius.factory.product_taxon');
             $productTaxon = $productTaxonFactory->createNew();
@@ -189,7 +189,7 @@ final class TestCatalog
         $rule->setChannel($this->channel());
         $rule->setMode($mode);
         $rule->setThreshold($threshold);
-        $rule->setScope(null !== $taxon ? ContainerRuleInterface::SCOPE_TAXON : (null !== $product ? ContainerRuleInterface::SCOPE_PRODUCT : ContainerRuleInterface::SCOPE_ALL));
+        $rule->setScope($taxon instanceof \Sylius\Component\Core\Model\TaxonInterface ? ContainerRuleInterface::SCOPE_TAXON : ($product instanceof \Sylius\Component\Core\Model\ProductInterface ? ContainerRuleInterface::SCOPE_PRODUCT : ContainerRuleInterface::SCOPE_ALL));
         $rule->setTaxon($taxon);
         $rule->setProduct($product);
         $rule->setCustomerGroup($group);
@@ -220,7 +220,7 @@ final class TestCatalog
         $taxon->setFallbackLocale($locale);
         $taxon->setName('Taxon ' . $code);
         $taxon->setSlug(strtolower($code . '-' . $this->suffix));
-        if (null !== $parent) {
+        if ($parent instanceof \Sylius\Component\Core\Model\TaxonInterface) {
             $parent->addChild($taxon);
         }
         $this->entityManager()->persist($taxon);
@@ -287,7 +287,7 @@ final class TestCatalog
         $cart->setCurrencyCode((string) $channel->getBaseCurrency()?->getCode());
         $cart->setLocaleCode((string) $channel->getDefaultLocale()?->getCode());
         $cart->setTokenValue('cf_' . bin2hex(random_bytes(10)));
-        if (null !== $customer) {
+        if ($customer instanceof \Sylius\Component\Core\Model\CustomerInterface) {
             $cart->setCustomerWithAuthorization($customer);
         }
         foreach ($lines as [$variant, $quantity]) {
