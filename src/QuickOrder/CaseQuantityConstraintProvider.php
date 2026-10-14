@@ -15,11 +15,11 @@ use Tmonier\SyliusQuickOrderPlugin\Quantity\QuantityConstraintProviderInterface;
  * QuickOrderBridgePass): quick order lines and the order matrix follow the case multiples of
  * this plugin. Decorates the quick order provider, which answers for the other variants.
  */
-final class CaseQuantityConstraintProvider implements QuantityConstraintProviderInterface
+final readonly class CaseQuantityConstraintProvider implements QuantityConstraintProviderInterface
 {
     public function __construct(
-        private readonly VariantLogisticsProviderInterface $logisticsProvider,
-        private readonly ?QuantityConstraintProviderInterface $inner = null,
+        private VariantLogisticsProviderInterface $logisticsProvider,
+        private ?QuantityConstraintProviderInterface $inner = null,
     ) {
     }
 

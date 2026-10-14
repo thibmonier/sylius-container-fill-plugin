@@ -8,26 +8,26 @@ namespace Tmonier\SyliusContainerFillPlugin\Planner;
  * One variant of the cart for one container type: quantities in sale units, capacity = units
  * filling one container, unit weight in grams, unit volume in mm³.
  */
-final class PlanLine
+final readonly class PlanLine
 {
     public const MISSING_CAPACITY = 'capacity';
 
     public const MISSING_WEIGHT = 'weight';
 
     public function __construct(
-        public readonly string $key,
-        public readonly string $label,
-        public readonly int $quantity,
-        public readonly ?int $capacity,
-        public readonly ?float $unitWeight,
-        public readonly ?float $unitVolume = null,
-        public readonly int $unitsPerCase = 1,
-        public readonly bool $ownPallet = false,
-        public readonly ?int $unitsPerLayer = null,
+        public string $key,
+        public string $label,
+        public int $quantity,
+        public ?int $capacity,
+        public ?float $unitWeight,
+        public ?float $unitVolume = null,
+        public int $unitsPerCase = 1,
+        public bool $ownPallet = false,
+        public ?int $unitsPerLayer = null,
         /** Height of one layer of the product in mm (layer mode). */
-        public readonly ?int $layerHeight = null,
+        public ?int $layerHeight = null,
         /** Other layers may be put on top of this product (layer mode). */
-        public readonly bool $stackable = true,
+        public bool $stackable = true,
     ) {
         if ($quantity < 0 || $unitsPerCase < 1) {
             throw new \InvalidArgumentException('Invalid plan line.');

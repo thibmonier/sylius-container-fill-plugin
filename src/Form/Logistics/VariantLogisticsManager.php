@@ -46,7 +46,7 @@ final class VariantLogisticsManager
     {
         $data = new VariantLogisticsData();
         $logistics = $this->logisticsRepository->findOneByVariant($variant);
-        if (null !== $logistics) {
+        if ($logistics instanceof \Tmonier\SyliusContainerFillPlugin\Entity\ProductVariantLogisticsInterface) {
             $data->unitsPerCase = $logistics->getUnitsPerCase();
             $data->caseWeight = $logistics->getCaseWeight();
             $data->stackable = $logistics->isStackable();
@@ -55,7 +55,7 @@ final class VariantLogisticsManager
             $data->caseMultipleRequired = $logistics->isCaseMultipleRequired();
         }
         foreach ($this->capacityRepository->findByVariant($variant) as $capacity) {
-            $data->capacities['t' . (string) $capacity->getContainerType()?->getId()] = [
+            $data->capacities['t' . $capacity->getContainerType()?->getId()] = [
                 'quantity' => $capacity->getQuantity(),
                 'unitsPerLayer' => $capacity->getUnitsPerLayer(),
             ];
@@ -89,7 +89,7 @@ final class VariantLogisticsManager
     public function write(ProductVariantInterface $variant, VariantLogisticsData $data): void
     {
         $logistics = $this->logisticsRepository->findOneByVariant($variant);
-        if (null === $logistics && !$data->isEmpty()) {
+        if (!$logistics instanceof \Tmonier\SyliusContainerFillPlugin\Entity\ProductVariantLogisticsInterface && !$data->isEmpty()) {
             $logistics = $this->logisticsFactory->createNew();
             $logistics->setVariant($variant);
             $this->entityManager->persist($logistics);
@@ -105,10 +105,10 @@ final class VariantLogisticsManager
 
         $existing = [];
         foreach ($this->capacityRepository->findByVariant($variant) as $capacity) {
-            $existing['t' . (string) $capacity->getContainerType()?->getId()] = $capacity;
+            $existing['t' . $capacity->getContainerType()?->getId()] = $capacity;
         }
         foreach ($this->containerTypeRepository->findAllOrdered() as $type) {
-            $key = 't' . (string) $type->getId();
+            $key = 't' . $type->getId();
             $quantity = $data->capacities[$key]['quantity'] ?? null;
             $capacity = $existing[$key] ?? null;
             if (null === $quantity) {

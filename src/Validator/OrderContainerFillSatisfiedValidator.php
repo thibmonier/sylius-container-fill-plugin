@@ -33,7 +33,7 @@ final class OrderContainerFillSatisfiedValidator extends ConstraintValidator
 
         $order = $this->resolveOrder($value);
         // Placed orders keep the rules of their checkout (grandfathering).
-        if (null === $order || BaseOrderInterface::STATE_CART !== $order->getState()) {
+        if (!$order instanceof \Sylius\Component\Core\Model\OrderInterface || BaseOrderInterface::STATE_CART !== $order->getState()) {
             return;
         }
 
@@ -55,7 +55,7 @@ final class OrderContainerFillSatisfiedValidator extends ConstraintValidator
         foreach ($report->violations() as $violation) {
             $this->context
                 ->buildViolation('tmonier_container_fill.violation.' . $violation->code)
-                ->setParameters(array_map('strval', $violation->translationParameters()))
+                ->setParameters(array_map(strval(...), $violation->translationParameters()))
                 ->setCode($violation->code)
                 ->addViolation()
             ;

@@ -19,11 +19,11 @@ use Tmonier\SyliusContainerFillPlugin\Rule\CartFillCheckerInterface;
  * indicative, freight is confirmed after the order (see README).
  */
 #[AsShippingCalculator(calculator: self::TYPE, label: 'tmonier_container_fill.shipping.per_container', formType: ChannelBasedFlatRateConfigurationType::class)]
-final class PerContainerRateCalculator implements CalculatorInterface
+final readonly class PerContainerRateCalculator implements CalculatorInterface
 {
     public const TYPE = 'tmonier_per_container';
 
-    public function __construct(private readonly CartFillCheckerInterface $checker)
+    public function __construct(private CartFillCheckerInterface $checker)
     {
     }
 

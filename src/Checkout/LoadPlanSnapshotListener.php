@@ -17,23 +17,23 @@ use Tmonier\SyliusContainerFillPlugin\Rule\CartFillCheckerInterface;
  * Writes the load plan of the order when its checkout completes (shop, shop API, admin): later
  * rule or logistics changes do not alter placed orders. Persisted only, flushed with the order.
  */
-final class LoadPlanSnapshotListener
+final readonly class LoadPlanSnapshotListener
 {
     /** @param FactoryInterface<OrderLoadPlanSnapshotInterface> $snapshotFactory */
     public function __construct(
-        private readonly CartFillCheckerInterface $checker,
-        private readonly FillOverrideChecker $overrideChecker,
-        private readonly FactoryInterface $snapshotFactory,
-        private readonly OrderLoadPlanSnapshotRepositoryInterface $snapshotRepository,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly LoggerInterface $logger,
+        private CartFillCheckerInterface $checker,
+        private FillOverrideChecker $overrideChecker,
+        private FactoryInterface $snapshotFactory,
+        private OrderLoadPlanSnapshotRepositoryInterface $snapshotRepository,
+        private EntityManagerInterface $entityManager,
+        private LoggerInterface $logger,
     ) {
     }
 
     public function __invoke(CompletedEvent $event): void
     {
         $order = $event->getSubject();
-        if (!$order instanceof OrderInterface || null !== $this->snapshotRepository->findOneByOrder($order)) {
+        if (!$order instanceof OrderInterface || $this->snapshotRepository->findOneByOrder($order) instanceof \Tmonier\SyliusContainerFillPlugin\Entity\OrderLoadPlanSnapshotInterface) {
             return;
         }
 

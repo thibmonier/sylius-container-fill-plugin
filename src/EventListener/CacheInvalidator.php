@@ -14,7 +14,7 @@ use Tmonier\SyliusContainerFillPlugin\Entity\VariantContainerCapacityInterface;
 use Tmonier\SyliusContainerFillPlugin\Rule\CartFillChecker;
 
 /** Plans of the request are computed again once logistics data, rules or variants change. */
-final class CacheInvalidator
+final readonly class CacheInvalidator
 {
     private const CLASSES = [
         ContainerRuleInterface::class,
@@ -25,7 +25,7 @@ final class CacheInvalidator
         ProductVariantInterface::class,
     ];
 
-    public function __construct(private readonly CartFillChecker $checker)
+    public function __construct(private CartFillChecker $checker)
     {
     }
 

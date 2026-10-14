@@ -48,7 +48,7 @@ final class CartFillChecker implements CartFillCheckerInterface, ResetInterface
     public function check(OrderInterface $order): CartFillReport
     {
         $channel = $order->getChannel();
-        if (null === $channel) {
+        if (!$channel instanceof \Sylius\Component\Channel\Model\ChannelInterface) {
             return new CartFillReport();
         }
 
@@ -60,7 +60,7 @@ final class CartFillChecker implements CartFillCheckerInterface, ResetInterface
             if (!$variant instanceof ProductVariantInterface || !$product instanceof ProductInterface || $item->getQuantity() < 1) {
                 continue;
             }
-            $key = (string) ($variant->getCode() ?? ('#' . EntityId::string($variant->getId())));
+            $key = $variant->getCode() ?? ('#' . EntityId::string($variant->getId()));
             $lines[$key] ??= ['variant' => $variant, 'product' => $product, 'quantity' => 0];
             $lines[$key]['quantity'] += $item->getQuantity();
         }
@@ -128,7 +128,7 @@ final class CartFillChecker implements CartFillCheckerInterface, ResetInterface
                 continue;
             }
             $outcome = $this->evaluateRule($rule, $inScope[$index], $logistics);
-            if (null === $outcome) {
+            if (!$outcome instanceof \Tmonier\SyliusContainerFillPlugin\Rule\RuleOutcome) {
                 continue;
             }
             $outcomes[] = $outcome;
@@ -207,7 +207,7 @@ final class CartFillChecker implements CartFillCheckerInterface, ResetInterface
 
         $candidates = array_values(array_filter(
             $this->rules[$channelId],
-            static fn (ContainerRuleInterface $rule): bool => null === $rule->getCustomerGroup() || (null !== $groupCode && $rule->getCustomerGroup()->getCode() === $groupCode),
+            static fn (ContainerRuleInterface $rule): bool => !$rule->getCustomerGroup() instanceof \Sylius\Component\Customer\Model\CustomerGroupInterface || (null !== $groupCode && $rule->getCustomerGroup()->getCode() === $groupCode),
         ));
 
         $groupScopes = [];
@@ -219,7 +219,7 @@ final class CartFillChecker implements CartFillCheckerInterface, ResetInterface
 
         return array_values(array_filter(
             $candidates,
-            fn (ContainerRuleInterface $rule): bool => null !== $rule->getCustomerGroup() || !isset($groupScopes[$this->scopeMatcher->scopeKey($rule)]),
+            fn (ContainerRuleInterface $rule): bool => $rule->getCustomerGroup() instanceof \Sylius\Component\Customer\Model\CustomerGroupInterface || !isset($groupScopes[$this->scopeMatcher->scopeKey($rule)]),
         ));
     }
 }

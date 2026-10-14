@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tmonier\SyliusContainerFillPlugin\Rule;
 
 /** Why a rule is not met; the code is the translation key suffix (tmonier_container_fill.violation.<code>). */
-final class Violation
+final readonly class Violation
 {
     public const INCOMPLETE_DATA = 'incomplete_data';
 
@@ -24,8 +24,8 @@ final class Violation
 
     /** @param array<string, string|int> $parameters */
     public function __construct(
-        public readonly string $code,
-        public readonly array $parameters = [],
+        public string $code,
+        public array $parameters = [],
     ) {
     }
 

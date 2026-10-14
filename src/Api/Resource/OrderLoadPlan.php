@@ -22,12 +22,12 @@ use Tmonier\SyliusContainerFillPlugin\Api\OrderLoadPlanProvider;
             uriTemplate: '/shop/orders/{tokenValue}/load-plan',
             uriVariables: ['tokenValue'],
             description: 'Load plan (containers, fill ratios, binding constraint, rule violations and suggestion) of a cart or of a placed order. Indicative.',
-            provider: OrderLoadPlanProvider::class,
             name: 'tmonier_container_fill_shop_order_load_plan',
+            provider: OrderLoadPlanProvider::class,
         ),
     ],
 )]
-final class OrderLoadPlan
+final readonly class OrderLoadPlan
 {
     /**
      * @param array<mixed> $rules every applicable rule, checked on all the lines of its scope
@@ -36,16 +36,16 @@ final class OrderLoadPlan
      */
     public function __construct(
         #[ApiProperty(identifier: true)]
-        public readonly string $tokenValue,
+        public string $tokenValue,
         /** "cart" (computed on read) or "snapshot" (recorded at checkout), "none" for a placed order without plan. */
-        public readonly string $source,
-        public readonly bool $satisfied,
-        public readonly array $rules = [],
-        public readonly array $lineViolations = [],
-        public readonly ?string $overriddenBy = null,
-        public readonly bool $indicative = true,
-        public readonly array $plan = [],
-        public readonly int $containerCount = 0,
+        public string $source,
+        public bool $satisfied,
+        public array $rules = [],
+        public array $lineViolations = [],
+        public ?string $overriddenBy = null,
+        public bool $indicative = true,
+        public array $plan = [],
+        public int $containerCount = 0,
     ) {
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tmonier\SyliusContainerFillPlugin\Planner;
 
 /** Load plan of the lines for one container type. */
-final class FillResult
+final readonly class FillResult
 {
     /**
      * @param list<ContainerFill> $containers
@@ -13,13 +13,13 @@ final class FillResult
      * @param array<string, list<string>> $incomplete missing data per line key
      */
     public function __construct(
-        public readonly ContainerSpec $container,
-        public readonly array $containers,
-        public readonly array $lines,
-        public readonly bool $volumeAvailable,
-        public readonly array $incomplete = [],
+        public ContainerSpec $container,
+        public array $containers,
+        public array $lines,
+        public bool $volumeAvailable,
+        public array $incomplete = [],
         /** Planned by layers (1.1): containers carry their layers, the stack height binds. */
-        public readonly bool $layerMode = false,
+        public bool $layerMode = false,
     ) {
     }
 

@@ -13,16 +13,16 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Tmonier\SyliusContainerFillPlugin\Logistics\EntityId;
 
 /** Changes the quantity of a cart line like the cart form does (cart change events, processing, flush). */
-final class CartQuantityAdjuster
+final readonly class CartQuantityAdjuster
 {
     /** SyliusCartEvents::CART_POST_CHANGE exists since Sylius 2.3 only: the event name, dispatched on 2.2 too. */
     public const CART_POST_CHANGE = 'sylius.cart_post_change';
 
     public function __construct(
-        private readonly OrderItemQuantityModifierInterface $quantityModifier,
-        private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly ObjectManager $manager,
-        private readonly int $quantityLimit,
+        private OrderItemQuantityModifierInterface $quantityModifier,
+        private EventDispatcherInterface $eventDispatcher,
+        private ObjectManager $manager,
+        private int $quantityLimit,
     ) {
     }
 

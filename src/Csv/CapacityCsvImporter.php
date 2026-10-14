@@ -46,7 +46,7 @@ final class CapacityCsvImporter
     {
         $contents = str_replace(["\r\n", "\r"], "\n", preg_replace('/^\xEF\xBB\xBF/', '', $contents) ?? $contents);
         $rows = explode("\n", $contents);
-        $header = (string) array_shift($rows);
+        $header = array_shift($rows);
         if ('' === trim($header)) {
             return new CapacityImportResult(0, 0, [1 => 'The file is empty.'], $dryRun);
         }
@@ -77,7 +77,7 @@ final class CapacityCsvImporter
             }
             $line = [];
             foreach ($columns as $index => $column) {
-                $line[$column] = trim((string) ($values[$index] ?? ''));
+                $line[$column] = trim($values[$index] ?? '');
             }
 
             $error = $this->check($line);
@@ -119,10 +119,10 @@ final class CapacityCsvImporter
     /** @param array<string, string> $line */
     private function check(array $line): ?string
     {
-        if ('' === $line['variant_code'] || null === $this->variant($line['variant_code'])) {
+        if ('' === $line['variant_code'] || !$this->variant($line['variant_code']) instanceof \Sylius\Component\Core\Model\ProductVariantInterface) {
             return sprintf('Unknown variant "%s".', $line['variant_code']);
         }
-        if ('' === $line['container_type'] || null === $this->containerTypeRepository->findOneByCode($line['container_type'])) {
+        if ('' === $line['container_type'] || !$this->containerTypeRepository->findOneByCode($line['container_type']) instanceof \Tmonier\SyliusContainerFillPlugin\Entity\ContainerTypeInterface) {
             return sprintf('Unknown container type "%s".', $line['container_type']);
         }
         foreach (['capacity', 'units_per_layer', 'units_per_case', 'layer_height_mm'] as $column) {
@@ -144,17 +144,17 @@ final class CapacityCsvImporter
     {
         $variant = $this->variant($line['variant_code']);
         $type = $this->containerTypeRepository->findOneByCode($line['container_type']);
-        if (null === $variant || null === $type) {
+        if (!$variant instanceof \Sylius\Component\Core\Model\ProductVariantInterface || !$type instanceof \Tmonier\SyliusContainerFillPlugin\Entity\ContainerTypeInterface) {
             return;
         }
 
         $capacity = $this->capacityRepository->findOneByVariantAndType($variant, $type);
         if ('' === $line['capacity']) {
-            if (null !== $capacity) {
+            if ($capacity instanceof \Tmonier\SyliusContainerFillPlugin\Entity\VariantContainerCapacityInterface) {
                 $this->entityManager->remove($capacity);
             }
         } else {
-            if (null === $capacity) {
+            if (!$capacity instanceof \Tmonier\SyliusContainerFillPlugin\Entity\VariantContainerCapacityInterface) {
                 $capacity = $this->capacityFactory->createNew();
                 $capacity->setVariant($variant);
                 $capacity->setContainerType($type);

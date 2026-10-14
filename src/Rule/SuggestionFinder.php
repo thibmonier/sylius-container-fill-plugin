@@ -15,7 +15,7 @@ use Tmonier\SyliusContainerFillPlugin\Planner\PlanLine;
  * Finds the smallest quantity to add to one line so that the rule is met, checked by planning
  * again (the split may move units between containers). Only additions are suggested.
  */
-final class SuggestionFinder
+final readonly class SuggestionFinder
 {
     /** Cases tried after the estimate before giving up. */
     private const EXTRA_ATTEMPTS = 12;
@@ -24,8 +24,8 @@ final class SuggestionFinder
     private const CANDIDATES = 3;
 
     public function __construct(
-        private readonly LoadPlannerInterface $planner,
-        private readonly RuleEvaluator $evaluator,
+        private LoadPlannerInterface $planner,
+        private RuleEvaluator $evaluator,
     ) {
     }
 
@@ -55,7 +55,7 @@ final class SuggestionFinder
         }
 
         $target = $this->target($result, $required);
-        if (null === $target) {
+        if (!$target instanceof \Tmonier\SyliusContainerFillPlugin\Planner\ContainerFill) {
             return null;
         }
 
@@ -63,11 +63,11 @@ final class SuggestionFinder
         arsort($candidates);
         foreach (\array_slice(array_keys($candidates), 0, self::CANDIDATES) as $key) {
             $line = $result->line((string) $key);
-            if (null === $line) {
+            if (!$line instanceof \Tmonier\SyliusContainerFillPlugin\Planner\PlanLine) {
                 continue;
             }
             $suggestion = $this->tryLine($rule, $result, $target, $line, $required);
-            if (null !== $suggestion) {
+            if ($suggestion instanceof \Tmonier\SyliusContainerFillPlugin\Rule\Suggestion) {
                 return $suggestion;
             }
         }

@@ -18,11 +18,11 @@ use Tmonier\SyliusContainerFillPlugin\Rule\CartFillCheckerInterface;
  * on demand.
  */
 #[AsShippingMethodRuleChecker(type: self::TYPE, label: 'tmonier_container_fill.shipping.container_type_rule', formType: ContainerTypeRuleConfigurationType::class)]
-final class ContainerTypeRuleChecker implements RuleCheckerInterface
+final readonly class ContainerTypeRuleChecker implements RuleCheckerInterface
 {
     public const TYPE = 'tmonier_container_type';
 
-    public function __construct(private readonly CartFillCheckerInterface $checker)
+    public function __construct(private CartFillCheckerInterface $checker)
     {
     }
 

@@ -9,18 +9,18 @@ use Tmonier\SyliusContainerFillPlugin\Repository\ProductVariantLogisticsReposito
 use Tmonier\SyliusContainerFillPlugin\Repository\VariantContainerCapacityRepositoryInterface;
 
 /** Writes the capacities in the import format (round trip). */
-final class CapacityCsvExporter
+final readonly class CapacityCsvExporter
 {
     public function __construct(
-        private readonly VariantContainerCapacityRepositoryInterface $capacityRepository,
-        private readonly ProductVariantLogisticsRepositoryInterface $logisticsRepository,
+        private VariantContainerCapacityRepositoryInterface $capacityRepository,
+        private ProductVariantLogisticsRepositoryInterface $logisticsRepository,
     ) {
     }
 
     public function export(): string
     {
         $capacities = $this->capacityRepository->findAllForExport();
-        $variantIds = array_values(array_unique(array_map(static fn ($capacity): int => EntityId::int($capacity->getVariant()?->getId()), $capacities)));
+        $variantIds = array_values(array_unique(array_map(static fn (\Tmonier\SyliusContainerFillPlugin\Entity\VariantContainerCapacityInterface $capacity): int => EntityId::int($capacity->getVariant()?->getId()), $capacities)));
         $logistics = [] === $variantIds ? [] : $this->logisticsRepository->findByVariantIds($variantIds);
 
         $stream = fopen('php://temp', 'r+');

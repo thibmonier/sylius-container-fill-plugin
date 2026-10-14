@@ -94,7 +94,7 @@ final class ContainerFillDemoFixture extends AbstractFixture
 
         $pallet = $this->containerTypeRepository->findOneByCode('EUR_PALLET');
         $semi = $this->containerTypeRepository->findOneByCode('SEMI_13_6');
-        if (null === $pallet || null === $semi) {
+        if (!$pallet instanceof \Tmonier\SyliusContainerFillPlugin\Entity\ContainerTypeInterface || !$semi instanceof \Tmonier\SyliusContainerFillPlugin\Entity\ContainerTypeInterface) {
             throw new \RuntimeException('Load the "tmonier_container_fill_container_types" fixture first.');
         }
 

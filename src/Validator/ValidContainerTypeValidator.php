@@ -29,7 +29,7 @@ final class ValidContainerTypeValidator extends ConstraintValidator
                 $this->context->buildViolation('tmonier_container_fill.container_type.layer_mode.limit')->atPath('maxLayers')->addViolation();
             }
         }
-        if (null === $value->getNestedType()) {
+        if (!$value->getNestedType() instanceof \Tmonier\SyliusContainerFillPlugin\Entity\ContainerTypeInterface) {
             return;
         }
 

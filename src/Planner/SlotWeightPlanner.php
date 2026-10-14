@@ -16,11 +16,11 @@ namespace Tmonier\SyliusContainerFillPlugin\Planner;
  * is one smaller item). "Own pallet" lines never share a container (single-place containers)
  * or take whole places (multi-place containers such as a truck of 33 pallet places).
  */
-final class SlotWeightPlanner implements LoadPlannerInterface
+final readonly class SlotWeightPlanner implements LoadPlannerInterface
 {
     private const EPSILON = 1e-9;
 
-    private readonly LayerPlanner $layerPlanner;
+    private LayerPlanner $layerPlanner;
 
     public function __construct(?LayerPlanner $layerPlanner = null)
     {

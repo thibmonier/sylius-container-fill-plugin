@@ -62,7 +62,7 @@ final class VariantLogisticsType extends AbstractType
 
         $capacities = $builder->create('capacities', FormType::class, ['label' => false, 'compound' => true]);
         foreach ($this->containerTypeRepository->findAllOrdered() as $type) {
-            $row = $builder->create('t' . (string) $type->getId(), FormType::class, [
+            $row = $builder->create('t' . $type->getId(), FormType::class, [
                 'label' => (string) ($type->getName() ?? $type->getCode()),
                 'compound' => true,
             ]);

@@ -40,7 +40,7 @@ final class ContainerTypePresetFixture extends AbstractFixture
         $created = [];
         foreach (ContainerTypePresets::PRESETS as $position => $preset) {
             $type = $this->repository->findOneByCode($preset['code']);
-            if (null !== $type) {
+            if ($type instanceof \Tmonier\SyliusContainerFillPlugin\Entity\ContainerTypeInterface) {
                 $created[$preset['code']] = $type;
 
                 continue;

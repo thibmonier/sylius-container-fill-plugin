@@ -10,12 +10,12 @@ use Tmonier\SyliusContainerFillPlugin\Repository\ProductVariantLogisticsReposito
 use Tmonier\SyliusContainerFillPlugin\Repository\VariantContainerCapacityRepositoryInterface;
 
 /** Two queries for all the variants of a cart. */
-final class VariantLogisticsProvider implements VariantLogisticsProviderInterface
+final readonly class VariantLogisticsProvider implements VariantLogisticsProviderInterface
 {
     public function __construct(
-        private readonly ProductVariantLogisticsRepositoryInterface $logisticsRepository,
-        private readonly VariantContainerCapacityRepositoryInterface $capacityRepository,
-        private readonly Units $units,
+        private ProductVariantLogisticsRepositoryInterface $logisticsRepository,
+        private VariantContainerCapacityRepositoryInterface $capacityRepository,
+        private Units $units,
     ) {
     }
 
