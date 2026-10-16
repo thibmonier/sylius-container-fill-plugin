@@ -9,8 +9,14 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Tests\Tmonier\SyliusContainerFillPlugin\ContainerFillTestTrait;
 use Tmonier\SyliusContainerFillPlugin\Entity\ContainerRuleInterface;
+use Tmonier\SyliusContainerFillPlugin\Logistics\VariantLogisticsProviderInterface;
 use Tmonier\SyliusContainerFillPlugin\Planner\BindingConstraint;
+use Tmonier\SyliusContainerFillPlugin\Planner\LoadPlannerInterface;
+use Tmonier\SyliusContainerFillPlugin\Repository\ContainerRuleRepositoryInterface;
 use Tmonier\SyliusContainerFillPlugin\Rule\CartFillChecker;
+use Tmonier\SyliusContainerFillPlugin\Rule\RuleEvaluator;
+use Tmonier\SyliusContainerFillPlugin\Rule\ScopeMatcher;
+use Tmonier\SyliusContainerFillPlugin\Rule\SuggestionFinder;
 use Tmonier\SyliusContainerFillPlugin\Rule\Violation;
 
 final class CartFillCheckerTest extends KernelTestCase
@@ -140,12 +146,12 @@ final class CartFillCheckerTest extends KernelTestCase
         $corrupted->setDepth(\NAN);
 
         $logger = new class() extends AbstractLogger {
-            /** @var list<array{string, string, array<mixed>}> */
+            /** @var list<array{level: mixed, message: string, context: array<mixed>}> */
             public array $records = [];
 
             public function log($level, \Stringable|string $message, array $context = []): void
             {
-                $this->records[] = [(string) $level, (string) $message, $context];
+                $this->records[] = ['level' => $level, 'message' => (string) $message, 'context' => $context];
             }
         };
         $report = $this->checkerWith($logger)->check($cart);
@@ -153,23 +159,36 @@ final class CartFillCheckerTest extends KernelTestCase
         self::assertTrue($report->isSatisfied());
         self::assertNull($report->outcomes[0]->result->line((string) $corrupted->getCode()));
         self::assertCount(1, $logger->records);
-        self::assertSame('warning', $logger->records[0][0]);
-        self::assertSame((string) $corrupted->getCode(), $logger->records[0][2]['variant']);
+        self::assertSame('warning', $logger->records[0]['level']);
+        self::assertSame((string) $corrupted->getCode(), $logger->records[0]['context']['variant']);
     }
 
     private function checkerWith(LoggerInterface $logger): CartFillChecker
     {
-        $container = self::getContainer();
-
         return new CartFillChecker(
-            $container->get('tmonier_container_fill.repository.container_rule'),
-            $container->get('tmonier_container_fill.logistics_provider'),
-            $container->get('tmonier_container_fill.planner'),
-            $container->get('tmonier_container_fill.rule_evaluator'),
-            $container->get('tmonier_container_fill.suggestion_finder'),
-            $container->get('tmonier_container_fill.scope_matcher'),
+            $this->service('tmonier_container_fill.repository.container_rule', ContainerRuleRepositoryInterface::class),
+            $this->service('tmonier_container_fill.logistics_provider', VariantLogisticsProviderInterface::class),
+            $this->service('tmonier_container_fill.planner', LoadPlannerInterface::class),
+            $this->service('tmonier_container_fill.rule_evaluator', RuleEvaluator::class),
+            $this->service('tmonier_container_fill.suggestion_finder', SuggestionFinder::class),
+            $this->service('tmonier_container_fill.scope_matcher', ScopeMatcher::class),
             $logger,
         );
+    }
+
+    /**
+     * @template T of object
+     *
+     * @param class-string<T> $class
+     *
+     * @return T
+     */
+    private function service(string $id, string $class): object
+    {
+        $service = self::getContainer()->get($id);
+        self::assertInstanceOf($class, $service);
+
+        return $service;
     }
 
     public function testSyliusWeightIsTheFallback(): void
