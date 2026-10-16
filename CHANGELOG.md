@@ -2,6 +2,19 @@
 
 All notable changes to `tmonier/sylius-container-fill-plugin`.
 
+## 1.1.1
+
+### Fixed
+- Cart lines without usable logistics data (no weight, zero or negative weight) are ignored by
+  the fill rules instead of making the plan incomplete: an "all products" rule no longer blocks
+  mixed carts, and a cart without any logistics data is accepted without error.
+- A non-finite (corrupted) weight or dimension is left out of the calculation and logged as a
+  warning naming the variant, without interrupting the cart or the checkout.
+
+### Changed
+- `CartFillChecker` takes an optional trailing `LoggerInterface` argument (no BC break).
+- A line with a weight but no capacity for the container type still makes the plan incomplete.
+
 ## 1.1.0
 
 ### Added
