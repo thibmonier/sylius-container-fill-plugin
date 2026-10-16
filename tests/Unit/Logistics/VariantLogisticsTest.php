@@ -83,6 +83,40 @@ final class VariantLogisticsTest extends TestCase
         self::assertSame(12, $logistics->planLine($this->types()[0], 24)->unitsPerCase);
     }
 
+    public function testALineWithoutUsableWeightIsIgnored(): void
+    {
+        $variant = $this->variant('PLAIN');
+        self::assertTrue((new VariantLogistics($variant, null, [], new Units()))->isIgnored());
+
+        foreach ([0.0, -2.5] as $weight) {
+            $variant->setWeight($weight);
+            self::assertTrue((new VariantLogistics($variant, null, [], new Units()))->isIgnored(), 'weight ' . $weight);
+        }
+
+        $variant->setWeight(1.0);
+        self::assertFalse((new VariantLogistics($variant, null, [], new Units()))->isIgnored());
+        self::assertFalse((new VariantLogistics($variant, null, [], new Units()))->isCorrupted());
+    }
+
+    public function testANonNumericWeightOrDimensionIsCorruptedAndIgnored(): void
+    {
+        foreach (['setWeight', 'setWidth', 'setHeight', 'setDepth'] as $setter) {
+            foreach ([\NAN, \INF] as $value) {
+                $variant = $this->variant('BAD');
+                $variant->setWeight(1.0);
+                $variant->setWidth(10);
+                $variant->setHeight(10);
+                $variant->setDepth(10);
+                $variant->{$setter}($value);
+
+                $logistics = new VariantLogistics($variant, null, [], new Units());
+                self::assertTrue($logistics->isCorrupted(), $setter);
+                self::assertTrue($logistics->isIgnored(), $setter);
+                self::assertNull($logistics->unitVolume(), $setter);
+            }
+        }
+    }
+
     /** @return array{ContainerType, ContainerType} */
     private function types(): array
     {
