@@ -181,8 +181,12 @@ off): nothing changes until you opt in.
 | Layer height (mm), stackable | layer mode: height of one layer of the product; a non-stackable product bears nothing (at most one of its layers per pallet, on top) |
 | Capacity per container type | units filling one container (capacity mode, trucks), units per layer (layer mode, "round up to the layer") |
 
-A product in the scope of a rule without capacity or weight makes the plan **incomplete**: the
-rule is not met and the gauge names the product. The plugin never assumes missing data is fine.
+A product in the scope of a rule with a weight but without capacity for the container type makes
+the plan **incomplete**: the rule is not met and the gauge names the product. A product **without
+a usable weight** (empty, zero or negative; a corrupted non-numeric weight or dimension is also
+logged as a warning naming the variant) is ignored by the rules: it neither fills a container nor
+blocks the cart, so an "all products" rule does not block mixed carts. Give the product a weight
+to make it count.
 
 ### Rules
 
@@ -194,7 +198,7 @@ rule is not met and the gauge names the product. The plugin never assumes missin
 | Container types | allowed types, tried in order: the first one meeting the rule is retained |
 | Mode | `full_only`; `min_fill_percent` (threshold 1-100); `multiple_of` (threshold, or the case of each line when empty); `max_containers` (threshold) |
 
-Overloaded containers and incomplete data fail every mode. An enabled rule whose container
+Overloaded containers and incomplete plans fail every mode. An enabled rule whose container
 types are all disabled blocks the checkout of its products (flagged in the rule grid): disable
 the rule rather than its types. Rules apply to the lines in their
 scope; carts without lines in the scope of a rule show no gauge. When several rules match a

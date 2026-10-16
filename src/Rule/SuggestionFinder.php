@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tmonier\SyliusContainerFillPlugin\Rule;
 
 use Tmonier\SyliusContainerFillPlugin\Entity\ContainerRuleInterface;
-use Tmonier\SyliusContainerFillPlugin\Planner\BindingConstraint;
 use Tmonier\SyliusContainerFillPlugin\Planner\ContainerFill;
 use Tmonier\SyliusContainerFillPlugin\Planner\FillResult;
 use Tmonier\SyliusContainerFillPlugin\Planner\LoadPlannerInterface;
@@ -41,8 +40,11 @@ final readonly class SuggestionFinder
                 $remainder = $line->quantity % $multiple;
                 if (0 !== $remainder) {
                     $least = $result->leastFilled();
+                    if (!$least instanceof ContainerFill) {
+                        return null;
+                    }
 
-                    return new Suggestion(Suggestion::ROUND_TO_MULTIPLE, $line->key, $line->label, $multiple - $remainder, null === $least ? 1 : $least->index, null === $least ? BindingConstraint::Slots : $least->binding(), $line->unitsPerCase);
+                    return new Suggestion(Suggestion::ROUND_TO_MULTIPLE, $line->key, $line->label, $multiple - $remainder, $least->index, $least->binding(), $line->unitsPerCase);
                 }
             }
 

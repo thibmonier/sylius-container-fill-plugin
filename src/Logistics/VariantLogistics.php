@@ -90,7 +90,7 @@ final readonly class VariantLogistics
             return $caseWeight / $this->unitsPerCase();
         }
         $weight = $this->variant->getWeight();
-        if (null !== $weight && $weight > 0) {
+        if (null !== $weight && is_finite($weight) && $weight > 0) {
             return $this->units->toGrams($weight);
         }
 
@@ -103,11 +103,29 @@ final readonly class VariantLogistics
         $width = $this->variant->getWidth();
         $height = $this->variant->getHeight();
         $depth = $this->variant->getDepth();
-        if (in_array(null, [$width, $height, $depth], true) || $width <= 0 || $height <= 0 || $depth <= 0) {
+        if (in_array(null, [$width, $height, $depth], true) || !is_finite($width) || !is_finite($height) || !is_finite($depth) || $width <= 0 || $height <= 0 || $depth <= 0) {
             return null;
         }
 
         return $this->units->toMillimetres($width) * $this->units->toMillimetres($height) * $this->units->toMillimetres($depth);
+    }
+
+    /** A Sylius weight or dimension is not a finite number (corrupted import): worth a warning. */
+    public function isCorrupted(): bool
+    {
+        foreach ([$this->variant->getWeight(), $this->variant->getWidth(), $this->variant->getHeight(), $this->variant->getDepth()] as $value) {
+            if (null !== $value && !is_finite($value)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** Left out of the fill calculation: no usable unit weight (absent, zero, negative) or corrupted data. */
+    public function isIgnored(): bool
+    {
+        return $this->isCorrupted() || null === $this->unitWeight();
     }
 
     public function planLine(ContainerTypeInterface $type, int $quantity): PlanLine

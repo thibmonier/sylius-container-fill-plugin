@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tmonier\SyliusContainerFillPlugin\Rule;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Model\ProductVariantInterface;
@@ -21,6 +23,9 @@ use Tmonier\SyliusContainerFillPlugin\Repository\ContainerRuleRepositoryInterfac
  * Rules of the cart channel, for everybody or for the customer's group, whose scope contains
  * at least one line. Each rule plans its lines for each allowed container type (one type per
  * rule): the first type meeting the rule is retained, else the first one with complete data.
+ *
+ * A line without usable logistics data (no weight, zero or negative weight, corrupted value) is
+ * ignored by the calculation instead of blocking the cart; a corrupted value is logged.
  *
  * Results are kept for the request, keyed by the lines and a data version bumped whenever
  * plugin data or variants are flushed (CacheInvalidator).
@@ -42,6 +47,7 @@ final class CartFillChecker implements CartFillCheckerInterface, ResetInterface
         private readonly RuleEvaluator $evaluator,
         private readonly SuggestionFinder $suggestionFinder,
         private readonly ScopeMatcher $scopeMatcher,
+        private readonly LoggerInterface $logger = new NullLogger(),
     ) {
     }
 
@@ -98,7 +104,7 @@ final class CartFillChecker implements CartFillCheckerInterface, ResetInterface
         $inScope = [];
         $planned = [];
         foreach ($lines as $key => $line) {
-            if (!isset($logistics[$key])) {
+            if (!isset($logistics[$key]) || $this->isIgnored($logistics[$key])) {
                 continue;
             }
             $winner = null;
@@ -138,6 +144,16 @@ final class CartFillChecker implements CartFillCheckerInterface, ResetInterface
         }
 
         return $this->reports[$cacheKey] = new CartFillReport($outcomes, $lineViolations, $plan);
+    }
+
+    /** Lines without usable logistics data are left out of the calculation, never blocking. */
+    private function isIgnored(VariantLogistics $data): bool
+    {
+        if ($data->isCorrupted()) {
+            $this->logger->warning('Variant {variant} has a corrupted weight or dimension: its line is ignored by the container fill rules.', ['variant' => $data->key()]);
+        }
+
+        return $data->isIgnored();
     }
 
     public function invalidate(): void

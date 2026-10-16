@@ -61,8 +61,11 @@ millimetres and grams.
 width x height x depth read from the raw fields (`getShippingVolume()` returns 0, not null,
 when a dimension is missing, verified on 2.3.0). Units per container: the capacity for the
 type, else the capacity for its nested type x places. A line in a rule scope without units per
-container or without weight makes the plan **incomplete**: the rule is not met ("incomplete
-logistics data" names the products). Missing data never passes silently.
+container makes the plan **incomplete**: the rule is not met ("incomplete logistics data" names
+the products). A line **without a usable weight** (absent, zero or negative, no case weight) is
+not planned at all: it is ignored by every rule, never blocks the cart and raises no exception.
+A weight or dimension that is not a finite number (corrupted import) is handled the same way and
+logs a warning naming the variant (channel `tmonier_container_fill`).
 
 ## 4. Planner
 
@@ -212,7 +215,9 @@ container; carriers' rules apply.
 1. Shop API exposure as a separate resource (section 7).
 2. Product preview rendered server side instead of Stimulus (section 7).
 3. Override role granted to nobody by default; no override from the shop.
-4. Incomplete logistics data in a rule scope blocks the checkout (never assumed fine).
+4. A line without capacity for the container type, but with a weight, blocks the checkout
+   (incomplete plan). A line without any usable weight is ignored (1.1.1: it used to block, which
+   made an "all products" rule block every mixed cart).
 5. A line outside every rule scope is not planned (no gauge without applicable rule).
 6. Per-container shipping without applicable rule charges one container.
 7. CSV import all or nothing; the variant form saves logistics only when the whole form is valid.
