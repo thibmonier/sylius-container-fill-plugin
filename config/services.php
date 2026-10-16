@@ -75,8 +75,10 @@ return static function (ContainerConfigurator $container): void {
             service('tmonier_container_fill.rule_evaluator'),
             service('tmonier_container_fill.suggestion_finder'),
             service('tmonier_container_fill.scope_matcher'),
+            service('logger'),
         ])
         ->tag('kernel.reset', ['method' => 'reset'])
+        ->tag('monolog.logger', ['channel' => 'tmonier_container_fill'])
         ->public();
     $services->alias(CartFillCheckerInterface::class, 'tmonier_container_fill.cart_fill_checker')->public();
 
