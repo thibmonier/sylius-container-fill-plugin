@@ -112,7 +112,7 @@ final class VariantLogisticsTest extends TestCase
                 $logistics = new VariantLogistics($variant, null, [], new Units());
                 self::assertTrue($logistics->isCorrupted(), $setter);
                 self::assertTrue($logistics->isIgnored(), $setter);
-                self::assertNull($logistics->unitVolume(), $setter);
+                self::assertNull('setWeight' === $setter ? $logistics->unitWeight() : $logistics->unitVolume(), $setter);
             }
         }
     }
