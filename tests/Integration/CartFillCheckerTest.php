@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tmonier\SyliusContainerFillPlugin\Integration;
 
+use Psr\Log\AbstractLogger;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Tests\Tmonier\SyliusContainerFillPlugin\ContainerFillTestTrait;
 use Tmonier\SyliusContainerFillPlugin\Entity\ContainerRuleInterface;
 use Tmonier\SyliusContainerFillPlugin\Planner\BindingConstraint;
+use Tmonier\SyliusContainerFillPlugin\Rule\CartFillChecker;
 use Tmonier\SyliusContainerFillPlugin\Rule\Violation;
 
 final class CartFillCheckerTest extends KernelTestCase
@@ -69,16 +72,104 @@ final class CartFillCheckerTest extends KernelTestCase
         self::assertSame($truck->getCode(), $report->outcomes[0]->result->container->code);
     }
 
-    public function testVariantsWithoutLogisticsDataInScopeBlock(): void
+    public function testALineWithoutLogisticsDataIsIgnoredAndDoesNotBlockAMixedCart(): void
+    {
+        $pallet = $this->catalog->pallet();
+        $this->catalog->rule([$pallet]);
+        $complete = $this->catalog->variant('A', [[$pallet, 40, null]]);
+        $plain = $this->catalog->plainVariant('PLAIN');
+
+        $report = $this->checker()->check($this->catalog->cart([[$complete, 40], [$plain, 3]]));
+
+        self::assertTrue($report->isSatisfied());
+        self::assertCount(1, $report->outcomes);
+        self::assertSame([(string) $complete->getCode() => 40], $report->outcomes[0]->result->containers[0]->units);
+        self::assertNull($report->outcomes[0]->result->line((string) $plain->getCode()));
+    }
+
+    public function testACartWithoutAnyLogisticsDataIsAccepted(): void
     {
         $pallet = $this->catalog->pallet();
         $this->catalog->rule([$pallet], ContainerRuleInterface::MODE_MIN_FILL_PERCENT, 1);
-        $plain = $this->catalog->plainVariant('PLAIN');
 
-        $report = $this->checker()->check($this->catalog->cart([[$plain, 1]]));
+        $report = $this->checker()->check($this->catalog->cart([[$this->catalog->plainVariant('PLAIN'), 1], [$this->catalog->plainVariant('OTHER'), 2]]));
+
+        self::assertTrue($report->isSatisfied());
+        self::assertSame([], $report->outcomes);
+    }
+
+    public function testNullOrNegativeWeightIsIgnored(): void
+    {
+        $pallet = $this->catalog->pallet();
+        $this->catalog->rule([$pallet]);
+        $zero = $this->catalog->variant('ZERO', [[$pallet, 40, null]], null);
+        $zero->setWeight(0.0);
+        $negative = $this->catalog->variant('NEG', [[$pallet, 40, null]], null);
+        $negative->setWeight(-3.0);
+        $this->entityManager()->flush();
+
+        $report = $this->checker()->check($this->catalog->cart([[$zero, 5], [$negative, 7]]));
+
+        self::assertTrue($report->isSatisfied());
+        self::assertSame([], $report->outcomes);
+    }
+
+    public function testCompleteLinesAreStillPlannedAsBefore(): void
+    {
+        $pallet = $this->catalog->pallet();
+        $this->catalog->rule([$pallet]);
+        $variant = $this->catalog->variant('A', [[$pallet, 40, 8]]);
+
+        $report = $this->checker()->check($this->catalog->cart([[$variant, 50]]));
 
         self::assertFalse($report->isSatisfied());
-        self::assertSame(Violation::INCOMPLETE_DATA, $report->outcomes[0]->violations[0]->code);
+        self::assertSame(Violation::NOT_FULL, $report->outcomes[0]->violations[0]->code);
+        self::assertSame(2, $report->outcomes[0]->result->containerCount());
+    }
+
+    public function testACorruptedValueIsDiscardedWithAWarningNamingTheVariant(): void
+    {
+        $pallet = $this->catalog->pallet();
+        $this->catalog->rule([$pallet]);
+        $complete = $this->catalog->variant('A', [[$pallet, 40, null]]);
+        $corrupted = $this->catalog->variant('CORRUPTED', [[$pallet, 40, null]]);
+        $cart = $this->catalog->cart([[$complete, 40], [$corrupted, 3]]);
+        // Not flushed: a non-finite float cannot be stored, only a corrupted import could bring one.
+        $corrupted->setWidth(10);
+        $corrupted->setHeight(10);
+        $corrupted->setDepth(\NAN);
+
+        $logger = new class() extends AbstractLogger {
+            /** @var list<array{string, string, array<mixed>}> */
+            public array $records = [];
+
+            public function log($level, \Stringable|string $message, array $context = []): void
+            {
+                $this->records[] = [(string) $level, (string) $message, $context];
+            }
+        };
+        $report = $this->checkerWith($logger)->check($cart);
+
+        self::assertTrue($report->isSatisfied());
+        self::assertNull($report->outcomes[0]->result->line((string) $corrupted->getCode()));
+        self::assertCount(1, $logger->records);
+        self::assertSame('warning', $logger->records[0][0]);
+        self::assertSame((string) $corrupted->getCode(), $logger->records[0][2]['variant']);
+    }
+
+    private function checkerWith(LoggerInterface $logger): CartFillChecker
+    {
+        $container = self::getContainer();
+
+        return new CartFillChecker(
+            $container->get('tmonier_container_fill.repository.container_rule'),
+            $container->get('tmonier_container_fill.logistics_provider'),
+            $container->get('tmonier_container_fill.planner'),
+            $container->get('tmonier_container_fill.rule_evaluator'),
+            $container->get('tmonier_container_fill.suggestion_finder'),
+            $container->get('tmonier_container_fill.scope_matcher'),
+            $logger,
+        );
     }
 
     public function testSyliusWeightIsTheFallback(): void
