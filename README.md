@@ -261,6 +261,8 @@ cases"). A registered customer's order is only visible to that customer.
 The gauge is the Live component `tmonier_container_fill:gauge`: it listens to
 `sylius:shop:cart_changed`; its actions emit it (on the cart page they reload the page).
 
+The ways to adapt a plugin without modifying it (templates through Twig hooks, forms, entities, services) are shown with real examples in the [override guide](https://sylius-b2b.thibaut-monier.fr/en_US/surcharge) of the B2B demo.
+
 ## Screenshots
 
 ![Cart gauge in layer mode: side view of the pallet, "add 414" to complete it and room left for more layers](docs/images/shop-cart-layers.jpg)

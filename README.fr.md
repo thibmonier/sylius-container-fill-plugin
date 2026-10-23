@@ -261,6 +261,8 @@ entiers »). La commande d'un client enregistré n'est visible que par ce client
 La jauge est le composant Live `tmonier_container_fill:gauge` : il écoute
 `sylius:shop:cart_changed` ; ses actions l'émettent (sur la page du panier, elles rechargent la page).
 
+Les façons d'adapter un plugin sans le modifier (gabarits par les Twig hooks, formulaires, entités, services) sont montrées avec des exemples réels dans le [guide de surcharge](https://sylius-b2b.thibaut-monier.fr/fr_FR/surcharge) de la démo B2B.
+
 ## Captures d'écran
 
 ![Jauge du panier en mode couches : vue de côté de la palette, « ajouter 414 » pour la compléter et place restante pour d'autres couches](docs/images/shop-cart-layers.jpg)
